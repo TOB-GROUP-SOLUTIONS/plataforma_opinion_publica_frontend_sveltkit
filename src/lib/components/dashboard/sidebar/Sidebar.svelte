@@ -20,7 +20,7 @@
 <aside
 	class={`${style.default} ${style.mobileOrientation[mobileOrientation]}
 		${$sidebarOpen ? style.open : style.close} scrollbar`}
-	style="background-image: url('/images/Sidebar.svg'); background-size: cover; background-position: center;"
+	style="background: #0C2C65;"
 >
 	<div class={style.container}>
 		<SidebarHeader />

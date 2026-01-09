@@ -1,0 +1,49 @@
+name: CI/CD Pipeline Dev
+# prueba cicd
+on:
+  push:
+    branches: 
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build the project
+      run: npm run build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy to production
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: |
+          cd ~/development/reclamos/reclamos_front_sveltekit || exit 1
+          echo "Cambiando al branch dev..."
+          git checkout dev
+          echo "Actualizando el repositorio..."
+          git pull
+          echo "Deteniendo y eliminando contenedores existentes..."
+          docker compose -f docker-compose.dev.yml down || exit 1
+          echo "Levantando contenedores en modo desprendido..."
+          docker compose -f docker-compose.dev.yml up -d --build || exit 1
+          echo "Despliegue completado exitosamente."

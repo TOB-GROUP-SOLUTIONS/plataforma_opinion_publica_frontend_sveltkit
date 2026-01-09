@@ -1,0 +1,16 @@
+version: '3.3'
+services:
+  reclamos_app:
+    build: .
+    container_name: reclamos_app
+    networks:
+      - reclamos
+    ports:
+      - '3050:3000'
+    restart: always
+    env_file:
+      - ./.env
+
+networks:
+  reclamos:
+    external: true

@@ -3,11 +3,14 @@
 	import Toast from '$lib/components/ui/Toast.svelte';
 	import { Label, Input, Card, Helper, Spinner, Button } from 'flowbite-svelte';
 	export let mainClass = 'bg-white-200 dark:bg-white-900 w-full min-h-screen flex flex-col';
+	import { EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
 	export let mainDivClass =
 		'flex flex-col items-center justify-center px-6 pt-8 mx-auto  w-full pt:mt-0 dark:bg-white-900';
 
 	let sending = false;
 	let successMessage = '';
+	let showPassword = false;
+
 	let errorMessage = '';
 	const handleSubmit = ({}) => {
 		sending = true;
@@ -29,19 +32,21 @@
 
 <title>Carnaval VIP</title>
 
-<main class={mainClass}>
-	<img src="/images/topbar-inicio.svg" alt="Topbar" class="max-w-full" />
+<main class="w-full min-h-screen flex flex-col items-center justify-center relative">
+	<img
+		src="/images/bg.svg"
+		alt="Background"
+		class="absolute inset-0 w-full h-full object-cover z-0"
+	/>
 
-	<div
-		class={mainDivClass}
-	>
-		<div class="w-full bg-white rounded-xl p-8 shadow-none text-black max-w-[640px] max-h-[58px] mx-auto">
+	<div class="flex flex-col items-center justify-center px-6 pt-8 mx-auto w-full pt:mt-0 z-10">
+		<div class="w-full rounded-xl p-8 shadow-none text-black max-w-[589px] mx-auto relative">
 			<div class="flex justify-center items-center mb-4">
-				<img src="/images/logo.svg" alt="Paso de los libres" width="374px" />
+				<img src="/images/logo.svg" alt="Together" width="374px" />
 			</div>
 			<form use:enhance={handleSubmit} method="post" action="?/login" class="mt-8 space-y-6">
 				<div>
-					<Label for="email" class="mb-2 text-black">Ingresar email</Label>
+					<Label for="email" class="mb-2 text-[#081C3F]">Ingresar email</Label>
 					<Input
 						type="email"
 						name="email"
@@ -52,15 +57,30 @@
 					/>
 				</div>
 				<div>
-					<Label for="password" class="mb-2 text-black">Contraseña</Label>
-					<Input
-						type="password"
-						name="password"
-						id="password"
-						placeholder="Ingrese contraseña"
-						required
-						class="border outline-none dark:border-white-600 dark:bg-white-700"
-					/>
+					<Label for="password" class="mb-2 text-[#081C3F]">Contraseña</Label>
+					<div class="relative">
+						<Input
+							type={showPassword ? 'text' : 'password'}
+							name="password"
+							id="password"
+							placeholder="Ingrese contraseña"
+							required
+							class="border outline-none dark:border-white-600 dark:bg-white-700"
+						/>
+
+						<button
+							type="button"
+							on:click={() => (showPassword = !showPassword)}
+							class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-600 hover:text-gray-800 focus:outline-none"
+							aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+						>
+							{#if showPassword}
+								<EyeSlashOutline class="shrink-0 h-6 w-6" />
+							{:else}
+								<EyeOutline class="shrink-0 h-6 w-6" />
+							{/if}
+						</button>
+					</div>
 				</div>
 
 				<Helper helperClass={'h-2 font-semibold mb-0 text-center'} color="red">
@@ -70,7 +90,7 @@
 				<Button
 					type="submit"
 					class="text-white border border-primary-500 hover:bg-primary-500 hover:text-white w-full"
-					style="background: #068B3E;"
+					style="background: #0C2C65;"
 					disabled={sending}
 				>
 					{#if sending}

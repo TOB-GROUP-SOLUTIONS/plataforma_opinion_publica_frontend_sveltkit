@@ -14,7 +14,7 @@ const config = {
 	theme: {
 		extend: {
 			fontFamily: {
-				sans: ['MontserratRegular', 'MontserratBold', 'MontserratBlack', 'sans-serif']
+				sans: ['Exo-SemiBold', 'MontserratBold', 'MontserratBlack', 'sans-serif']
 			},
 			colors: {
 				// rose
@@ -40,16 +40,16 @@ const config = {
 
 				// Verde de reclamos
 				primary: {
-					50: '#f1f8e9',
-					100: '#e4f1d4',
-					200: '#cde9aa',
-					300: '#b7e080',
-					400: '#a0d756',
-					500: '#8acf2d',
-					600: '#75b625',
-					700: '#609c1d',
-					800: '#4a8315',
-					900: '#356a0d'
+					50:  '#0C2C65',
+					100: '#0C2C65',
+					200: '#0C2C65',
+					300: '#0C2C65',
+					400: '#0C2C65',
+					500: '#0C2C65',
+					600: '#0C2C65',
+					700: '#0C2C65',
+					800: '#0C2C65',
+					900: '#0C2C65'
 				}
 
 				// sky

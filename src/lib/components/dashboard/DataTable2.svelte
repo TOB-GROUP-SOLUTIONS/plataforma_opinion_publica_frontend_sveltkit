@@ -137,7 +137,7 @@
                                             on:click={() => dispatch('edit', { data: obj })} 
                                             class="bg-[#00437B] hover:bg-[#003561] p-2"
                                         >
-                                            <FileLinesSolid class="text-white w-4 h-4" />
+                                            Editar
                                         </Button>
                                     {/if}
                                     {#if defaultActions.includes('delete')}

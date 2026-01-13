@@ -5,6 +5,8 @@
     import type { Reference } from '$lib/interfaces/references.interface';
     import SearchInput from '$lib/components/dashboard/SearchInput.svelte';
     import Toast from '$lib/components/ui/Toast.svelte';
+    import DeleteConfirmationModal from '$lib/components/ui/DeleteConfirmationModal.svelte';
+
 
 
     export let data: any;
@@ -15,10 +17,13 @@
     let currentPage = 1;
 	let successMessage = '';
 	let errorMessage = '';
-    
-    // Modal state
+      // Modal state
     let showModal = false;
+    let showEditModal = false;
     let isSubmitting = false;
+    let editingReference: Reference | null = null;
+    let confirmDelete = false;
+    let identifierToDelete: string = '';
 
     $: if (data?.referrers) {
         references = data.referrers || [];
@@ -29,6 +34,7 @@
     // Manejar respuesta del action
     $: if (form?.success) {
         showModal = false;
+        showEditModal = false;
         // Opcional: mostrar mensaje de éxito
     }
 
@@ -39,22 +45,22 @@
 
     function render(key: string, obj: Reference): any {
         return obj[key as keyof Reference] || '-';
-    }
-
-    function handleNewLead() {
+    }    function handleNewLead() {
         showModal = true;
+    }    function handleEdit(event: any) {
+        const obj = event.detail?.data || event;
+        editingReference = obj;
+        showEditModal = true;
+    }
+      function handleDelete(event: any) {
+        const obj = event.detail?.data || event;
+        identifierToDelete = obj.id?.toString() || '';
+        confirmDelete = true;
     }
 
-    function handleEdit(obj: Reference) {
-        console.log('Edit:', obj);
-    }
-
-    function handleDelete(obj: Reference) {
-        console.log('Delete:', obj);
-    }
-	
 	function handleCreateReference(){
         return async ({ result, update }: any) => {
+			isSubmitting = true;
 			if (result.type === 'success') {
 				//Cerramos el modal y lanzamos el mensaje de éxito
 				showModal = false;
@@ -65,6 +71,21 @@
 			} else {
 				errorMessage = result.error || 'Error al derivar la conversación';
 			}
+			isSubmitting = false;
+		}
+	}
+
+	function handleUpdateReference(){
+        return async ({ result, update }: any) => {
+			isSubmitting = true;
+			if (result.type === 'success') {
+				showEditModal = false;
+				successMessage = 'LCB actualizado correctamente';
+				await update();
+			} else {
+				errorMessage = result.error || 'Error al actualizar el LCB';
+			}
+			isSubmitting = false;
 		}
 	}
 
@@ -186,3 +207,68 @@
 {#if errorMessage.length > 0}
 	<Toast type="error" dismissible={true} showToast={true} bind:successMessage={errorMessage} />
 {/if}
+
+<!-- Modal para editar LCB -->
+<Modal bind:open={showEditModal} size="md" autoclose={false}>
+    <form 
+        method="POST" 
+        action="?/updateReference"
+        use:enhance={handleUpdateReference}
+        class="space-y-6"
+    >
+        <h3 class="text-xl font-semibold text-gray-900">
+            Editar LCB
+        </h3>
+        
+        <div>
+            <Label for="edit-name" class="mb-2">Nombre y Apellido</Label>
+            <Input
+                id="edit-name"
+                name="name"
+                type="text"
+                placeholder="Ingresa el nombre completo"
+                value={editingReference?.name || ''}
+                required
+                disabled={isSubmitting}
+            />
+        </div>
+
+        <div>
+            <Label for="edit-email" class="mb-2">Email</Label>
+            <Input
+                id="edit-email"
+                name="contact_email"
+                type="email"
+                placeholder="correo@ejemplo.com"
+                value={editingReference?.contact_email || ''}
+                required
+                disabled={isSubmitting}
+            />
+        </div>
+
+        <input type="hidden" name="id" value={editingReference?.id || ''} />
+        <input type="hidden" name="type" value="LCB" />
+
+        <div class="flex gap-3 justify-end">
+            <Button 
+                type="button"
+                color="alternative" 
+                on:click={() => showEditModal = false} 
+                disabled={isSubmitting}
+            >
+                Cancelar
+            </Button>
+            <Button type="submit" color="blue" disabled={isSubmitting}>
+                {isSubmitting ? 'Actualizando...' : 'Actualizar'}
+            </Button>
+        </div>
+    </form>
+</Modal>
+
+
+<DeleteConfirmationModal
+	actionUrl="?/deleteReference"
+	bind:open={confirmDelete}
+	identifier={identifierToDelete}
+	dataNameToDelete="el LCB"
+/>

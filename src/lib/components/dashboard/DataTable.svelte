@@ -4,7 +4,11 @@
 
 	export let user: any = undefined;
 	export let handleFiles: undefined | ((e: any) => void) = undefined;
+	export let handleView: undefined | ((e: any) => void) = undefined;
+	export let handleAssign: undefined | ((e: any) => void) = undefined;
+	export let handleChangeStatus: undefined | ((e: any) => void) = undefined;
 	export let handleRedirect: undefined | ((e: any) => void) = undefined;
+	export let handleAddBudget: undefined | ((e: any) => void) = undefined;
 	export let handleDelete: (e: any) => void;
 	export let handleEdit: (e: any) => void;
 	export let columns: Record<string, string>[] = [];
@@ -42,6 +46,10 @@
 		{actions}
 		{defaultActions}
 		on:goToArea={handleGoToArea}
+		on:view={handleView}
+		on:change_status={handleChangeStatus}
+		on:asingToUser={handleAssign}
+		on:add_budget={handleAddBudget}
 		on:files={handleFiles}
 		on:ver-historial={handleRedirect}
 		on:delete={handleDelete}

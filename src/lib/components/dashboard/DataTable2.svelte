@@ -2,19 +2,35 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import {
 		Table,
+		Button,
 		TableBody,
 		TableBodyCell,
 		TableBodyRow,
 		TableHead,
-		TableHeadCell
+		TableHeadCell,
+		Tooltip
 	} from 'flowbite-svelte';
 	import {
 		EditSolid,
 		PaperClipOutline,
 		TrashBinSolid,
-		CaretRightSolid
+		CaretRightSolid,
+		CheckCircleSolid,
+		QrCodeOutline,
+		PenOutline,
+		FileLinesSolid,
+		AnnotationSolid,
+		EyeOutline,
+		TrashBinOutline,
+		ExclamationCircleSolid,
+		UserSolid,
+		ReceiptSolid,
+		CogSolid
+
 	} from 'flowbite-svelte-icons';
 	import SortBtn from '../SortBtn.svelte';
+	import ActionsDropdown from './ActionsDropdown.svelte';
+	import { page } from '$app/stores';
 
 	export let user: any;
 	export let columns: Record<string, string>[] = [];
@@ -55,103 +71,110 @@
 </script>
 
 <div id="scrollContainer" class="overflow-x-auto mt-4">
-	<div id="scroll" class="h-1"></div>
-	<!-- Content of the other element -->
+    <div id="scroll" class="h-1"></div>
 </div>
 
-<Table>
-	<TableHead>
-		{#each headers as col, i}
-			{#if col === 'ID'}
-				<TableHeadCell class="p-1 border-l border-r border-[1px] border-gray-300 bg-gray-200">
-					{#if orderCols.includes(keys[i])}
-						<SortBtn key={keys[i]} label={col} />
-					{:else}
-						{col}
-					{/if}
-				</TableHeadCell>
-			{:else}
-				<TableHeadCell
-					class="min-w-44 p-1 border-l border-r border-[1px] border-gray-300 bg-gray-200"
-				>
-					{#if orderCols.includes(keys[i])}
-						<SortBtn key={keys[i]} label={col} />
-					{:else}
-						{col}
-					{/if}
-				</TableHeadCell>
-			{/if}
-		{/each}
-		{#if showActions}
-			<TableHeadCell class="sticky right-0 bg-gray-200 border-[1px] border-gray-300"
-				>Acciones</TableHeadCell
-			>
-		{/if}
-	</TableHead>
-	<TableBody>
-		{#each data as obj}
-			<TableBodyRow class="hover:bg-slate-300">
-				{#each keys as key}
-					{#if key === 'id'}
-						<TableBodyCell tdClass="w-fit p-1 border-l border-r border-[1px] border-gray-300">
-							{render(key, obj)}
-						</TableBodyCell>
-					{:else}
-						<TableBodyCell tdClass="min-w-44 p-1 border-l border-r border-[1px] border-gray-300">
-							{@html render(key, obj)}
-						</TableBodyCell>
-					{/if}
-				{/each}
-				{#if showActions}
-					<TableBodyCell
-						class="sticky right-0 bg-gray-100 z-1 hover:bg-slate-300 border-[1px] border-gray-300"
-					>
-						<div class="flex gap-3 justify-end">
-							{#each actions as action}
-								<svelte:component
-									this={action.component}
-									on:click={() => dispatch(action.event, { data: obj })}
-									{...action.props}
-								/>
-							{/each}
-							{#if defaultActions.includes('viewFiles')}
-								<button on:click={() => dispatch('files', { data: obj })}>
-									<PaperClipOutline color="blue" size="lg" />
-								</button>
-							{/if}
-							{#if defaultActions.includes('edit') && (obj.estado?.descripcion !== 'resuelto' || user?.roles[0].descripcion === 'superadmin')}
-								<button on:click={() => dispatch('edit', { data: obj })}>
-									<EditSolid color="#75b625" size="lg" />
-								</button>
-							{/if}
-							{#if defaultActions.includes('delete') && user?.roles[0].descripcion === 'superadmin' && user?.agente?.usuarioId !== obj.id}
-								<button on:click={() => dispatch('delete', { data: obj })}>
-									<TrashBinSolid color="red" size="lg" />
-								</button>
-							{/if}
-							{#if defaultActions.includes('goToArea') && obj.areasHijas.length >= 0}
-								<button on:click={() => dispatch('goToArea', { data: obj })}>
-									<CaretRightSolid
-										color={`${obj.areasHijas.length === 0 ? '#ffdf00' : 'blue'}`}
-										size="lg"
-									/>
-								</button>
-							{/if}
-							{#if defaultActions.includes('ver-historial')}
-								<button
-									class="text-primary-900 hover:underline"
-									on:click={() => dispatch('ver-historial', { data: obj })}
-								>
-									Ver historial
-								</button>
-							{/if}
-						</div>
-					</TableBodyCell>
-				{/if}
-			</TableBodyRow>
-		{/each}
-	</TableBody>
-</Table>
+<div class="overflow-visible">
+    <Table class="bg-white w-full table-fixed">
+        <TableHead>
+            {#each headers as col, i}
+                <TableHeadCell class="px-6 py-4 bg-white text-[#0C2C65] text-sm font-semibold uppercase border-b border-gray-200">
+                    {#if orderCols.includes(keys[i])}
+                        <SortBtn key={keys[i]} label={col} />
+                    {:else}
+                        {col}
+                    {/if}
+                </TableHeadCell>
+            {/each}
+            {#if showActions}
+                <TableHeadCell class="px-6 py-4 bg-white text-[#0C2C65] text-sm font-semibold uppercase border-b border-gray-200 text-center">
+                    Acciones
+                </TableHeadCell>
+            {/if}
+        </TableHead>
+        <TableBody>
+            {#each data as obj}
+                <TableBodyRow class="bg-white border-b border-gray-200">
+                    {#each keys as key}
+                        <TableBodyCell tdClass="px-6 py-4 text-[#6F6C6C] align-middle">
+                            {@html render(key, obj)}
+                        </TableBodyCell>
+                    {/each}
+                    
+                    {#if showActions}
+                        <TableBodyCell class="px-6 py-4 bg-white overflow-visible align-middle">
+                            <div class="flex gap-2 justify-center items-center relative">
+                                {#each actions as action}
+                                    <svelte:component
+                                        this={action.component}
+                                        on:click={() => dispatch(action.event, { data: obj })}
+                                        {...action.props}
+                                    />
+                                {/each}
+            
+                                {#if $page.url.pathname === '/admin/nuevos-interesados'}
+                                    <ActionsDropdown
+                                        actions={[
+                                            { label: 'Ver ficha', event: 'view', icon: EyeOutline, class: 'bg-[#4D6591] text-white rounded-full' },
+                                            { label: 'Asignar responsable', event: 'asingToUser', icon: UserSolid, class: 'bg-[#7597D5] text-white rounded-full' }
+                                        ]}
+                                        on:view={() => dispatch('view', { data: obj })}
+                                        on:asingToUser={() => dispatch('asingToUser', { data: obj })}
+                                    />
+                                {/if}
+            
+                                {#if $page.url.pathname === '/admin/lcb'}
+                                    {#if defaultActions.includes('generate_form')}
+                                        <Button 
+                                            on:click={() => dispatch('generate_form', { data: obj })} 
+                                            class="bg-[#7597D5] hover:bg-[#6486c4] text-white text-xs px-3 py-2"
+                                        >
+                                            Generar Formulario
+                                        </Button>
+                                    {/if}
+                                    {#if defaultActions.includes('edit')}
+                                        <Button 
+                                            on:click={() => dispatch('edit', { data: obj })} 
+                                            class="bg-[#00437B] hover:bg-[#003561] p-2"
+                                        >
+                                            <FileLinesSolid class="text-white w-4 h-4" />
+                                        </Button>
+                                    {/if}
+                                    {#if defaultActions.includes('delete')}
+                                        <Button 
+                                            on:click={() => dispatch('delete', { data: obj })} 
+                                            class="bg-[#6F6C6C] hover:bg-[#5a5858] p-2"
+                                        >
+                                            <TrashBinOutline class="text-white w-4 h-4" />
+                                        </Button>
+                                    {/if}
+                                {/if}
+
+                                {#if $page.url.pathname === '/admin/mis-leads'}
+                                    <ActionsDropdown
+                                        actions={[
+                                            { label: 'Ver ficha', event: 'view', icon: EyeOutline, class: 'bg-[#4D6591] text-white rounded-full text-sm' },
+											{ label: 'Agregar presupuesto', event: 'add_budget', icon: ReceiptSolid, class: 'text-sm bg-[#00000040] text-white rounded-full' },
+                                            { label: 'Cambiar responsable', event: 'asingToUser', icon: UserSolid, class: ' text-sm bg-[#7597D5] text-white rounded-full' },
+											{label: 'Cambiar estado', event: 'change_status', icon: CogSolid, class: ' text-sm  bg-green-600 text-white rounded-full' }
+                                        ]}
+                                        on:view={() => dispatch('view', { data: obj })}
+                                        on:asingToUser={() => dispatch('asingToUser', { data: obj })}
+                                        on:change_status={() => dispatch('change_status', { data: obj })}
+										on:add_budget={() => dispatch('add_budget', { data: obj })}
+                                    />
+                                {/if}
+
+
+                            </div>
+                        </TableBodyCell>
+                    {/if}
+                </TableBodyRow>
+            {/each}
+        </TableBody>
+    </Table>
+</div>
+
 {#if data.length === 0}
-	<p class="p-4 text-center font-popLight uppercase">No se encontraron datos</p>
+    <p class="p-4 text-center font-popLight uppercase">No se encontraron datos</p>
 {/if}

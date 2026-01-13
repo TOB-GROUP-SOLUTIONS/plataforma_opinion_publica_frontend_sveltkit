@@ -1,9 +1,46 @@
-import {UsersGroupSolid, HomeOutline, ClipboardOutline, BuildingSolid,BullhornSolid} from "flowbite-svelte-icons"
+import { Title } from "chart.js";
+import {UsersGroupSolid, HomeSolid, ClipboardOutline, BuildingSolid,UsersSolid, BookSolid} from "flowbite-svelte-icons"
 
 export const data = [
+
 	{
-		title: 'Noticias',
-		icon: BullhornSolid,
-		link: '/admin/noticias',
+		title: 'Inicio',
+		icon: HomeSolid,
+		link: '/admin'
+	},
+	{
+		title: 'Nuevos Intersados',
+		icon: UsersSolid,
+		link: '/admin/nuevos-interesados',
+	},
+
+	{
+		title: 'Mis leads',
+		icon: UsersGroupSolid,
+		link: '/admin/mis-leads',
+		sub_items: [
+			{
+				title: 'Sin presupuesto',
+				link: '/admin/mis-leads?status_lead=13',
+				icon: ClipboardOutline
+
+			},
+			{
+				title: 'Con presupuesto',
+				link: '/admin/mis-leads?status_lead=14',
+				icon: ClipboardOutline
+			},
+			{
+				title: 'Clientes',
+				link: '/admin/mis-leads?status_lead=15',
+				icon: BuildingSolid,
+			},
+		]
+	},
+
+	{
+		title: 'LCB',
+		icon: BookSolid,
+		link: '/admin/lcb',
 	},
 ];

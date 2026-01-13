@@ -12,9 +12,9 @@
 	$: user = $page.data.user;
 
 	const style = {
-		container: `bg-gray-100 h-screen overflow-hidden relative`,
-		main: `h-screen overflow-auto pb-36 pt-4 px-2 md:pb-8 lg:px-4`,
-		mainContainer: `flex flex-col h-screen pl-0 w-full lg:pl-24`
+		container: `bg-white min-h-screen overflow-hidden relative`,
+		main: `bg-white min-h-screen overflow-auto pb-36 pt-4 px-2 md:pb-8 lg:px-4`,
+		mainContainer: `flex flex-col min-h-screen pl-0 w-full lg:pl-24 `
 	};
 
 
@@ -80,8 +80,6 @@
 			/>
 			<main
 				class={style.main}
-				style="background-image: 
-    );"
 			>
 				<slot />
 			</main>

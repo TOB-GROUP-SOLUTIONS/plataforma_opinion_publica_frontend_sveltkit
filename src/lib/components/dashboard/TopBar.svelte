@@ -3,6 +3,7 @@
 	import { Dropdown, DropdownItem, Avatar } from 'flowbite-svelte';
 	import { openSidebar } from './store';
 	import { onMount } from 'svelte';
+	import { ArrowLeftToBracketOutline } from 'flowbite-svelte-icons';
 	import type { User } from '$lib/interfaces/user.interface';
 	import { redirect } from '@sveltejs/kit';
 
@@ -28,9 +29,10 @@
             window.location.replace('/?t=' + Date.now());
         });
     }
+	
 </script>
 
-<header class="bg-white h-16 items-center relative shadow w-full z-10 md:h-20">
+<header class="bg-[#0C2C6557] h-16 items-center relative shadow w-full z-10 md:h-20">
 	<div class="flex flex-center flex-col h-full justify-center mx-auto px-3 relative">
 		<div class="flex items-center pl-1 relative w-full sm:ml-0 sm:pr-2 lg:max-w-68">
 			<div class="flex left-0 relative w-3/4">
@@ -40,7 +42,7 @@
 						aria-expanded="false"
 						aria-label="Toggle sidenav"
 						on:click={openSidebar}
-						class="text-4xl  ${screenWidth < 1024 ? 'text-white' : 'text-black'} text-black focus:outline-none flex items-center gap-2"
+						class="text-4xl  ${screenWidth < 1024 ? 'text-[#0C2C65]' : 'text-black'} text-black focus:outline-none flex items-center gap-2"
 					>
 						&#8801;
 					</button>
@@ -60,31 +62,20 @@
 				{/if}
 			</div>
 			<!-- iconos right -->
-			<div class="flex items-center justify-end gap-3 p-1 relative w-full sm:mr-0 sm:right-auto">
-				<div>
-					<Avatar class="acs cursor-pointer" src="/images/logo.svg" />
-					<Dropdown triggeredBy=".acs">
-						<div slot="header" class="px-4 py-2">
-							<p class="block truncate text-sm text-center font-medium">
-								{user?.roles[0]?.descripcion
-									? user?.roles[0]?.descripcion.charAt(0).toUpperCase() +
-										user?.roles[0]?.descripcion.slice(1)
-									: ''}
-							</p>
-							<p class="block truncate text-sm text-center font-medium">{user?.apellido}, {user?.nombre}</p>
-							<hr class="my-1">
-							<p class="block truncate text-sm text-center font-medium">
-								{user?.agente?.area?.descripcion}
-							</p>
-						</div>
-						<DropdownItem><a href="/dashboard/perfil">Perfil</a></DropdownItem>
-						<DropdownItem slot="footer" on:click={logout}>Salir</DropdownItem>
+			<div class="flex items-center justify-end gap-3 p-1 relative w-full sm:mr-0 sm:right-auto ">
+				<div class="rounded-full p-1 border border-gray-300">
+					<div class="w-12 h-12 acs cursor-pointer bg-white rounded-full flex items-center justify-center">
+						<span class="text-4xl text-[#DD052B]">{user?.firstname?.charAt(0).toUpperCase() ?? ''}</span>
+					</div>
+					<Dropdown triggeredBy=".acs" class="mt-2">
+						<a class="block text-xs text-gray-700" href="/admin/perfil"><DropdownItem class="text-center">Perfil</DropdownItem></a>
+						<DropdownItem class="text-center flex justify-center text-gray-600" slot="footer" on:click={() => form.requestSubmit()}><ArrowLeftToBracketOutline/> Cerrar sesión</DropdownItem>
 					</Dropdown>
 					<form
 						method="POST"
 						bind:this={form}
 						class="hidden"
-						action="/dashboard/logout"
+						action="/logout"
 						use:enhance
 					></form>
 				</div>

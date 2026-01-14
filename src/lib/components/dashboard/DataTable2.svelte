@@ -127,7 +127,7 @@
                                     {#if defaultActions.includes('generate_form')}
                                         <Button 
                                             on:click={() => dispatch('generate_form', { data: obj })} 
-                                            class="bg-[#7597D5] hover:bg-[#6486c4] text-white text-xs px-3 py-2"
+                                            class="bg-[#7597D5] hover:bg-[#6486c4] text-white text-sm px-4 py-3"
                                         >
                                             Generar Formulario
                                         </Button>
@@ -135,7 +135,7 @@
                                     {#if defaultActions.includes('edit')}
                                         <Button 
                                             on:click={() => dispatch('edit', { data: obj })} 
-                                            class="bg-[#00437B] hover:bg-[#003561] p-2"
+                                            class="bg-[#00437B] hover:bg-[#003561] px-4 py-3"
                                         >
                                             Editar
                                         </Button>
@@ -143,9 +143,9 @@
                                     {#if defaultActions.includes('delete')}
                                         <Button 
                                             on:click={() => dispatch('delete', { data: obj })} 
-                                            class="bg-[#6F6C6C] hover:bg-[#5a5858] p-2"
+                                            class="bg-[#6F6C6C] hover:bg-[#5a5858] px-4 py-3"
                                         >
-                                            <TrashBinOutline class="text-white w-4 h-4" />
+                                            <TrashBinOutline class="text-white w-5 h-5" />
                                         </Button>
                                     {/if}
                                 {/if}
@@ -154,7 +154,7 @@
                                     <ActionsDropdown
                                         actions={[
                                             { label: 'Ver ficha', event: 'view', icon: EyeOutline, class: 'bg-[#4D6591] text-white rounded-full text-sm' },
-											{ label: 'Agregar presupuesto', event: 'add_budget', icon: ReceiptSolid, class: 'text-sm bg-[#00000040] text-white rounded-full' },
+											{ label: 'Agregar presupuesto', event: 'add_budget', icon: ReceiptSolid, class: 'text-sm bg-[#666666] text-white rounded-full' },
                                             { label: 'Cambiar responsable', event: 'asingToUser', icon: UserSolid, class: ' text-sm bg-[#7597D5] text-white rounded-full' },
 											{label: 'Cambiar estado', event: 'change_status', icon: CogSolid, class: ' text-sm  bg-green-600 text-white rounded-full' }
                                         ]}

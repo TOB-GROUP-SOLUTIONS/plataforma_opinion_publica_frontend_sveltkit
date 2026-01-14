@@ -17,11 +17,8 @@
 	let isSubmittingStatus = false;
 	let selectedLeadIdStatus: number | null = null;
 	let selectedStatus: { label: string; value: number } | null = null;
-	$: statusOptions = [
-		{ label: 'Potencial', value: 9 },
-		{ label: 'No contestar', value: 10 },
-		{ label: 'Sin respuesta', value: 11 }
-	];
+	let selectedDate: string = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
+
 
 	let { leads, meta, searchParams } = data;
 
@@ -169,24 +166,8 @@
 	let isSubmittingBudget = false;
 	let selectedLeadIdBudget: number | null = null;
 	let selectedFile: File | null = null;
-	let selectedMonth: string = 'Ene';
-	let selectedYear: string = new Date().getFullYear().toString();
 
-	const months = [
-		'Ene',
-		'Feb',
-		'Mar',
-		'Abr',
-		'May',
-		'Jun',
-		'Jul',
-		'Ago',
-		'Sep',
-		'Oct',
-		'Nov',
-		'Dic'
-	];
-	const years = Array.from({ length: 10 }, (_, i) => (new Date().getFullYear() + i).toString());
+
 
 	function handleChangeStatus(e: CustomEvent) {
 		selectedLeadIdStatus = e.detail?.data?.id ?? e.detail?.id;
@@ -230,8 +211,6 @@
 		selectedLeadIdBudget = e.detail?.data?.id ?? e.detail?.id;
 		showBudgetModal = true;
 		selectedFile = null;
-		selectedMonth = 'Ene';
-		selectedYear = new Date().getFullYear().toString();
 	}
 
 	function handleBudgetEnhanced() {
@@ -464,86 +443,85 @@
 
 <!-- Modal: Agregar presupuesto -->
 <Modal bind:open={showBudgetModal} size="md" autoclose={false}>
-	<form
-		method="POST"
-		action="?/addBudget"
-		use:enhance={handleBudgetEnhanced}
-		class="space-y-6 p-4"
-		enctype="multipart/form-data"
-	>
-		<h3 class="text-2xl font-semibold text-gray-600 text-center mb-4">Agregar presupuesto</h3>
+    <form
+        method="POST"
+        action="?/addBudget"
+        use:enhance={handleBudgetEnhanced}
+        class="space-y-6 p-4"
+        enctype="multipart/form-data"
+    >
+        <h3 class="text-2xl font-semibold text-gray-600 text-center mb-4">Agregar presupuesto</h3>
 
-		<input type="hidden" name="lead_id" value={selectedLeadIdBudget ?? ''} />
+        <input type="hidden" name="lead_id" value={selectedLeadIdBudget ?? ''} />
+		<input type="hidden" name="due_date" value={selectedDate ?? ''} />
 
-		<!-- Seleccionar archivo -->
-		<div>
-			<label
-				for="file-input"
-				class="block border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-gray-400 transition"
-			>
-				<div class="text-gray-500">
-					<svg class="mx-auto h-8 w-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
-						/>
-					</svg>
-					<p class="text-gray-600 underline">Seleccionar archivo</p>
-				</div>
-				<input
-					id="file-input"
-					type="file"
-					name="file"
-					hidden
-					on:change={handleFileSelect}
-					accept=".pdf,.doc,.docx,.xls,.xlsx"
-					disabled={isSubmittingBudget}
-				/>
-			</label>
-			{#if selectedFile}
-				<p class="text-sm text-gray-600 mt-2">Archivo seleccionado: {selectedFile.name}</p>
-			{/if}
-		</div>
+        <!-- Seleccionar archivo -->
+        <div>
+            <label
+                for="file-input"
+                class="block border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-gray-400 transition"
+            >
+                <div class="text-gray-500">
+                    <svg class="mx-auto h-8 w-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
+                        />
+                    </svg>
+                    <p class="text-gray-600 underline">Seleccionar archivo</p>
+                </div>
+                <input
+                    id="file-input"
+                    type="file"
+                    name="file"
+                    hidden
+                    on:change={handleFileSelect}
+                    accept=".pdf,.doc,.docx,.xls,.xlsx"
+                    disabled={isSubmittingBudget}
+                />
+            </label>
+            {#if selectedFile}
+                <p class="text-sm text-gray-600 mt-2">Archivo seleccionado: {selectedFile.name}</p>
+            {/if}
+        </div>
 
-		<!-- Fecha de vencimiento -->
-		<div class="space-y-3">
-			<p class="text-gray-600 font-medium text-center">Fecha de vencimiento</p>
-			<div class="flex gap-3 justify-center">
-				<select
-					bind:value={selectedMonth}
-					class="border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-700"
-					disabled={isSubmittingBudget}
-				>
-					{#each months as month}
-						<option value={month}>{month}</option>
-					{/each}
-				</select>
-				<select
-					bind:value={selectedYear}
-					class="border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-700"
-					disabled={isSubmittingBudget}
-				>
-					{#each years as year}
-						<option value={year}>{year}</option>
-					{/each}
-				</select>
-				<input type="hidden" name="expiration_date" value="{selectedMonth}-{selectedYear}" />
-			</div>
-		</div>
+        <!-- Fecha de vencimiento -->
+        <div class="space-y-3">
+            <div class="flex items-center gap-2 justify-center">
+                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                </svg>
+                <p class="text-gray-600 font-medium">Fecha de vencimiento</p>
+            </div>
+            <div class="flex justify-center">
+                <input
+                    type="date"
+                    bind:value={selectedDate}
+                    class="border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    disabled={isSubmittingBudget}
+                    min={new Date().toISOString().split('T')[0]}
+                />
+            </div>
+        </div>
 
-		<!-- Botón de acción -->
-		<div class="flex justify-center">
-			<button
-				type="submit"
-				disabled={isSubmittingBudget || !selectedFile}
-				class="rounded-full px-12 py-2 bg-green-600 hover:bg-green-700 text-white font-medium disabled:opacity-50"
-			>
-				{isSubmittingBudget ? 'Agregando...' : 'Aceptar'}
-			</button>
-		</div>
-	</form>
+        <!-- Botón de acción -->
+        <div class="flex justify-center">
+            <button
+                type="submit"
+                disabled={isSubmittingBudget || !selectedFile}
+                class="rounded-full px-12 py-2 bg-green-600 hover:bg-green-700 text-white font-medium disabled:opacity-50"
+            >
+                {isSubmittingBudget ? 'Agregando...' : 'Aceptar'}
+            </button>
+        </div>
+    </form>
 </Modal>
 
 {#if successMessage.length > 0}

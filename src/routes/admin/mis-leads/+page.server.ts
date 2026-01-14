@@ -116,7 +116,7 @@ export const actions: Actions = {
 		const data = await request.formData();
 		const leadId = data.get('lead_id');
 		const budgetFile = data.get('file') as File;
-		const expirationDate = data.get('expiration_date');
+		const due_date = data.get('due_date');
 
 		if (!budgetFile) {
 			throw error(400, 'El archivo es requerido');
@@ -149,7 +149,7 @@ export const actions: Actions = {
 				unit_price: 0,
 				subtotal: 0,
 				final_amount: 0,
-				valid_until: expirationDate,
+				valid_until: due_date,
 				status_id: 1,
 				file_id: fileId
 			};

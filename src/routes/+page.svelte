@@ -30,7 +30,7 @@
 	};
 </script>
 
-<title>Carnaval VIP</title>
+<title>Together</title>
 
 <main class="w-full min-h-screen flex flex-col items-center justify-center relative">
 	<img

@@ -21,18 +21,18 @@ export const data = [
 		sub_items: [
 			{
 				title: 'Sin presupuesto',
-				link: '/admin/mis-leads?status_lead=13',
+				link: '/admin/mis-leads?status=13',
 				icon: ClipboardOutline
 
 			},
 			{
 				title: 'Con presupuesto',
-				link: '/admin/mis-leads?status_lead=14',
+				link: '/admin/mis-leads?status=14',
 				icon: ClipboardOutline
 			},
 			{
 				title: 'Clientes',
-				link: '/admin/mis-leads?status_lead=15',
+				link: '/admin/mis-leads?status=15',
 				icon: BuildingSolid,
 			},
 		]

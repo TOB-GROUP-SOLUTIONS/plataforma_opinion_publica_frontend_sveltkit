@@ -11,7 +11,7 @@ export const load = async ({ cookies, locals, url, fetch }: any) => {
 	const search = url.searchParams.get('query') || '';
 	const order = url.searchParams.get('order') || 'id';
 	const direction = url.searchParams.get('direction') || 'desc';
-	const status_lead = url.searchParams.get('status_lead') || '';
+	const status = url.searchParams.get('status') || '';
 	const userId = locals.user.id;
 
 	const params = new URLSearchParams({
@@ -19,7 +19,7 @@ export const load = async ({ cookies, locals, url, fetch }: any) => {
 		search,
 		order,
 		direction,
-		status_lead,
+		status,
 		userId: String(userId)
 	});
 

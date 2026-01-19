@@ -40,6 +40,10 @@
 	export let actions: any = [];
 	export let defaultActions: string[] = ['edit'];
 
+    export let statusFilter: string | null = null;
+
+    console.log('Status Filter:', statusFilter);
+
 	const dispatch = createEventDispatcher();
 
 	export let orderCols: string[] = [];
@@ -149,23 +153,22 @@
                                         </Button>
                                     {/if}
                                 {/if}
-
                                 {#if $page.url.pathname === '/admin/mis-leads'}
                                     <ActionsDropdown
                                         actions={[
                                             { label: 'Ver ficha', event: 'view', icon: EyeOutline, class: 'bg-[#4D6591] text-white rounded-full text-sm' },
-											{ label: 'Agregar presupuesto', event: 'add_budget', icon: ReceiptSolid, class: 'text-sm bg-[#666666] text-white rounded-full' },
+                                            { label: 'Agregar presupuesto', event: 'add_budget', icon: ReceiptSolid, class: 'text-sm bg-[#666666] text-white rounded-full' },
                                             { label: 'Cambiar responsable', event: 'asingToUser', icon: UserSolid, class: ' text-sm bg-[#7597D5] text-white rounded-full' },
-											{label: 'Cambiar estado', event: 'change_status', icon: CogSolid, class: ' text-sm  bg-green-600 text-white rounded-full' }
+                                            { label: 'Cambiar estado', event: 'change_status', icon: CogSolid, class: ' text-sm  bg-green-600 text-white rounded-full' },
+                                            ...(statusFilter === "14" ? [{ label: 'Confirmar Pago', event: 'confirmPayment', icon: ReceiptSolid, class: 'text-sm bg-[#666666] text-white rounded-full' }] : [])
                                         ]}
                                         on:view={() => dispatch('view', { data: obj })}
                                         on:asingToUser={() => dispatch('asingToUser', { data: obj })}
                                         on:change_status={() => dispatch('change_status', { data: obj })}
-										on:add_budget={() => dispatch('add_budget', { data: obj })}
+                                        on:add_budget={() => dispatch('add_budget', { data: obj })}
+                                        on:confirmPayment={() => dispatch('confirmPayment', { data: obj })}
                                     />
                                 {/if}
-
-
                             </div>
                         </TableBodyCell>
                     {/if}

@@ -18,6 +18,8 @@
 	let selectedLeadIdStatus: number | null = null;
 	let selectedStatus: { label: string; value: number } | null = null;
 	let selectedDate: string = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
+	let showConfirmPaymentModal = false;
+	let selectBudgetId: number | null = null;
 
 
 	let { leads, meta, searchParams } = data;
@@ -81,6 +83,9 @@
 	let selectedLeadId: number | null = null;
 	let selectedUser: { label: string; value: number } | null = null;
 	let currentResponsable: string = '';
+	const statusFilter = $page.url.searchParams.get('status');
+	console.log('Status filter:', statusFilter);
+
 	$: userOptions = (data?.users ?? []).map((u: any) => ({
 		label: `${u.firstname} ${u.lastname}`,
 		value: u.id
@@ -213,6 +218,32 @@
 		selectedFile = null;
 	}
 
+	function handleConfirmPayment(e: CustomEvent){
+		console.log('Evento Confirmar Pago:', e);
+		selectBudgetId = e.detail?.data.budgets[0]?.id ?? e.detail?.id;
+		console.log(selectBudgetId)
+		showConfirmPaymentModal = true;
+		selectedFile = null;
+	}
+
+
+	function  handleConfirmPaymentEnhanced() {
+		isSubmittingBudget = true;
+
+		return async ({ result, update }: any) => {
+			isSubmittingBudget = false;
+
+			if (result.type === 'success') {
+				showConfirmPaymentModal = false;
+				successMessage = 'Pago confirmado correctamente';
+				await update();
+			} else {
+				errorMessage = result?.error ?? 'Error al confirmar pago';
+			}
+		};
+	}
+
+
 	function handleBudgetEnhanced() {
 		isSubmittingBudget = true;
 
@@ -272,12 +303,14 @@
 			{columns}
 			{orderCols}
 			data={leads}
+			statusFilter={statusFilter}
 			{render}
 			defaultActions={['change_status', 'assign', 'view', 'add_budget']}
 			{handleView}
 			{handleAssign}
 			{handleChangeStatus}
 			{handleAddBudget}
+			{handleConfirmPayment}
 		/>
 	</div>
 
@@ -510,6 +543,89 @@
                 />
             </div>
         </div>
+
+        <!-- Botón de acción -->
+        <div class="flex justify-center">
+            <button
+                type="submit"
+                disabled={isSubmittingBudget || !selectedFile}
+                class="rounded-full px-12 py-2 bg-green-600 hover:bg-green-700 text-white font-medium disabled:opacity-50"
+            >
+                {isSubmittingBudget ? 'Agregando...' : 'Aceptar'}
+            </button>
+        </div>
+    </form>
+</Modal>
+
+
+<Modal bind:open={showConfirmPaymentModal} size="md" autoclose={false}>
+    <form
+        method="POST"
+        action="?/confirmPayment"
+        use:enhance={handleConfirmPaymentEnhanced}
+        class="space-y-6 p-4"
+        enctype="multipart/form-data"
+    >
+        <h3 class="text-2xl font-semibold text-gray-600 text-center mb-4">Confirmar Pago</h3>
+
+        <input type="hidden" name="budget_id" value={selectBudgetId ?? ''} />
+		<input type="hidden" name="due_date" value={selectedDate ?? ''} />
+
+        <!-- Seleccionar archivo -->
+        <div>
+            <label
+                for="file-input"
+                class="block border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-gray-400 transition"
+            >
+                <div class="text-gray-500">
+                    <svg class="mx-auto h-8 w-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
+                        />
+                    </svg>
+                    <p class="text-gray-600 underline">Seleccionar archivo</p>
+                </div>
+                <input
+                    id="file-input"
+                    type="file"
+                    name="file"
+                    hidden
+                    on:change={handleFileSelect}
+                    accept=".pdf,.doc,.docx,.xls,.xlsx"
+                    disabled={isSubmittingBudget}
+                />
+            </label>
+            {#if selectedFile}
+                <p class="text-sm text-gray-600 mt-2">Archivo seleccionado: {selectedFile.name}</p>
+            {/if}
+        </div>
+
+		<!-- Campo de notas -->
+		<div class="space-y-3">
+			<div class="flex items-center gap-2 justify-center">
+			<svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				stroke-width="2"
+				d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+				/>
+			</svg>
+			<p class="text-gray-600 font-medium">Notas</p>
+			</div>
+			<div class="flex justify-center">
+			<textarea
+				name="notes"
+				rows="4"
+				class="w-full max-w-xl border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+				placeholder="Agregar notas sobre el pago..."
+				disabled={isSubmittingBudget}
+			></textarea>
+			</div>
+		</div>
 
         <!-- Botón de acción -->
         <div class="flex justify-center">

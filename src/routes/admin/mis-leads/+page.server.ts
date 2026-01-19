@@ -172,6 +172,70 @@ export const actions: Actions = {
 		}
 	},
 
+	confirmPayment: async ({ cookies, request }) => {
+		const token = cookies.get('token');
+		const data = await request.formData();
+		const budgetId = data.get('budget_id');
+		const FilePaymentConfirmed = data.get('file') as File;
+		const notes = data.get('notes');
+
+
+
+		if (!FilePaymentConfirmed) {
+			throw error(400, 'El archivo es requerido');
+		}
+
+
+		console.log(FilePaymentConfirmed)
+
+		try {
+
+			const fileFormData = new FormData();
+			fileFormData.append('file', FilePaymentConfirmed);
+			fileFormData.append('url', FilePaymentConfirmed.name)
+
+			const fileResponse = await api.post({
+				fetch,
+				endpoint: 'files/upload',
+				body: fileFormData,
+				token
+			});
+
+			if (!fileResponse.ok) {
+				throw error(500, 'Error al subir el archivo');
+			}
+
+			console.log('File upload response:', fileResponse);
+
+			const fileId = fileResponse.data.id;
+
+			console.log('File uploaded with ID:', fileId);
+
+			// Paso 2: Crear el payment CON el file_id
+			const paymentDto = {
+				receipt_id: fileId,
+				notes: notes,
+				budget_id: budgetId
+			};
+
+			const paymentResponse = await api.post({
+				fetch,
+				endpoint: 'payments',
+				body: JSON.stringify(paymentDto),
+				token
+			});
+
+			if (!paymentResponse.ok) {
+				throw error(500, 'Error al crear el pago');
+			}
+
+			return { success: true };
+		} catch (err) {
+			console.error('Error en addBudget:', err);
+			throw error(500, 'Error procesando el presupuesto');
+		} 
+	},
+
 	restore: async ({ cookies, request }) => {
 		const token = cookies.get('token');
 		const data = await request.formData();

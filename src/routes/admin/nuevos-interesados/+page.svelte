@@ -6,7 +6,7 @@
 	import Pagination from '$lib/components/Pagination.svelte';
 	import type { Lead } from '$lib/interfaces/lead.interface';
     import { enhance } from '$app/forms';
-    import { Modal, Button, Label, Input } from 'flowbite-svelte';
+    import { Modal, Button, Label, Input, Textarea } from 'flowbite-svelte';
     import Toast from '$lib/components/ui/Toast.svelte';
 	import Select from 'svelte-select';
 
@@ -18,6 +18,71 @@
 
 	$: ({ leads, meta, searchParams, users } = data);
 	$: leadsArray = leads;
+
+	// Modal nuevo formulario
+	let showNewFormModal = false;
+	let isSubmittingForm = false;
+	let formData: {
+		full_name: string;
+		email: string;
+		phone: string;
+		city: string;
+		age: string;
+		programa: { label: string; value: string } | null;
+		contactMethod: { label: string; value: string } | null;
+		objective: string;
+		consultation: string;
+	} = {
+		full_name: '',
+		email: '',
+		phone: '',
+		city: '',
+		age: '',
+		programa: null,
+		contactMethod: null,
+		objective: ''
+	};
+
+	const programOptions = [
+		{ label: 'Tutoría', value: 'tutoria' },
+		{ label: 'Individuales', value: 'individuales' },
+		{ label: 'Grupos', value: 'grupos' }
+	];
+
+	const contactMethods = [
+		{ label: 'Instagram', value: 'instagram' },
+		{ label: 'Facebook', value: 'facebook' },
+		{ label: 'Google', value: 'google' },
+		{ label: 'Referido', value: 'referido' },
+		{ label: 'Otro', value: 'otro' }
+	];
+
+	function handleCreateFormEnhanced() {
+		isSubmittingForm = true;
+
+		return async ({ result, update }: any) => {
+			isSubmittingForm = false;
+
+			if (result.type === 'success') {
+				showNewFormModal = false;
+				successMessage = 'Formulario guardado correctamente';
+				// Resetear formulario
+				formData = {
+					full_name: '',
+					email: '',
+					phone: '',
+					city: '',
+					age: '',
+					programa: null,
+					contactMethod: null,
+					objective: ''
+				};
+				await update();
+			} else {
+				errorMessage = result?.data?.error ?? 'Error al guardar el formulario';
+			}
+		};
+	}
 
 	const columns = [
 		{ key: 'full_name', label: 'Nombre y Apellido' },
@@ -141,7 +206,7 @@
 	}
 
 	function handleNewLead() {
-		goto('/admin/nuevos-interesados/nuevo');
+		showNewFormModal = true;
 	}
 
 	function handleSearch(e: CustomEvent) {
@@ -264,6 +329,183 @@
             </Button>
         </div>
     </form>
+</Modal>
+
+<!-- Modal: Nuevo Formulario -->
+<Modal bind:open={showNewFormModal} size="lg" autoclose={false} outsideclose={false}>
+	<form method="POST" action="?/createLead" use:enhance={handleCreateFormEnhanced} class="space-y-6">
+		<div class="flex items-center justify-center">
+			<h3 class="text-xl text-gray-900">Formulario Inicial</h3>
+		</div>
+
+		<hr class="text-gray-300" />
+
+		<!-- Nombre y Apellido -->
+		<div>
+			<Label for="full_name" class="mb-3 block">
+				<span class="text-gray-700">Nombre y apellido</span>
+				<span class="text-red-600">*</span>
+			</Label>
+			<Input
+				id="full_name"
+				name="full_name"
+				type="text"
+				bind:value={formData.full_name}
+				required
+				disabled={isSubmittingForm}
+				class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-100"
+			/>
+		</div>
+
+		<!-- Email -->
+		<div>
+			<Label for="email" class="mb-3 block">
+				<span class="text-gray-700">Email</span>
+			</Label>
+			<Input
+				id="email"
+				name="email"
+				type="email"
+				bind:value={formData.email}
+				disabled={isSubmittingForm}
+				class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-100"
+			/>
+		</div>
+
+		<!-- Teléfono / WhatsApp -->
+		<div>
+			<Label for="phone" class="mb-3 block">
+				<span class="text-gray-700">Teléfono / WhatsApp</span>
+			</Label>
+			<Input
+				id="phone"
+				name="phone"
+				type="tel"
+				bind:value={formData.phone}
+				disabled={isSubmittingForm}
+				class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-100"
+			/>
+		</div>
+
+		<!-- Ciudad / Localidad -->
+		<div>
+			<Label for="city" class="mb-3 block">
+				<span class="text-gray-700">Ciudad / Localidad</span>
+			</Label>
+			<Input
+				id="city"
+				name="city"
+				type="text"
+				bind:value={formData.city}
+				disabled={isSubmittingForm}
+				class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-100"
+			/>
+		</div>
+
+		<!-- Edad -->
+		<div>
+			<Label for="age" class="mb-3 block">
+				<span class="text-gray-700">Edad</span>
+			</Label>
+			<Input
+				id="age"
+				name="age"
+				type="number"
+				bind:value={formData.age}
+				disabled={isSubmittingForm}
+				class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-100"
+			/>
+		</div>
+
+		<!-- Programa de Interés y ¿Cómo nos contactaste? -->
+		<div class="grid grid-cols-2 gap-6">
+			<div>
+				<Label for="programa" class="mb-3 block">
+					<span class="text-gray-700">Programa de interés</span>
+				</Label>
+				<Select
+					id="programa"
+					items={programOptions}
+					bind:value={formData.programa}
+					placeholder="Elegir"
+					clearable={false}
+					disabled={isSubmittingForm}
+					class="w-full"
+				/>
+			</div>
+
+			<div>
+				<Label for="contact_method" class="mb-3 block">
+					<span class="text-gray-700">¿Cómo nos contactaste?</span>
+				</Label>
+				<Select
+					id="contact_method"
+					items={contactMethods}
+					bind:value={formData.contactMethod}
+					placeholder="Elegir"
+					clearable={false}
+					disabled={isSubmittingForm}
+					class="w-full"
+				/>
+			</div>
+		</div>
+
+
+	<!-- Objetivo del viaje de estudio -->		
+	 <div>
+			<Label for="age" class="mb-3 block">
+				<span class="text-gray-700">¿Cuál es el objetivo del viaje de estudio?</span>
+			</Label>
+			<Input
+				id="age"
+				name="objective"
+				type="text"
+				bind:value={formData.objective}
+				disabled={isSubmittingForm}
+				class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-100"
+			/>
+		</div>
+
+	
+		<div>
+			<Label for="objective" class="mb-3 block">
+				<span class="text-gray-700">Consulta / Comentarios</span>
+			</Label>
+			<Textarea
+				id="objective"
+				name="objective"
+				bind:value={formData.consultation}
+				rows={4}
+				disabled={isSubmittingForm}
+				class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-100"
+			/>
+		</div>
+
+		<!-- Botones -->
+		<div class="flex gap-4 justify-end pt-4">
+			<Button
+				type="button"
+				color="alternative"
+				on:click={() => (showNewFormModal = false)}
+				disabled={isSubmittingForm}
+				class="px-6"
+			>
+				Cancelar
+			</Button>
+			<Button
+				type="submit"
+				color="green"
+				disabled={isSubmittingForm || !formData.full_name}
+				class="px-6"
+			>
+				{isSubmittingForm ? 'Guardando...' : 'Guardar'}
+			</Button>
+		</div>
+
+		<!-- Hidden inputs para los valores de select -->
+		<input type="hidden" name="program" value={formData.programa?.value ?? ''} />
+		<input type="hidden" name="source" value={formData.contactMethod?.value ?? ''} />
+	</form>
 </Modal>
 
 

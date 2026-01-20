@@ -26,21 +26,21 @@ export const load = async ({ cookies, locals, url, fetch }: any) => {
 			params,
 			token
 		}),
-        api.get({
-            fetch,
-            endpoint: 'users',
-            token
-        })
+		api.get({
+			fetch,
+			endpoint: 'users',
+			token
+		})
 	]);
 
 	if (!leadsresponse.ok) throw error(500, 'Error al cargar los leads');
 
-    console.log('Response Data:', leadsresponse.data);
+	console.log('Response Data:', leadsresponse.data);
 
 	return {
 		leads: leadsresponse.data.data,
 		meta: leadsresponse.data.meta,
-        users: usersResponse.data,
+		users: usersResponse.data,
 		searchParams: { page, search, order, direction }
 	};
 };
@@ -62,33 +62,64 @@ export const actions: Actions = {
 		return { success: true };
 	},
 
-    asingToUser: async ({ cookies, request }) => {
-        const token = cookies.get('token');
-        const data = await request.formData();
+	createLead: async ({ cookies, request, fetch }) => {
+		const token = cookies.get('token');
+		const data = await request.formData();
+
+		const payload = {
+			full_name: data.get('full_name'),
+			email: data.get('email'),
+			phone: data.get('phone'),
+			city: data.get('city'),
+			age: data.get('age') ? parseInt(data.get('age') as string) : null,
+			programa: data.get('program'),
+			source: data.get('source'),
+			objective: data.get('objective')
+		};
+
+		try {
+			const response = await api.post({
+				fetch,
+				endpoint: 'leads',
+				body: JSON.stringify(payload),
+				token
+			});
+
+			if (!response.ok) throw error(500, 'Error al crear el formulario');
 
 
+			return { success: true };
+		} catch (err: any) {
+			return {
+				error: err.message || 'Error al guardar el formulario'
+			};
+		}
+	},
 
-        const leadId = data.get('lead_id');
-        const userId = data.get('user_id');
+	asingToUser: async ({ cookies, request }) => {
+		const token = cookies.get('token');
+		const data = await request.formData();
 
-        console.log('Asignando lead', leadId, 'to user', userId);
+		const leadId = data.get('lead_id');
+		const userId = data.get('user_id');
 
-        const UpdateLeadDto = {
-            assigned_to: userId
-        };
+		console.log('Asignando lead', leadId, 'to user', userId);
 
+		const UpdateLeadDto = {
+			assigned_to: userId
+		};
 
-        const response = await api.patch({
-            fetch,
-            endpoint: `leads/${leadId}`,
-            body: JSON.stringify(UpdateLeadDto),
-            token
-        });
+		const response = await api.patch({
+			fetch,
+			endpoint: `leads/${leadId}`,
+			body: JSON.stringify(UpdateLeadDto),
+			token
+		});
 
-        if (!response.ok) throw error(500, 'Error al asignar el lead');
+		if (!response.ok) throw error(500, 'Error al asignar el lead');
 
-        return { success: true };
-    },
+		return { success: true };
+	},
 
 	restore: async ({ cookies, request }) => {
 		const token = cookies.get('token');

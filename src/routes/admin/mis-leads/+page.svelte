@@ -83,7 +83,7 @@
 	let selectedLeadId: number | null = null;
 	let selectedUser: { label: string; value: number } | null = null;
 	let currentResponsable: string = '';
-	const statusFilter = $page.url.searchParams.get('status');
+	$: statusFilter = $page.url.searchParams.get('status');
 	console.log('Status filter:', statusFilter);
 
 	$: userOptions = (data?.users ?? []).map((u: any) => ({

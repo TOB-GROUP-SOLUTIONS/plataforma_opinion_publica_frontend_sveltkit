@@ -19,6 +19,16 @@
 	$: ({ leads, meta, searchParams, users } = data);
 	$: leadsArray = leads;
 
+	// Variables para manejo de archivos y estado del envío de presupuesto
+	let selectedFile: File | null = null;
+	let isSubmittingBudget: boolean = false;
+
+	function handleFileSelect(e: Event) {
+		const input = e.target as HTMLInputElement;
+		const files = input?.files;
+		selectedFile = files && files.length > 0 ? files[0] : null;
+	}
+
 	// Modal nuevo formulario
 	let showNewFormModal = false;
 	let isSubmittingForm = false;
@@ -32,6 +42,7 @@
 		contactMethod: { label: string; value: string } | null;
 		objective: string;
 		consultation: string;
+
 	} = {
 		full_name: '',
 		email: '',
@@ -40,7 +51,8 @@
 		age: '',
 		programa: null,
 		contactMethod: null,
-		objective: ''
+		objective: '',
+		consultation: ''
 	};
 
 	const programOptions = [
@@ -57,32 +69,7 @@
 		{ label: 'Otro', value: 'otro' }
 	];
 
-	function handleCreateFormEnhanced() {
-		isSubmittingForm = true;
 
-		return async ({ result, update }: any) => {
-			isSubmittingForm = false;
-
-			if (result.type === 'success') {
-				showNewFormModal = false;
-				successMessage = 'Formulario guardado correctamente';
-				// Resetear formulario
-				formData = {
-					full_name: '',
-					email: '',
-					phone: '',
-					city: '',
-					age: '',
-					programa: null,
-					contactMethod: null,
-					objective: ''
-				};
-				await update();
-			} else {
-				errorMessage = result?.data?.error ?? 'Error al guardar el formulario';
-			}
-		};
-	}
 
 	const columns = [
 		{ key: 'full_name', label: 'Nombre y Apellido' },
@@ -168,6 +155,37 @@
         };
     }
 
+    // Handler para use:enhance (no invocar enhance en tiempo de inicialización)
+    async function createFormHandler() {
+		return async ({ result, update }: any) => {
+
+			        // se resetea el flag de envío cuando llega el resultado
+        isSubmittingForm = false;
+
+        if (result.type === 'success') {
+            showNewFormModal = false;
+            successMessage = 'Formulario guardado correctamente';
+            // Resetear formulario (incluye consultation)
+            formData = {
+                full_name: '',
+                email: '',
+                phone: '',
+                city: '',
+                age: '',
+                programa: null,
+                contactMethod: null,
+                objective: '',
+                consultation: ''
+            };
+            await update();
+        } else {
+            errorMessage = result?.data?.error ?? 'Error al guardar el formulario';
+        }
+        };
+
+
+    }
+
     function handleAssign(e: CustomEvent) {
         selectedLeadId = e.detail?.data?.id ?? e.detail?.id;
         showAssignModal = true;
@@ -184,7 +202,6 @@
             if (result.type === 'success') {
                 showAssignModal = false;
                 successMessage = 'Responsable asignado correctamente';
-                await update();
             } else {
                 errorMessage = result?.error ?? 'Error al asignar responsable';
             }
@@ -278,7 +295,8 @@
 			{handleView}
 			{handleAssign}
 			{handleChangeStatus}
-		
+			{handleEdit}
+			{handleDelete}
 		/>
 	</div>
 
@@ -333,7 +351,7 @@
 
 <!-- Modal: Nuevo Formulario -->
 <Modal bind:open={showNewFormModal} size="lg" autoclose={false} outsideclose={false}>
-	<form method="POST" action="?/createLead" use:enhance={handleCreateFormEnhanced} class="space-y-6">
+	<form enctype="multipart/form-data" method="POST" action="?/createLead" use:enhance={createFormHandler} on:submit={() => (isSubmittingForm = true)} class="space-y-6">
 		<div class="flex items-center justify-center">
 			<h3 class="text-xl text-gray-900">Formulario Inicial</h3>
 		</div>
@@ -453,11 +471,11 @@
 
 	<!-- Objetivo del viaje de estudio -->		
 	 <div>
-			<Label for="age" class="mb-3 block">
+			<Label for="objective" class="mb-3 block">
 				<span class="text-gray-700">¿Cuál es el objetivo del viaje de estudio?</span>
 			</Label>
 			<Input
-				id="age"
+				id="objective"
 				name="objective"
 				type="text"
 				bind:value={formData.objective}
@@ -468,18 +486,51 @@
 
 	
 		<div>
-			<Label for="objective" class="mb-3 block">
+			<Label for="consultation" class="mb-3 block">
 				<span class="text-gray-700">Consulta / Comentarios</span>
 			</Label>
 			<Textarea
-				id="objective"
-				name="objective"
+				id="consultation"
+				name="consultation"
 				bind:value={formData.consultation}
 				rows={4}
 				disabled={isSubmittingForm}
 				class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-100"
 			/>
 		</div>
+
+		<div >
+            <label
+                for="file-input"
+                class="block border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-gray-400 transition"
+            >
+                <div class="text-gray-500">
+                    <svg class="mx-auto h-8 w-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
+                        />
+                    </svg>
+                    <p class="text-gray-600 underline">Seleccionar archivo</p>
+                </div>
+                <input
+                    id="file-input"
+                    type="file"
+                    name="file"
+                    hidden
+                    on:change={handleFileSelect}
+                    accept=".pdf,.doc"
+                    disabled={isSubmittingBudget}
+                />
+            </label>
+            {#if selectedFile}
+                <p class="text-sm text-gray-600 mt-2">Archivo seleccionado: {selectedFile.name}</p>
+            {/if}
+		</div>
+
+
 
 		<!-- Botones -->
 		<div class="flex gap-4 justify-end pt-4">
@@ -501,6 +552,9 @@
 				{isSubmittingForm ? 'Guardando...' : 'Guardar'}
 			</Button>
 		</div>
+
+
+
 
 		<!-- Hidden inputs para los valores de select -->
 		<input type="hidden" name="program" value={formData.programa?.value ?? ''} />

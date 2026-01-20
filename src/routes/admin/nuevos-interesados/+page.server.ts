@@ -66,7 +66,7 @@ export const actions: Actions = {
 		const token = cookies.get('token');
 		const data = await request.formData();
 
-		const payload = {
+		const CreateLeadDto = {
 			full_name: data.get('full_name'),
 			email: data.get('email'),
 			phone: data.get('phone'),
@@ -81,9 +81,11 @@ export const actions: Actions = {
 			const response = await api.post({
 				fetch,
 				endpoint: 'leads',
-				body: JSON.stringify(payload),
+				body: JSON.stringify(CreateLeadDto),
 				token
 			});
+
+			console.log('Create Lead Response:', response);
 
 			if (!response.ok) throw error(500, 'Error al crear el formulario');
 

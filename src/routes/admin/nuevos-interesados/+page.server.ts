@@ -74,7 +74,8 @@ export const actions: Actions = {
 			age: data.get('age') ? parseInt(data.get('age') as string) : null,
 			programa: data.get('program'),
 			source: data.get('source'),
-			objective: data.get('objective')
+			objective: data.get('objective'),
+			notes: data.get('observations')
 		};
 
 		try {

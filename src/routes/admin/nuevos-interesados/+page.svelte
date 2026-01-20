@@ -553,9 +553,6 @@
 			</Button>
 		</div>
 
-
-
-
 		<!-- Hidden inputs para los valores de select -->
 		<input type="hidden" name="program" value={formData.programa?.value ?? ''} />
 		<input type="hidden" name="source" value={formData.contactMethod?.value ?? ''} />

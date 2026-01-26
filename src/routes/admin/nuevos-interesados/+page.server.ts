@@ -16,7 +16,8 @@ export const load = async ({ cookies, locals, url, fetch }: any) => {
 		page,
 		search,
 		order,
-		direction
+		direction,
+		onlyUnassigned: 'true'
 	});
 
 	const [leadsresponse, usersResponse] = await Promise.all([
@@ -73,6 +74,7 @@ export const actions: Actions = {
 			city: data.get('city'),
 			age: data.get('age') ? parseInt(data.get('age') as string) : null,
 			programa: data.get('program'),
+			status: 1,
 			source: data.get('source'),
 			objective: data.get('objective'),
 			notes: data.get('observations')

@@ -25,7 +25,7 @@
 	let { leads, meta } = data;
 
 	$: ({ leads, meta, users } = data);
-	console.log('Mis leads data:', leads);
+	console.log('Mis leads data:', meta);
 
 	const columns = [
 		{ key: 'full_name', label: 'Nombre y Apellido' },
@@ -84,7 +84,6 @@
 	let selectedUser: { label: string; value: number } | null = null;
 	let currentResponsable: string = '';
 	$: statusFilter = $page.url.searchParams.get('status');
-	console.log('Status filter:', statusFilter);
 
 	$: userOptions = (data?.users ?? []).map((u: any) => ({
 		label: `${u.firstname} ${u.lastname}`,
@@ -316,7 +315,7 @@
 
 	{#if meta.total > 1}
 		<div class="mt-6">
-			<Pagination {...data?.meta || {}} class="mt-3" />
+			<Pagination {meta} class="mt-3" />
 		</div>
 	{/if}
 </div>

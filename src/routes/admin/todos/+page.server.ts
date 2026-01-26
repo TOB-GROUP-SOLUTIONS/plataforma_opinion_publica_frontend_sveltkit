@@ -63,41 +63,51 @@ export const actions: Actions = {
 		return { success: true };
 	},
 
-	createLead: async ({ cookies, request, fetch }) => {
+	changeStatus: async ({ cookies, request }) => {
 		const token = cookies.get('token');
 		const data = await request.formData();
 
-		const CreateLeadDto = {
-			full_name: data.get('full_name'),
-			email: data.get('email'),
-			phone: data.get('phone'),
-			city: data.get('city'),
-			age: data.get('age') ? parseInt(data.get('age') as string) : null,
-			programa: data.get('program'),
-			source: data.get('source'),
-			objective: data.get('objective'),
-			notes: data.get('observations')
+		const leadId = data.get('lead_id');
+		const userId = data.get('user_id');
+
+
+		const UpdateLeadDto = {
+			assigned_to: userId,
+			interest_level: data.get('status_id')
 		};
 
-		try {
-			const response = await api.post({
-				fetch,
-				endpoint: 'leads',
-				body: JSON.stringify(CreateLeadDto),
-				token
-			});
 
-			console.log('Create Lead Response:', response);
+		const response = await api.patch({
+			fetch,
+			endpoint: `leads/${leadId}`,
+			body: JSON.stringify(UpdateLeadDto),
+			token
+		});
 
-			if (!response.ok) throw error(500, 'Error al crear el formulario');
+		if (!response.ok) throw error(500, 'Error al asignar el lead');
 
+		return { success: true };
+	},
 
-			return { success: true };
-		} catch (err: any) {
-			return {
-				error: err.message || 'Error al guardar el formulario'
-			};
-		}
+	change_status: async ({ cookies, request }) => {
+		const token = cookies.get('token');
+		const data = await request.formData();
+		const leadId = data.get('lead_id');
+		const statusLeadId = data.get('status_id');
+
+		const UpdateLeadDto = {
+			status_lead: statusLeadId
+		};
+
+		const response = await api.patch({
+			fetch,
+			endpoint: `leads/${leadId}`,
+			body: JSON.stringify(UpdateLeadDto),
+			token
+		});
+		if (!response.ok) throw error(500, 'Error al cambiar el estado del lead');
+
+		return { success: true };
 	},
 
 	asingToUser: async ({ cookies, request }) => {

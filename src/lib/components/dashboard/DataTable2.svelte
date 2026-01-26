@@ -157,7 +157,8 @@
                                     <ActionsDropdown
                                         actions={[
                                             { label: 'Ver ficha', event: 'view', icon: EyeOutline, class: 'bg-[#4D6591] text-white rounded-full text-sm' },
-                                            { label: 'Agregar presupuesto', event: 'add_budget', icon: ReceiptSolid, class: 'text-sm bg-[#666666] text-white rounded-full' },
+
+                                            ...(statusFilter === "13" ? [{ label: 'Agregar presupuesto', event: 'add_budget', icon: ReceiptSolid, class: 'text-sm bg-[#666666] text-white rounded-full' }] : []),
                                             { label: 'Cambiar responsable', event: 'asingToUser', icon: UserSolid, class: ' text-sm bg-[#7597D5] text-white rounded-full' },
                                             { label: 'Cambiar estado', event: 'change_status', icon: CogSolid, class: ' text-sm  bg-green-600 text-white rounded-full' },
                                             ...(statusFilter === "14" ? [{ label: 'Confirmar Pago', event: 'confirmPayment', icon: ReceiptSolid, class: 'text-sm bg-[#666666] text-white rounded-full' }] : [])

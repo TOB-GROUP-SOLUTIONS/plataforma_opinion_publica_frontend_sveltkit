@@ -14,6 +14,32 @@ export const data = [
 		link: '/admin/nuevos-interesados',
 	},
 
+	
+	{
+		title: 'Todos',
+		icon: UsersGroupSolid,
+		link: '/admin/todos',
+		sub_items: [
+			{
+				title: 'Sin presupuesto',
+				link: '/admin/todos?status=13',
+				icon: ClipboardOutline
+
+			},
+			{
+				title: 'Con presupuesto',
+				link: '/admin/todos?status=14',
+				icon: ClipboardOutline
+			},
+			{
+				title: 'Clientes',
+				link: '/admin/todos?status=15',
+				icon: BuildingSolid,
+			},
+		]
+	},
+
+
 	{
 		title: 'Mis leads',
 		icon: UsersGroupSolid,

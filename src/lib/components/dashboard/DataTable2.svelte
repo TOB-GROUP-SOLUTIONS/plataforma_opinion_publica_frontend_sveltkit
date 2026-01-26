@@ -170,6 +170,18 @@
                                         on:confirmPayment={() => dispatch('confirmPayment', { data: obj })}
                                     />
                                 {/if}
+
+                                {#if $page.url.pathname === '/admin/todos'}
+                                    <ActionsDropdown
+                                        actions={[
+                                            { label: 'Ver ficha', event: 'view', icon: EyeOutline, class: 'bg-[#4D6591] text-white rounded-full text-sm' },
+                                            { label: 'Cambiar responsable', event: 'asingToUser', icon: UserSolid, class: ' text-sm bg-[#7597D5] text-white rounded-full' },
+                                            { label: 'Cambiar estado', event: 'change_status', icon: CogSolid, class: ' text-sm  bg-green-600 text-white rounded-full' },                                        ]}
+                                        on:view={() => dispatch('view', { data: obj })}
+                                        on:asingToUser={() => dispatch('asingToUser', { data: obj })}
+                                        on:change_status={() => dispatch('change_status', { data: obj })}
+                                    />
+                                {/if}
                             </div>
                         </TableBodyCell>
                     {/if}

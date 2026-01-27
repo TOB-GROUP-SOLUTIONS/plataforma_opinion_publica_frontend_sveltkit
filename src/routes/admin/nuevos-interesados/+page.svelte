@@ -133,12 +133,12 @@
 		{ key: 'full_name', label: 'Nombre y Apellido' },
 		{ key: 'programa', label: 'Programa' },
 		{ key: 'colegio', label: 'Colegio/Institución' },
-		{ key: 'createdAt', label: 'Fecha' },
+		{ key: 'created_at', label: 'Fecha' },
 		{ key: 'source', label: 'Origen' },
 		{ key: 'city', label: 'Localidad' }
 	];
 
-	const orderCols = ['full_name', 'createdAt', 'source'];
+	const orderCols = ['full_name', 'created_at', 'source'];
 
 	function render(key: string, lead: Lead) {
 		switch (key) {
@@ -148,8 +148,8 @@
 				return 'Tutoría'; // Placeholder - ajustar según tus datos
 			case 'colegio':
 				return 'Colegio Mecenas'; // Placeholder - ajustar según tus datos
-			case 'createdAt':
-				return new Date(lead.createdAt).toLocaleDateString('es-AR');
+			case 'created_at':
+				return new Date(lead.created_at).toLocaleDateString('es-AR');
 			case 'source':
 				return lead.source || 'Web';
 			case 'city':

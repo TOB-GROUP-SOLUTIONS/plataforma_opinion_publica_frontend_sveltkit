@@ -21,12 +21,10 @@
 		// Diccionario de rutas a títulos
 	const routeTitles: Record<string, string> = {
 		'/admin': 'Inicio',
-		'/admin/proyectos': 'Proyectos',
-		'/admin/clientes': 'Clientes',
-		'/admin/documentos': 'Documentos',
-		'/admin/lotes': 'Lotes',
-		'/admin/expensas': 'Expensas',
-		'/admin/configuracion': 'Configuración',
+		'/admin/lcb': 'LCB',
+		'/admin/todos': 'Todos',
+		'/admin/mis-leads': 'Mis Leads',
+		'/admin/nuevos-interesados': 'Nuevos Interesados',
 		// Agrega aquí más rutas y títulos según sea necesario
 	};
 

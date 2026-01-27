@@ -21,6 +21,11 @@ export const data = [
 		link: '/admin/todos',
 		sub_items: [
 			{
+				title: 'Todos',
+				link: '/admin/todos',
+				icon: ClipboardOutline
+			},
+			{
 				title: 'Sin presupuesto',
 				link: '/admin/todos?status=13',
 				icon: ClipboardOutline

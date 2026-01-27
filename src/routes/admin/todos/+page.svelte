@@ -30,14 +30,14 @@
 	const columns = [
 		{ key: 'full_name', label: 'Nombre y Apellido' },
 		{ key: 'status', label: 'Estado' },
-		{ key: 'createdAt', label: 'Fecha' },
+		{ key: 'created_at', label: 'Fecha' },
 		{ key: 'producto', label: 'Producto' },
 		{ key: 'source', label: 'Origen' },
 		{ key: 'city', label: 'Localidad' },
 		{ key: 'responsable', label: 'Responsable' }
 	];
 
-	const orderCols = ['full_name', 'createdAt', 'source'];
+	const orderCols = ['full_name', 'created_at', 'source'];
 
 	function render(key: string, lead: Lead) {
 		switch (key) {
@@ -52,8 +52,8 @@
 					return '<span class="bg-red-600 rounded-full text-white px-7 py-2 ">No contestar</span>';
 				if (lead.interest_level?.value == 'NO_RESPONSE')
 					return '<span class="bg-yellow-600 rounded-full text-white px-7 py-2 ">Sin respuesta</span>';
-			case 'createdAt':
-				return new Date(lead.createdAt).toLocaleDateString('es-AR');
+			case 'created_at':
+				return new Date(lead.created_at).toLocaleDateString('es-AR');
 			case 'source':
 				return lead.source || 'Web';
 			case 'city':

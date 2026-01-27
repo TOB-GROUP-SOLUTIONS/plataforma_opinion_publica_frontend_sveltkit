@@ -28,7 +28,7 @@ export interface Lead {
     description?: string;
   };
   city?: number;
-  createdAt: Date;
+  created_at: Date;
   updatedAt: Date;
   deletedAt?: Date;
     assigned_to?: {

@@ -27,6 +27,7 @@
 	}
 	
 	function handleAction(event: string) {
+		console.log('Action selected:', event);
 		dispatch(event);
 		isOpen = false;
 	}

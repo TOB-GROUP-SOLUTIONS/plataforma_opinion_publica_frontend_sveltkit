@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { browser } from '$app/environment';
+	import { onMount, onDestroy } from 'svelte';
 	import DataTable from '$lib/components/dashboard/DataTable.svelte';
 	import SearchInput from '$lib/components/dashboard/SearchInput.svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
@@ -18,6 +20,62 @@
 
 	$: ({ leads, meta, searchParams, users } = data);
 	$: leadsArray = leads;
+
+	// Polling de leads
+	let isRefreshing = false;
+	let lastRefreshTime: Date = new Date();
+	let pollingInterval: any = null;
+
+	async function fetchLeads() {
+		if (!browser) return;
+		try {
+			isRefreshing = true;
+			const params = new URLSearchParams($page.url.searchParams);
+			const response = await fetch(`/api/leads?${params.toString()}`);
+			if (!response.ok) {
+				throw new Error(`Error: ${response.status}`);
+			}
+			const result = await response.json();
+			if (result?.data && Array.isArray(result.data)) {
+				leads = result.data as Lead[];
+				meta = result.meta ?? meta;
+				lastRefreshTime = new Date();
+			} else {
+				console.error('❌ Estructura inválida de /api/leads', result);
+			}
+		} catch (error) {
+			console.error('❌ Error en polling de leads:', error);
+		} finally {
+			isRefreshing = false;
+		}
+	}
+
+	function startPolling() {
+		if (pollingInterval) clearInterval(pollingInterval);
+		// Ejecutar una vez al iniciar
+		fetchLeads();
+		// Luego cada 30 segundos
+		pollingInterval = setInterval(() => {
+			fetchLeads();
+		}, 30000);
+	}
+
+	function stopPolling() {
+		if (pollingInterval) {
+			clearInterval(pollingInterval);
+			pollingInterval = null;
+		}
+	}
+
+	onMount(() => {
+		if (browser) {
+			startPolling();
+		}
+	});
+
+	onDestroy(() => {
+		stopPolling();
+	});
 
 	// Variables para manejo de archivos y estado del envío de presupuesto
 	let selectedFile: File | null = null;
@@ -265,6 +323,35 @@
 			<span class="text-xl">+</span>
 			Nuevo Formulario
 		</button>
+
+		<div class="flex gap-2 text-sm text-gray-500 whitespace-nowrap">
+			{#if isRefreshing}
+				<span class="flex items-center">
+					<svg class="animate-spin h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+						<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+						<path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+					</svg>
+					Actualizando...
+				</span>
+			{:else}
+				<span class="flex items-center">
+					<div class="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></div>
+					Actualizado {lastRefreshTime.toLocaleTimeString()}
+				</span>
+			{/if}
+			
+			<!-- Botón para actualizar manualmente -->
+			<button 
+				on:click={fetchLeads}	
+				disabled={isRefreshing}
+				class="p-1 rounded-md hover:bg-gray-100 disabled:opacity-50"
+				title="Actualizar ahora"
+			>
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+				</svg>
+			</button>
+		</div>
 
 		<div class="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">
 			<SearchInput

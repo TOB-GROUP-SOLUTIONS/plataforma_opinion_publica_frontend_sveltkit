@@ -14,7 +14,7 @@ const config = {
 	theme: {
 		extend: {
 			fontFamily: {
-				sans: ['Exo-SemiBold', 'MontserratBold', 'MontserratBlack', 'sans-serif']
+				sans: ['MontserratRegular', 'MontserratBold', 'MontserratBlack', 'sans-serif']
 			},
 			colors: {
 				// rose

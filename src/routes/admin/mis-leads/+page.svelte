@@ -9,6 +9,7 @@
 	import { Modal, Button, Label, Input } from 'flowbite-svelte';
 	import Toast from '$lib/components/ui/Toast.svelte';
 	import Select from 'svelte-select';
+	import PersonalRecord from '$lib/components/dashboard/PersonalRecord.svelte';
 
 	export let data;
 	let successMessage = '';
@@ -19,7 +20,9 @@
 	let selectedStatus: { label: string; value: number } | null = null;
 	let selectedDate: string = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
 	let showConfirmPaymentModal = false;
+	let identifierToView = {} as any;
 	let selectBudgetId: number | null = null;
+	let showPersonalRecordModal = false;
 
 
 	let { leads, meta, searchParams } = data;
@@ -72,10 +75,11 @@
 		goto(`/admin/nuevos-interesados/${id}/editar`);
 	}
 
-	function handleView(e: CustomEvent) {
-		const id = e.detail.id;
-		//goto(`/admin/nuevos-interesados/${id}`);
-	}
+    const handleView = ({ detail }: any) => {
+		console.log('Ver ficha personal:', detail.data);
+		identifierToView = { ...detail.data };
+		showPersonalRecordModal = true;
+	};
 
 	let showAssignModal = false;
 	let isSubmittingAssign = false;
@@ -639,6 +643,13 @@
         </div>
     </form>
 </Modal>
+
+{#if showPersonalRecordModal}
+	<PersonalRecord
+		data={identifierToView}
+		on:close={() => (showPersonalRecordModal = false)}
+	/>
+{/if}
 
 {#if successMessage.length > 0}
 	<Toast type="success" dismissible={true} showToast={true} bind:successMessage />

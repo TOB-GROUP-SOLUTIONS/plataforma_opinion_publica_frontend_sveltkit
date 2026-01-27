@@ -15,7 +15,14 @@ export async function handle({ event, resolve }: any) {
     event.locals.user = undefined;
     
     // Permitir acceso a la página principal y rutas públicas
-    if (currentPath === '/' || currentPath === '/login' || currentPath.startsWith('/api/') || currentPath.startsWith('/new-password') || currentPath.startsWith('/reset-password')) {
+    if (
+      currentPath === '/' ||
+      currentPath === '/login' ||
+      currentPath.startsWith('/api/') ||
+      currentPath.startsWith('/new-password') ||
+      currentPath.startsWith('/reset-password') ||
+      currentPath.startsWith('/formulario-lcb')
+    ) {
       return await resolve(event);
     }
     

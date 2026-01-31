@@ -23,6 +23,7 @@ jobs:
           exit-code: "1"
           severity: "CRITICAL,HIGH"
           scanners: "vuln,secret"
+          trivyignores: ".trivyignore"
         env:
           TRIVY_SKIP_DEV_DEPS: "true"
 

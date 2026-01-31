@@ -1,0 +1,6 @@
+# Ignore xlsx vulnerabilities as the fix is outside the public npm registry
+CVE-2023-30533
+CVE-2024-22363
+
+# Ignore devalue which is deeply nested in sveltekit
+CVE-2025-57820

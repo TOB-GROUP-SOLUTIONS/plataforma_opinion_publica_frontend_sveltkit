@@ -73,11 +73,11 @@ jobs:
 
           if [ "${{ needs.build.result }}" == "success" ]; then
             COLOR=3066993
-            STATUS="✅ SPS Backoffice - Build Exitoso"
+            STATUS="✅ Together Backoffice - Build Exitoso"
             DESCRIPTION="El build del entorno de **desarrollo** finalizó correctamente.\n\n📦 Dependencias instaladas y compilación completada sin errores."
           else
             COLOR=15158332
-            STATUS="❌ SPS Backoffice - Build Fallido"
+            STATUS="❌ Together Backoffice - Build Fallido"
             DESCRIPTION="El build del entorno de **desarrollo** ha fallado.\n\n⚠️ Revisar los logs del workflow para identificar el error."
           fi
 
@@ -94,7 +94,7 @@ jobs:
                   {\"name\": \"🔗 Commit\", \"value\": \"[\`${GITHUB_SHA::7}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})\", \"inline\": true},
                   {\"name\": \"👤 Autor\", \"value\": \"${{ github.actor }}\", \"inline\": true}
                 ],
-                \"footer\": {\"text\": \"SPS Salud • Backoffice Frontend • GitHub Actions\"},
+                \"footer\": {\"text\": \"Together • Backoffice Frontend • GitHub Actions\"},
                 \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"
               }]
             }" \

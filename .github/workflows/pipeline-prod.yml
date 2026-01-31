@@ -215,7 +215,7 @@ jobs:
           username: ${{ secrets.STAGING_USER }}
           password: ${{ secrets.STAGING_PASSWORD }}
           script: |
-            cd ~/development/sps/deploy/backoffice
+            cd ~/development/together/deploy/frontend
             docker compose pull
             docker compose up -d
             echo "Deploy completed!"

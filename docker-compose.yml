@@ -1,16 +1,17 @@
-version: '3.3'
 services:
-  reclamos_app:
-    build: .
-    container_name: reclamos_app
-    networks:
-      - reclamos
-    ports:
-      - '3050:3000'
+  together_backoffice_sveltekit_prod:
+    image: ghcr.io/tob-group-solutions/together_backoffice_sveltekit:latest
+    container_name: together_backoffice_sveltekit_prod
     restart: always
+    ports:
+      - "3800:3000"
     env_file:
-      - ./.env
-
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - together
+      
 networks:
-  reclamos:
+  together:
     external: true

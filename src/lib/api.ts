@@ -1,5 +1,7 @@
-import { PUBLIC_API_URL } from '$env/static/public'
+import { env } from '$env/dynamic/public';
 import type {Response} from '$lib/interfaces/response.interface'
+
+const PUBLIC_API_URL = env.PUBLIC_API_URL;
 
 type fetchParams = {
   fetch: typeof globalThis.fetch, 

@@ -4,3 +4,11 @@ CVE-2024-22363
 
 # Ignore devalue which is deeply nested in sveltekit
 CVE-2025-57820
+
+# Ignore esbuild gobinary vulnerabilities if they persist after overrides
+CVE-2024-24790
+CVE-2023-45288
+CVE-2024-34156
+CVE-2025-47907
+CVE-2025-58183
+CVE-2025-61729

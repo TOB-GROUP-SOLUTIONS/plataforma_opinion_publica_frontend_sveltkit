@@ -9,7 +9,10 @@
 	import { Modal, Button, Label, Input } from 'flowbite-svelte';
 	import Toast from '$lib/components/ui/Toast.svelte';
 	import Select from 'svelte-select';
+	import SortInput from '$lib/components/dashboard/SortInput.svelte';
 	import PersonalRecord from '$lib/components/dashboard/PersonalRecord.svelte';
+	import { AdjustmentsHorizontalOutline } from 'flowbite-svelte-icons';
+	import { Tooltip } from 'flowbite-svelte';
 
 	export let data;
 	let successMessage = '';
@@ -23,12 +26,20 @@
 	let identifierToView = {} as any;
 	let selectBudgetId: number | null = null;
 	let showPersonalRecordModal = false;
+	let formModalFilter = false;
+	let fechaDesde: string = '';
+	let fechaHasta: string = '';
+	let count: number = 0;
+	let modalOrdering: string = '';
 
+	$: count = (fechaDesde ? 1 : 0) + (fechaHasta ? 1 : 0);
 
 	let { leads, meta, searchParams } = data;
 
 	$: ({ leads, meta, searchParams, users } = data);
 	console.log('Mis leads data:', leads);
+
+	const orderCols = ['created_at'];
 
 	const columns = [
 		{ key: 'full_name', label: 'Nombre y Apellido' },
@@ -39,8 +50,6 @@
 		{ key: 'city', label: 'Localidad' },
 		{ key: 'responsable', label: 'Responsable' }
 	];
-
-	const orderCols = ['full_name', 'created_at', 'source'];
 
 	function render(key: string, lead: Lead) {
 		switch (key) {
@@ -75,7 +84,7 @@
 		goto(`/admin/nuevos-interesados/${id}/editar`);
 	}
 
-    const handleView = ({ detail }: any) => {
+	const handleView = ({ detail }: any) => {
 		console.log('Ver ficha personal:', detail.data);
 		identifierToView = { ...detail.data };
 		showPersonalRecordModal = true;
@@ -109,6 +118,39 @@
 		showAssignModal = true;
 		assignSuccessMsg = '';
 		selectedUser = null;
+	}
+
+	function handleClearFilters() {
+		fechaDesde = '';
+		fechaHasta = '';
+		modalOrdering = '';
+		const params = new URLSearchParams($page.url.searchParams);
+		params.delete('order');
+		params.delete('direction');
+		params.delete('page');
+		goto(`?${params.toString()}`);
+		formModalFilter = false;
+		// Recargar sin filtros usando la misma función
+	}
+
+	function handleApplyDateFilter() {
+		// Validar que fechaHasta no sea menor que fechaDesde
+		if (fechaHasta && fechaDesde && fechaHasta < fechaDesde) {
+			fechaHasta = '';
+		}
+		const params = new URLSearchParams($page.url.searchParams);
+		if (modalOrdering) {
+			const [order, direction] = modalOrdering.split(' ');
+			params.set('order', order);
+			params.set('direction', direction);
+		} else {
+			params.delete('order');
+			params.delete('direction');
+		}
+		params.set('page', '1');
+		goto(`?${params.toString()}`);
+		// Aplicar los filtros usando la misma función que onChangePeriodo
+		formModalFilter = false;
 	}
 
 	// handler para enhanced: sólo recibe y procesa la respuesta del action
@@ -176,8 +218,6 @@
 	let selectedLeadIdBudget: number | null = null;
 	let selectedFile: File | null = null;
 
-
-
 	function handleChangeStatus(e: CustomEvent) {
 		selectedLeadIdStatus = e.detail?.data?.id ?? e.detail?.id;
 
@@ -222,7 +262,7 @@
 		selectedFile = null;
 	}
 
-	function handleConfirmPayment(e: CustomEvent){
+	function handleConfirmPayment(e: CustomEvent) {
 		console.log('Evento Confirmar Pago:', e);
 		selectBudgetId = e.detail?.data.budgets[0]?.id ?? e.detail?.id;
 		console.log(selectBudgetId)
@@ -230,8 +270,7 @@
 		selectedFile = null;
 	}
 
-
-	function  handleConfirmPaymentEnhanced() {
+	function handleConfirmPaymentEnhanced() {
 		isSubmittingBudget = true;
 
 		return async ({ result, update }: any) => {
@@ -246,7 +285,6 @@
 			}
 		};
 	}
-
 
 	function handleBudgetEnhanced() {
 		isSubmittingBudget = true;
@@ -277,27 +315,23 @@
 </svelte:head>
 
 <div class="min-h-screen bg-white p-6">
-	<div class="mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
-		<SearchInput placeholder="Buscar por nombre, DNI, teléfono" />
+	<div class="mb-6 flex flex-col md:flex-row gap-4 items-stretch md:items-end justify-between">
+		<div class="w-full md:flex-1">
+			<SearchInput placeholder="Buscar por nombre, DNI, teléfono" />
+		</div>
 
-		<div class="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">
-			<select class="border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-700">
-				<option>Del más reciente al más viejo</option>
-				<option>Del más viejo al más reciente</option>
-			</select>
+		<div class="flex flex-col md:flex-row gap-4 items-stretch md:items-end w-full md:w-auto">
+			<div class="w-full md:w-64">
+				<SortInput {orderCols} onOrderChange={() => {}} />
+			</div>
 
-			<button
-				class="border border-gray-300 rounded-lg px-6 py-2 bg-white text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-			>
-				Filtrar
-				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-					/>
-				</svg>
+			<button class="border border-gray-300 rounded-md px-3 py-2 flex items-center h-[42px] relative" on:click={() => (formModalFilter = true)}>
+				Filtrar <AdjustmentsHorizontalOutline class="w-6 h-6 text-gray-500 ml-1" aria-hidden="true" />
+				{#if count > 0}
+				<span class="text-xs font-semibold text-blue-800 bg-blue-200 rounded-full absolute top-0 right-0 flex items-center justify-center w-4 h-4" style="transform: translate(50%, -50%);">
+					{count}
+				</span>
+				{/if}
 			</button>
 		</div>
 	</div>
@@ -525,28 +559,20 @@
         </div>
 
         <!-- Fecha de vencimiento -->
-        <div class="space-y-3">
-            <div class="flex items-center gap-2 justify-center">
-                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                </svg>
-                <p class="text-gray-600 font-medium">Fecha de vencimiento</p>
+            <div class="flex items-center gap-2">
+                <div class="w-full md:w-64">
+                    <SortInput {orderCols} onOrderChange={() => {}} />
+                </div>
+                <button class="border border-gray-300 rounded-md px-2 py-2 flex items-center relative" on:click={() => (formModalFilter = true)}>
+                    Filtrar <AdjustmentsHorizontalOutline class="w-6 h-6 text-gray-500 ml-1" aria-hidden="true" />
+                    {#if count > 0}
+                    <span class="text-xs font-semibold text-blue-800 bg-blue-200 rounded-full absolute top-0 right-0 flex items-center justify-center w-4 h-4" style="transform: translate(50%, -50%);">
+                        {count}
+                    </span>
+                    {/if}
+                </button>
+                <Tooltip color="yellow">Más filtros</Tooltip>
             </div>
-            <div class="flex justify-center">
-                <input
-                    type="date"
-                    bind:value={selectedDate}
-                    class="border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    disabled={isSubmittingBudget}
-                    min={new Date().toISOString().split('T')[0]}
-                />
-            </div>
-        </div>
 
         <!-- Botón de acción -->
         <div class="flex justify-center">
@@ -642,6 +668,109 @@
             </button>
         </div>
     </form>
+</Modal>
+
+<!-- Modal de Filtros por Fechas -->
+<Modal bind:open={formModalFilter} size="sm" autoclose={false} class="w-full">
+	<div class="p-6">
+		<div class="space-y-4">
+			<!-- Ordenar por -->
+			<div>
+				<Label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+					Ordenar por
+				</Label>
+				<select
+					bind:value={modalOrdering}
+					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5"
+				>
+					<option value="">Sin orden</option>
+					<option value="full_name asc">Nombre (A-Z)</option>
+					<option value="full_name desc">Nombre (Z-A)</option>
+				</select>
+			</div>
+
+			<!-- Fecha Desde -->
+			<div>
+				<Label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+					Fecha Desde
+				</Label>
+				<div class="relative">
+					<input
+						type="date"
+						bind:value={fechaDesde}
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 pr-10"
+						style="color-scheme: light;"
+					/>
+					<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+						<svg
+							class="w-5 h-5 text-gray-500"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+							/>
+						</svg>
+					</div>
+				</div>
+			</div>
+
+			<!-- Fecha Hasta -->
+			<div>
+				<Label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+					Fecha Hasta
+				</Label>
+				<div class="relative">
+					<input
+						type="date"
+						bind:value={fechaHasta}
+						min={fechaDesde || undefined}
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 pr-10"
+						style="color-scheme: light;"
+					/>
+					<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+						<svg
+							class="w-5 h-5 text-gray-500"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+							/>
+						</svg>
+					</div>
+				</div>
+			</div>
+
+			<!-- Botones -->
+			<div class="flex gap-3 w-full mt-6">
+				<Button
+					type="button"
+					on:click={handleClearFilters}
+					class="flex-1 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-md"
+				>
+					Borrar Todo
+				</Button>
+				<Button
+					type="button"
+					on:click={handleApplyDateFilter}
+					class="flex-1 bg-gray-700 hover:bg-gray-800 text-white rounded-md"
+				>
+					Filtrar
+				</Button>
+			</div>
+		</div>
+	</div>
 </Modal>
 
 {#if showPersonalRecordModal}

@@ -150,7 +150,7 @@ export const actions: Actions = {
 				subtotal: 0,
 				final_amount: 0,
 				valid_until: due_date,
-				status_id: 1,
+				status_id: 16,
 				file_id: fileId
 			};
 
@@ -261,6 +261,74 @@ export const actions: Actions = {
 		});
 
 		if (!response.ok) throw error(500, 'Error al restaurar');
+
+		return { success: true };
+	},
+
+	updateLead: async ({ cookies, request }) => {
+		const token = cookies.get('token');
+		const data = await request.formData();
+		const leadId = data.get('lead_id');
+		const statusId = data.get('status_id');
+
+		const updateData = {
+			status: statusId
+		};
+
+		const response = await api.patch({
+			fetch,
+			endpoint: `leads/${leadId}`,
+			body: JSON.stringify(updateData),
+			token
+		});
+
+		if (!response.ok) throw error(500, 'Error al actualizar el lead');
+
+		return { success: true };
+	},
+
+	savePersonalRecord: async ({ cookies, request }) => {
+		const token = cookies.get('token');
+		const data = await request.formData();
+		const leadId = data.get('lead_id');
+
+		const updateData = {
+			full_name: data.get('full_name'),
+			email: data.get('email'),
+			phone: data.get('phone'),
+			dni: data.get('dni'),
+			birth_date: data.get('birthDate'),
+			parent_full_name: data.get('parentName'),
+			parent_relation: data.get('relationshipType'),
+			parent_email: data.get('parentEmail'),
+			parent_phone: data.get('phone'),
+			program_type: data.get('programType'),
+			institution: data.get('school'),
+			associated_product: data.get('product'),
+			allergies: data.get('allergies'),
+			preexisting_conditions: data.get('preexisting_conditions'),
+			current_illnesses: data.get('current_illnesses'),
+			medical_observations: data.get('medical_observations'),
+			requires_medication: data.get('requires_medication') === 'true',
+			invoice_type: data.get('invoice_type'),
+			business_name: data.get('business_name'),
+			cuit_cuil: data.get('cuit_cuil'),
+			billing_address: data.get('billing_address'),
+			salary: data.get('salary') ? parseFloat(data.get('salary') as string) : null
+		};
+
+		console.log('Updating lead with data:', updateData);
+
+		const response = await api.patch({
+			fetch,
+			endpoint: `leads/${leadId}`,
+			body: JSON.stringify(updateData),
+			token
+		});
+
+		console.log('Lead update response:', response);
+
+		if (!response.ok) throw error(500, 'Error al actualizar el lead');
 
 		return { success: true };
 	}

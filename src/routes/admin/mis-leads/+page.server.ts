@@ -165,6 +165,19 @@ export const actions: Actions = {
 				throw error(500, 'Error al crear el presupuesto');
 			}
 
+
+			// Paso 3: Actualizar el status del lead (opcional)
+            const leadUpdateData = {
+                status: 14 // Cambia esto al ID del status que desees
+            };
+
+            await api.patch({
+                fetch,
+                endpoint: `leads/${leadId}`,
+                body: JSON.stringify(leadUpdateData),
+                token
+            });
+
 			return { success: true };
 		} catch (err) {
 			console.error('Error en addBudget:', err);

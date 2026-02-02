@@ -39,6 +39,17 @@
 	$: ({ leads, meta, searchParams, users } = data);
 	console.log('Mis leads data:', leads);
 
+	// Sincronizar filtros con URL cuando cambia la página (pero no mientras se edita el modal)
+	$: if (typeof window !== 'undefined' && $page.url.searchParams && !formModalFilter) {
+		const urlFromDate = $page.url.searchParams.get('fromDate') || '';
+		const urlToDate = $page.url.searchParams.get('toDate') || '';
+		
+		if (urlFromDate !== fechaDesde || urlToDate !== fechaHasta) {
+			fechaDesde = urlFromDate;
+			fechaHasta = urlToDate;
+		}
+	}
+
 	const orderCols = ['created_at'];
 
 	const columns = [
@@ -128,13 +139,13 @@
 		params.delete('order');
 		params.delete('direction');
 		params.delete('page');
+		params.delete('fromDate');
+		params.delete('toDate');
 		goto(`?${params.toString()}`);
 		formModalFilter = false;
-		// Recargar sin filtros usando la misma función
 	}
 
 	function handleApplyDateFilter() {
-		// Validar que fechaHasta no sea menor que fechaDesde
 		if (fechaHasta && fechaDesde && fechaHasta < fechaDesde) {
 			fechaHasta = '';
 		}
@@ -147,9 +158,18 @@
 			params.delete('order');
 			params.delete('direction');
 		}
+		if (fechaDesde) {
+			params.set('fromDate', fechaDesde);
+		} else {
+			params.delete('fromDate');
+		}
+		if (fechaHasta) {
+			params.set('toDate', fechaHasta);
+		} else {
+			params.delete('toDate');
+		}
 		params.set('page', '1');
 		goto(`?${params.toString()}`);
-		// Aplicar los filtros usando la misma función que onChangePeriodo
 		formModalFilter = false;
 	}
 

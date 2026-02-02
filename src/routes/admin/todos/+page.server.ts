@@ -12,13 +12,17 @@ export const load = async ({ cookies, locals, url, fetch }: any) => {
 	const order = url.searchParams.get('order') || 'id';
 	const direction = url.searchParams.get('direction') || 'desc';
 	const status = url.searchParams.get('status') || '';
+	const fromdate = url.searchParams.get('fromDate') || '';
+	const todate = url.searchParams.get('toDate') || '';
 
 	const params = new URLSearchParams({
 		page,
 		search,
 		order,
 		direction,
-		status
+		status,
+		fromdate,
+		todate
 	});
 
 	const [leadsresponse, usersResponse] = await Promise.all([

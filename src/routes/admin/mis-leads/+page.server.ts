@@ -12,6 +12,8 @@ export const load = async ({ cookies, locals, url, fetch }: any) => {
 	const order = url.searchParams.get('order') || 'id';
 	const direction = url.searchParams.get('direction') || 'desc';
 	const status = url.searchParams.get('status') || '';
+	const fromDate = url.searchParams.get('fromDate') || '';
+	const toDate = url.searchParams.get('toDate') || '';
 	const userId = locals.user.id;
 
 	const params = new URLSearchParams({
@@ -20,6 +22,8 @@ export const load = async ({ cookies, locals, url, fetch }: any) => {
 		order,
 		direction,
 		status,
+		fromDate,
+		toDate,
 		userId: String(userId)
 	});
 

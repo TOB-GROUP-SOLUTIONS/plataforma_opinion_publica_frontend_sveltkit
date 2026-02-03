@@ -34,7 +34,12 @@
 			on:click={() => window.history.back()}
 		>
 			<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M6 18L18 6M6 6l12 12"
+				/>
 			</svg>
 		</button>
 
@@ -139,9 +144,7 @@
 			</div>
 
 			<div class="mb-4">
-				<label for="email_alumno" class="block text-sm text-gray-700 mb-1">
-					Email
-				</label>
+				<label for="email_alumno" class="block text-sm text-gray-700 mb-1"> Email </label>
 				<input
 					type="email"
 					id="email_alumno"
@@ -151,9 +154,7 @@
 			</div>
 
 			<div class="mb-4">
-				<label for="telefono_alumno" class="block text-sm text-gray-700 mb-1">
-					Teléfono
-				</label>
+				<label for="telefono_alumno" class="block text-sm text-gray-700 mb-1"> Teléfono </label>
 				<input
 					type="tel"
 					id="telefono_alumno"
@@ -179,9 +180,7 @@
 			</div>
 
 			<div class="mb-4">
-				<label for="curso_actual" class="block text-sm text-gray-700 mb-1">
-					Curso actual
-				</label>
+				<label for="curso_actual" class="block text-sm text-gray-700 mb-1"> Curso actual </label>
 				<input
 					type="text"
 					id="curso_actual"
@@ -191,9 +190,7 @@
 			</div>
 
 			<div class="mb-6">
-				<label for="sede_actual" class="block text-sm text-gray-700 mb-1">
-					Sede actual
-				</label>
+				<label for="sede_actual" class="block text-sm text-gray-700 mb-1"> Sede actual </label>
 				<input
 					type="text"
 					id="sede_actual"

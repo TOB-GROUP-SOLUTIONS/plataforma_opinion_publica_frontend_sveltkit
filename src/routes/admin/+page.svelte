@@ -31,10 +31,10 @@
 		{ key: 'city', label: 'Localidad' },
 	];
 
-	let budgets = data?.budgets ?? [];
+	$: budgets = data?.budgets ?? [];
 
-	// resultados de búsqueda (se inicializan desde SSR si el load los devolvió)
-	let results: any[] = data?.searchResults ?? [];
+	// ✅ Hacer results reactivo - se actualiza automáticamente cuando data cambia
+	$: results = data?.searchResults ?? [];
 	let searching = false;
 
 	console.log('Budgets:', budgets);
@@ -54,24 +54,15 @@
 	    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 	    if (params.get('validDate') !== today) {
 	      params.set('validDate', today);
-	      // usar replaceState para no agregar entrada al historial
 	      goto(`?${params.toString()}`, { replaceState: true });
 	    }
 	  } catch (err) {
 	    console.error('Error setting validDate param:', err);
 	  }
-
-	  // inicializar valor del search desde la URL
-	  try {
-	    const p = new URLSearchParams(window.location.search);
-	    search = p.get('search') ?? '';
-	  } catch (e) {
-	    search = '';
-	  }
 	});
 
 	// --- lógica de búsqueda: actualizar query param `search` con debounce ---
-	let search = '';
+	let search = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('search') ?? '' : '';
 	let searchTimer: any;
 	function onSearchInput() {
 	  clearTimeout(searchTimer);
@@ -83,35 +74,9 @@
 	      params.set('search', search.trim());
 	    }
 	    params.set('page', '1');
-	    goto(`${window.location.pathname}?${params.toString()}`, { replaceState: true });
+		goto(`?${params.toString()}`, { keepFocus: true, noScroll: true });
 
-	    // buscar en backend y mostrar resultados en mini-ventana
-	    performSearch(search);
 	  }, 400);
-	}
-
-	async function performSearch(q: string) {
-		if (!q || q.trim() === '') {
-			results = [];
-			return;
-		}
-		searching = true;
-		try {
-			const sParams = new URLSearchParams();
-			sParams.set('q', q);
-			sParams.set('limit', '10');
-			const res = await get({ fetch, endpoint: 'search', params: sParams });
-			if (res.ok) {
-				results = res.data?.results ?? [];
-			} else {
-				results = [];
-			}
-		} catch (err) {
-			console.error('Search error', err);
-			results = [];
-		} finally {
-			searching = false;
-		}
 	}
 
 	function renderBudget(key: string, b: any) {
@@ -130,6 +95,8 @@
 				return '-';
 		}
 	}
+
+	console.log('Initial search results:', results);
 </script>
 
 <svelte:head>
@@ -142,8 +109,6 @@
 		</h1>
     <div class="w-full max-w-[898px] flex justify-center relative">
 			<Input id="globalSearch" placeholder="Buscar por nombre,DNI,telefono" class="h-12 max-w-[898px] bg-[#02325A26]" bind:value={search} on:input={onSearchInput} />
-
-			<!-- Mini-ventana de resultados -->
 			{#if searching}
 				<div class="absolute top-full mt-2 w-full max-w-[898px] bg-white border rounded shadow z-50 p-3 text-center">Buscando...</div>
 			{:else if results && results.length > 0}

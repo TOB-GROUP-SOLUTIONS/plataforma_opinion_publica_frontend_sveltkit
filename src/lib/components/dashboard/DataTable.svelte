@@ -9,7 +9,7 @@
 	export let handleChangeStatus: undefined | ((e: any) => void) = undefined;
 	export let handleRedirect: undefined | ((e: any) => void) = undefined;
 	export let handleAddBudget: undefined | ((e: any) => void) = undefined;
-	export let handleConfirmPayment : undefined | ((e: any) => void) = undefined;
+	export let handleConfirmPayment: undefined | ((e: any) => void) = undefined;
 	export let handleDelete: (e: any) => void;
 	export let handleEdit: (e: any) => void;
 	export let columns: Record<string, string>[] = [];
@@ -48,7 +48,7 @@
 		{actions}
 		{defaultActions}
 		{statusFilter}
-		on:confirmPayment = {handleConfirmPayment}
+		on:confirmPayment={handleConfirmPayment}
 		on:goToArea={handleGoToArea}
 		on:view={handleView}
 		on:change_status={handleChangeStatus}
@@ -58,5 +58,6 @@
 		on:ver-historial={handleRedirect}
 		on:delete={handleDelete}
 		on:edit={handleEdit}
+		on:generate_form
 	/>
 </div>

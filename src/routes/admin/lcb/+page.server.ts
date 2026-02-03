@@ -27,11 +27,11 @@ export const load = async ({ cookies, locals, url, fetch }: any) => {
 		token
 	});
 
-	
+
 
 	if (!response.ok) throw error(500, 'Error al cargar los leads');
 
-    console.log('Response Data:', response.data);
+	console.log('Response Data:', response.data);
 
 	return {
 		referrers: response.data.data,
@@ -57,7 +57,7 @@ export const actions: Actions = {
 		return { success: true };
 	},
 
-	updateReference : async ({ cookies, request }) => {
+	updateReference: async ({ cookies, request }) => {
 		const token = cookies.get('token');
 		const data = await request.formData();
 		const id = data.get('id');
@@ -81,9 +81,9 @@ export const actions: Actions = {
 		});
 		if (!response.ok) throw error(500, 'Error al actualizar la referencia');
 		return { success: true };
-	},	
+	},
 
-	createReference : async ({ cookies, request }) => {
+	createReference: async ({ cookies, request }) => {
 		const token = cookies.get('token');
 		const data = await request.formData();
 		const name = data.get('name');
@@ -104,7 +104,7 @@ export const actions: Actions = {
 			endpoint: 'referrers',
 			token,
 			body: JSON.stringify(CreateReferenceDto)
-		});		if (!response.ok) throw error(500, 'Error al crear la referencia');
+		}); if (!response.ok) throw error(500, 'Error al crear la referencia');
 
 		return { success: true };
 	},
@@ -123,5 +123,21 @@ export const actions: Actions = {
 		if (!response.ok) throw error(500, 'Error al eliminar la referencia');
 
 		return { success: true };
+	},
+
+	generateLink: async ({ cookies, request }) => {
+		const token = cookies.get('token');
+		const data = await request.formData();
+		const id = data.get('id');
+
+		const response = await api.post({
+			fetch,
+			endpoint: `referrers/${id}/generate-link`,
+			token
+		});
+
+		if (!response.ok) throw error(500, 'Error al generar el link');
+
+		return { success: true, link: response.data.link };
 	}
 };

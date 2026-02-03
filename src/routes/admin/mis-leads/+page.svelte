@@ -579,20 +579,28 @@
         </div>
 
         <!-- Fecha de vencimiento -->
-            <div class="flex items-center gap-2">
-                <div class="w-full md:w-64">
-                    <SortInput {orderCols} onOrderChange={() => {}} />
-                </div>
-                <button class="border border-gray-300 rounded-md px-2 py-2 flex items-center relative" on:click={() => (formModalFilter = true)}>
-                    Filtrar <AdjustmentsHorizontalOutline class="w-6 h-6 text-gray-500 ml-1" aria-hidden="true" />
-                    {#if count > 0}
-                    <span class="text-xs font-semibold text-blue-800 bg-blue-200 rounded-full absolute top-0 right-0 flex items-center justify-center w-4 h-4" style="transform: translate(50%, -50%);">
-                        {count}
-                    </span>
-                    {/if}
-                </button>
-                <Tooltip color="yellow">Más filtros</Tooltip>
+        <div class="space-y-3">
+            <div class="flex items-center gap-2 justify-center">
+                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                </svg>
+                <p class="text-gray-600 font-medium">Fecha de vencimiento</p>
             </div>
+            <div class="flex justify-center">
+                <input
+                    type="date"
+                    bind:value={selectedDate}
+                    class="border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    disabled={isSubmittingBudget}
+                    min={new Date().toISOString().split('T')[0]}
+                />
+            </div>
+        </div>
 
         <!-- Botón de acción -->
         <div class="flex justify-center">

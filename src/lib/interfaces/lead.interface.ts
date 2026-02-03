@@ -27,14 +27,14 @@ export interface Lead {
     type: string;
     description?: string;
   };
-  city?: number;
+  city?: string;
   created_at: Date;
   updatedAt: Date;
   deletedAt?: Date;
-    assigned_to?: {
-        id: number;
-        firstname: string;
-        lastname: string;
-        email: string;
-    };
+  assigned_to?: {
+    id: number;
+    firstname: string;
+    lastname: string;
+    email: string;
+  };
 }

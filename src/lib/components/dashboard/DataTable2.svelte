@@ -146,7 +146,7 @@
 											on:click={() => dispatch('generate_form', { data: obj })}
 											class="bg-[#7597D5] hover:bg-[#6486c4] text-white text-sm px-4 py-3"
 										>
-											Enviar Formulario
+											generar link
 										</Button>
 									{/if}
 									{#if defaultActions.includes('edit')}

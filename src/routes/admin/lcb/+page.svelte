@@ -3,6 +3,7 @@
 	import { Modal, Button, Label, Input } from 'flowbite-svelte';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import type { Reference } from '$lib/interfaces/references.interface';
 	import SearchInput from '$lib/components/dashboard/SearchInput.svelte';
 	import Toast from '$lib/components/ui/Toast.svelte';
@@ -10,6 +11,15 @@
 
 	export let data: any;
 	export let form: any;
+
+	onMount(() => {
+		(window as any).copyToClipboard = (text: string) => {
+			navigator.clipboard.writeText(text).then(() => {
+				successMessage = 'Link copiado al portapapeles';
+				setTimeout(() => (successMessage = ''), 3000);
+			});
+		};
+	});
 
 	let references: Reference[] = [];
 	let totalPages = 1;
@@ -46,7 +56,18 @@
 	function render(key: string, obj: Reference): any {
 		if (key === 'link_form') {
 			return obj.link_form
-				? `<a href="${obj.link_form}" target="_blank" class="text-blue-600 hover:underline truncate block max-w-xs">${obj.link_form}</a>`
+				? `<div class="flex items-center gap-2">
+                    <button 
+                        onclick="copyToClipboard('${obj.link_form}')"
+                        class="p-2 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-blue-600 transition-colors"
+                        title="Copiar link"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                        </svg>
+                    </button>
+                    <a href="${obj.link_form}" target="_blank" class="text-blue-600 hover:underline truncate block max-w-[150px] text-xs">${obj.link_form}</a>
+                   </div>`
 				: '<span class="text-gray-400">Sin link</span>';
 		}
 		return obj[key as keyof Reference] || '-';

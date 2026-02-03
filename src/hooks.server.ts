@@ -25,7 +25,8 @@ export async function handle({ event, resolve }: any) {
 			currentPath.startsWith('/api/') ||
 			currentPath.startsWith('/new-password') ||
 			currentPath.startsWith('/reset-password') ||
-			currentPath.startsWith('/formulario-lcb')
+			currentPath.startsWith('/formulario-lcb') ||
+			currentPath.startsWith('/ref/')
 		) {
 			console.log('[HOOK] - Ruta pública permitida, continuando');
 			return await resolve(event);

@@ -1,58 +1,80 @@
-import { paths } from '$lib/access';
 import * as api from '$lib/api';
 import { redirect, type HandleServerError } from '@sveltejs/kit';
 
 export async function handle({ event, resolve }: any) {
-  // Comprobar si es una solicitud de logout o viene de logout
-  if (event.url.pathname === '/logout' || event.url.pathname === '/api/auth/logout' || event.url.searchParams.has('t')) {
-    // Limpiar la sesión y continuar
-    event.locals.user = undefined;
-    event.cookies.delete('token', { path: '/' });
-    
-    // Para la API de logout, resolver inmediatamente
-    if (event.url.pathname === '/api/auth/logout') {
-      return await resolve(event);
-    }
-  }
+	// Silenciar errores de Chrome DevTools que buscan archivos de configuración
+	if (event.url.pathname.startsWith('/.well-known/')) {
+		return new Response(null, { status: 404 });
+	}
 
-  const token = event.cookies.get('token');
-  console.log('TOKEN:', token);
-  const currentPath = event.url.pathname;
+	const token = event.cookies.get('token');
+	const currentPath = event.url.pathname;
 
-  //Si no hay token, no hay usuario
-  if (!token) {
-    event.locals.user = undefined;
-    return await resolve(event);
-  }
 
-  try {
-    const res = await api.get({ fetch, endpoint: 'auth/user-admin', token });
-    console.log('RESPUESTA API:', res);
-    if (res?.ok) {
-      event.locals.user = res.data;
+	// Si no hay token y no estás en la página principal, redirigir a /
+	if (!token) {
+		event.locals.user = undefined;
 
-      const userRoles = event?.locals?.user?.roles?.map((r: any) => r.nombre) || [];
+		// Permitir acceso a la página principal y rutas públicas
+		if (
+			currentPath === '/' ||
+			currentPath === '/login' ||
+			currentPath.startsWith('/api/') ||
+			currentPath.startsWith('/new-password') ||
+			currentPath.startsWith('/reset-password') ||
+			currentPath.startsWith('/formulario-lcb') ||
+			currentPath.startsWith('/ref/')
+		) {
+			return await resolve(event);
+		}
 
-      // Buscar la ruta actual en la lista de paths definidos
-      const pathConfig = paths?.find((p) => p.root === currentPath);
+		// Redirigir a / para cualquier otra ruta
+		return redirect(307, '/');
+	}
 
-      // Si la ruta está definida en paths y el usuario no tiene los roles necesarios, redirigir
-      if (pathConfig && !pathConfig?.roles?.some((role) => userRoles.includes(role))) {
-        return redirect(307, '/admin');
-      }
 
-      return await resolve(event);
-    } else {
-      // Token inválido, limpiar sesión
-      event.locals.user = undefined;
-      event.cookies.delete('token', { path: '/' });
-      return await resolve(event);
-    }
-  } catch (error) {
-    // Error en la verificación del token, limpiar sesión
-    console.error('Error verificando el token:', error);
-    event.locals.user = undefined;
-    event.cookies.delete('token', { path: '/' });
-    return await resolve(event);
-  }
+	try {
+		const res = await api.get({ fetch, endpoint: 'auth/user-admin', token });
+
+		console.log(
+			JSON.stringify({
+				ok: res?.ok,
+				dataType: typeof res?.data,
+				dataKeys: res?.data ? Object.keys(res.data) : 'null'
+			})
+		);
+
+		if (res?.ok) {
+
+			// Validar que res.data tenga estructura mínima de usuario
+			if (res.data && (res.data.id || res.data.email)) {
+				event.locals.user = res.data;
+			} else {
+				event.locals.user = undefined;
+				event.cookies.delete('token', { secure: false, path: '/' });
+				return redirect(307, '/');
+			}
+
+			return await resolve(event);
+		} else {
+			// Token inválido, limpiar sesión y redirigir a /
+			event.locals.user = undefined;
+			event.cookies.delete('token', { secure: false, path: '/' });
+			return redirect(307, '/');
+		}
+	} catch (error) {
+		event.locals.user = undefined;
+		event.cookies.delete('token', { secure: false, path: '/' });
+		return redirect(307, '/');
+	}
 }
+
+export const handleError: HandleServerError = async ({ error, event, status, message }) => {
+	// Ignorar errores de Chrome DevTools
+	if (event?.url?.pathname?.startsWith('/.well-known/')) {
+		return { message: 'Not Found' };
+	}
+
+	console.error('handleError: ', error, event, status, message);
+	return { message };
+};

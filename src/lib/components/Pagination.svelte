@@ -1,22 +1,35 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 
-	export let prev: number | undefined | null;
-	export let next: number | undefined | null;
-	export let lastPage: number | undefined | null;
-	export let currentPage: number | undefined | null;
+	// Aceptar tanto el objeto meta completo como props individuales
+	export let meta: {
+		prev?: number | null;
+		next?: number | null;
+		lastPage?: number | null;
+		currentPage?: number | null;
+		total?: number | null;
+		perPage?: number | null;
+	} | undefined = undefined;
+
+	// Props individuales (compatibilidad con versión anterior)
+	export let prev: number | undefined | null = undefined;
+	export let next: number | undefined | null = undefined;
+	export let lastPage: number | undefined | null = undefined;
+	export let currentPage: number | undefined | null = undefined;
 	export let total: number | undefined | null = undefined;
 	export let perPage: number | undefined | null = undefined;
 	export let url = $page.url.pathname;
 
-	// ignorar props
-	function ignoreProps() {
-		total;
-		perPage;
-	}
+	// Usar meta si está disponible, sino usar props individuales
+	$: _prev = meta?.prev ?? prev;
+	$: _next = meta?.next ?? next;
+	$: _lastPage = meta?.lastPage ?? lastPage;
+	$: _currentPage = meta?.currentPage ?? currentPage;
+	$: _total = meta?.total ?? total;
+	$: _perPage = meta?.perPage ?? perPage;
 
-	$: nextUrl = getUrlForPage($page.url.searchParams, next);
-	$: previousUrl = getUrlForPage($page.url.searchParams, prev);
+	$: nextUrl = getUrlForPage($page.url.searchParams, _next);
+	$: previousUrl = getUrlForPage($page.url.searchParams, _prev);
 
 	function getUrlForPage(searchParams: URLSearchParams, page: number | undefined | null) {
 		if (!page) return '';
@@ -43,14 +56,13 @@
 			>
 				Ant.</a
 			>
-		</li>
-		<li>
+		</li>		<li>
 			<span
 				class="relative block bg-transparent px-5 text-lg transition-all duration-300 dark:text-gray-300 text-gray-700"
 			>
-				{currentPage}
+				{_currentPage}
 				de
-				{lastPage}
+				{_lastPage}
 			</span>
 		</li>
 		<!-- Next button -->

@@ -11,22 +11,20 @@
 
 	$: user = $page.data.user;
 
-	const style = {
-		container: `bg-gray-100 h-screen overflow-hidden relative`,
-		main: `h-screen overflow-auto pb-36 pt-4 px-2 md:pb-8 lg:px-4`,
-		mainContainer: `flex flex-col h-screen pl-0 w-full lg:pl-24`
-	};
+    const style = {
+        container: `bg-white h-screen overflow-hidden relative`,
+        main: `bg-white h-full overflow-y-auto pb-36 pt-4 px-2 md:pb-8 lg:px-4`,
+        mainContainer: `flex flex-col h-screen pl-0 w-full lg:pl-24`
+    };
 
 
 		// Diccionario de rutas a títulos
 	const routeTitles: Record<string, string> = {
 		'/admin': 'Inicio',
-		'/admin/proyectos': 'Proyectos',
-		'/admin/clientes': 'Clientes',
-		'/admin/documentos': 'Documentos',
-		'/admin/lotes': 'Lotes',
-		'/admin/expensas': 'Expensas',
-		'/admin/configuracion': 'Configuración',
+		'/admin/lcb': 'LCB',
+		'/admin/todos': 'Todos',
+		'/admin/mis-leads': 'Mis Leads',
+		'/admin/nuevos-interesados': 'Nuevos Interesados',
 		// Agrega aquí más rutas y títulos según sea necesario
 	};
 
@@ -80,8 +78,6 @@
 			/>
 			<main
 				class={style.main}
-				style="background-image: 
-    );"
 			>
 				<slot />
 			</main>

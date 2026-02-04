@@ -29,7 +29,7 @@
 			¿Está seguro de que desea eliminar {dataNameToDelete}?
 		</h3>
 
-		<Input type="hidden" name="identifier" value={identifier} />
+		<Input type="hidden" name="id" value={identifier} />
 
 		<div class="flex items-center gap-2 max-w-[300px] mx-auto">
 			<Button type="submit" class="w-full bg-red-600 hover:bg-red-700">

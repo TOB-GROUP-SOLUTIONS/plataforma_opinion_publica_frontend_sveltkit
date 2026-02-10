@@ -64,7 +64,13 @@ export const actions = {
 
 		if (res?.data?.access_token) {
 			console.log('[+page.server.ts] - Access token recibido, guardando en cookie');
-			cookies.set('token', res?.data?.access_token, { secure: false, path: '/' });
+			cookies.set('token', res?.data?.access_token, { 
+				secure: true, // IMPORTANTE: true en producción (HTTPS)
+				httpOnly: true, // Protección contra XSS
+				sameSite: 'lax', // Protección contra CSRF
+				path: '/',
+				maxAge: 60 * 60 * 24 * 7 // 7 días
+			});
 			console.log('[+page.server.ts] - Redirigiendo a /admin con token guardado');
 			redirect(303, '/admin');
 		}

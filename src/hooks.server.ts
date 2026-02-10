@@ -51,7 +51,7 @@ export async function handle({ event, resolve }: any) {
 				event.locals.user = res.data;
 			} else {
 				event.locals.user = undefined;
-				event.cookies.delete('token', { secure: false, path: '/' });
+				event.cookies.delete('token', { path: '/' });
 				return redirect(307, '/');
 			}
 
@@ -59,12 +59,12 @@ export async function handle({ event, resolve }: any) {
 		} else {
 			// Token inválido, limpiar sesión y redirigir a /
 			event.locals.user = undefined;
-			event.cookies.delete('token', { secure: false, path: '/' });
+			event.cookies.delete('token', { path: '/' });
 			return redirect(307, '/');
 		}
 	} catch (error) {
 		event.locals.user = undefined;
-		event.cookies.delete('token', { secure: false, path: '/' });
+		event.cookies.delete('token', { path: '/' });
 		return redirect(307, '/');
 	}
 }

@@ -1,6 +1,7 @@
 import * as api from '$lib/api';
 import { redirect } from '@sveltejs/kit';
 import { fail } from '@sveltejs/kit';
+import { dev } from '$app/environment';
 
 export function load({ locals, url, cookies }: any) {
 	console.log('[+page.server.ts] - Load function - locals.user:', locals.user);
@@ -64,8 +65,8 @@ export const actions = {
 
 		if (res?.data?.access_token) {
 			console.log('[+page.server.ts] - Access token recibido, guardando en cookie');
-			cookies.set('token', res?.data?.access_token, { 
-				secure: true, // IMPORTANTE: true en producción (HTTPS)
+			cookies.set('token', res?.data?.access_token, {
+				secure: !dev, // Dinámico: false en dev (HTTP), true en prod (HTTPS)
 				httpOnly: true, // Protección contra XSS
 				sameSite: 'lax', // Protección contra CSRF
 				path: '/',

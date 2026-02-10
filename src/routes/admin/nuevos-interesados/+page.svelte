@@ -11,15 +11,37 @@
     import { Modal, Button, Label, Input, Textarea } from 'flowbite-svelte';
     import Toast from '$lib/components/ui/Toast.svelte';
 	import Select from 'svelte-select';
+	import SortInput from '$lib/components/dashboard/SortInput.svelte';
 
 	export let data;
     let successMessage = '';
     let errorMessage = '';
+    let formModalFilter = false;
+    let fechaDesde: string = '';
+    let fechaHasta: string = '';
+    let count: number = 0;
+    let modalOrdering: string = '';
+    let selectedProgram: string = '';
+
+    $: count = (fechaDesde ? 1 : 0) + (fechaHasta ? 1 : 0) + (selectedProgram ? 1 : 0);
 
 	let { leads, meta, searchParams } = data;
 
 	$: ({ leads, meta, searchParams, users } = data);
 	$: leadsArray = leads;
+
+	// Sincronizar filtros con URL cuando cambia la página (pero no mientras se edita el modal)
+	$: if (browser && $page.url.searchParams && !formModalFilter) {
+		const urlFromDate = $page.url.searchParams.get('fromDate') || '';
+		const urlToDate = $page.url.searchParams.get('toDate') || '';
+		const urlProgram = $page.url.searchParams.get('program') || '';
+		
+		if (urlFromDate !== fechaDesde || urlToDate !== fechaHasta || urlProgram !== selectedProgram) {
+			fechaDesde = urlFromDate;
+			fechaHasta = urlToDate;
+			selectedProgram = urlProgram;
+		}
+	}
 
 	// Polling de leads
 	let isRefreshing = false;
@@ -69,6 +91,11 @@
 
 	onMount(() => {
 		if (browser) {
+			// Inicializar filtros desde URL
+			fechaDesde = $page.url.searchParams.get('fromDate') || '';
+			fechaHasta = $page.url.searchParams.get('toDate') || '';
+			selectedProgram = $page.url.searchParams.get('program') || '';
+			
 			startPolling();
 		}
 	});
@@ -307,6 +334,55 @@
 		goto(`?${params.toString()}`);
 	}
 
+	function handleClearFilters() {
+		fechaDesde = '';
+		fechaHasta = '';
+		modalOrdering = '';
+		selectedProgram = '';
+		const params = new URLSearchParams($page.url.searchParams);
+		params.delete('order');
+		params.delete('direction');
+		params.delete('page');
+		params.delete('program');
+		params.delete('fromDate');
+		params.delete('toDate');
+		goto(`?${params.toString()}`);
+		formModalFilter = false;
+	}
+
+	function handleApplyDateFilter() {
+		if (fechaHasta && fechaDesde && fechaHasta < fechaDesde) {
+			fechaHasta = '';
+		}
+		const params = new URLSearchParams($page.url.searchParams);
+		if (modalOrdering) {
+			const [order, direction] = modalOrdering.split(' ');
+			params.set('order', order);
+			params.set('direction', direction);
+		} else {
+			params.delete('order');
+			params.delete('direction');
+		}
+		if (selectedProgram) {
+			params.set('program', selectedProgram);
+		} else {
+			params.delete('program');
+		}
+		if (fechaDesde) {
+			params.set('fromDate', fechaDesde);
+		} else {
+			params.delete('fromDate');
+		}
+		if (fechaHasta) {
+			params.set('toDate', fechaHasta);
+		} else {
+			params.delete('toDate');
+		}
+		params.set('page', '1');
+		goto(`?${params.toString()}`);
+		formModalFilter = false;
+	}
+
 </script>
 
 <svelte:head>
@@ -353,21 +429,29 @@
 			</button>
 		</div>
 
-		<div class="flex flex-col md:flex-row gap-4 items-center w-full md:w-auto">
-			<SearchInput
-				placeholder="Buscar por nombre, DNI, teléfono"
-			/>
+		<div class="flex flex-col md:flex-row gap-4 items-stretch md:items-end w-full md:w-auto">
+			<div class="w-full md:flex-1">
+				<SearchInput
+					placeholder="Buscar por nombre, DNI, teléfono"
+				/>
+			</div>
 
-			<select class="border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-700">
-				<option>Del más reciente al más viejo</option>
-				<option>Del más viejo al más reciente</option>
-			</select>
+			<div>
+				<SortInput
+					{orderCols}
+				/>
+			</div>
 
-			<button class="border border-gray-300 rounded-lg px-6 py-2 bg-white text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+			<button class="border border-gray-300 rounded-md px-3 py-2 flex items-center h-[42px] relative" on:click={() => (formModalFilter = true)}>
 				Filtrar
-				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<svg class="w-6 h-6 text-gray-500 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
 				</svg>
+				{#if count > 0}
+				<span class="text-xs font-semibold text-blue-800 bg-blue-200 rounded-full absolute top-0 right-0 flex items-center justify-center w-4 h-4" style="transform: translate(50%, -50%);">
+					{count}
+				</span>
+				{/if}
 			</button>
 		</div>
 	</div>
@@ -647,6 +731,127 @@
 </Modal>
 
 
+
+<!-- Modal de Filtros por Fechas -->
+<Modal bind:open={formModalFilter} size="sm" autoclose={false} class="w-full">
+	<div class="p-6">
+		<div class="space-y-4">
+			<!-- Ordenar por -->
+			<div>
+				<Label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+					Ordenar por
+				</Label>
+				<select
+					bind:value={modalOrdering}
+					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5"
+				>
+					<option value="">Sin orden</option>
+					<option value="full_name asc">Nombre (A-Z)</option>
+					<option value="full_name desc">Nombre (Z-A)</option>
+					<option value="created_at desc">Fecha (más reciente)</option>
+					<option value="created_at asc">Fecha (más antigua)</option>
+				</select>
+			</div>
+
+			<!-- Tipo de Programa -->
+			<div>
+				<Label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+					Tipo de Programa
+				</Label>
+				<select
+					bind:value={selectedProgram}
+					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5"
+				>
+					<option value="">Todos</option>
+					<option value="tutoria">Tutoría</option>
+					<option value="individuales">Individual</option>
+					<option value="grupos">Grupo</option>
+				</select>
+			</div>
+
+			<!-- Fecha Desde -->
+			<div>
+				<Label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+					Fecha Desde
+				</Label>
+				<div class="relative">
+					<input
+						type="date"
+						bind:value={fechaDesde}
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 pr-10"
+						style="color-scheme: light;"
+					/>
+					<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+						<svg
+							class="w-5 h-5 text-gray-500"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+							/>
+						</svg>
+					</div>
+				</div>
+			</div>
+
+			<!-- Fecha Hasta -->
+			<div>
+				<Label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+					Fecha Hasta
+				</Label>
+				<div class="relative">
+					<input
+						type="date"
+						bind:value={fechaHasta}
+						min={fechaDesde || undefined}
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-gray-500 focus:border-gray-500 block w-full p-2.5 pr-10"
+						style="color-scheme: light;"
+					/>
+					<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+						<svg
+							class="w-5 h-5 text-gray-500"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+							/>
+						</svg>
+					</div>
+				</div>
+			</div>
+
+			<!-- Botones -->
+			<div class="flex gap-3 w-full mt-6">
+				<Button
+					type="button"
+					on:click={handleClearFilters}
+					class="flex-1 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 rounded-md"
+				>
+					Borrar Todo
+				</Button>
+				<Button
+					type="button"
+					on:click={handleApplyDateFilter}
+					class="flex-1 bg-gray-700 hover:bg-gray-800 text-white rounded-md"
+				>
+					Filtrar
+				</Button>
+			</div>
+		</div>
+	</div>
+</Modal>
 
 {#if successMessage.length > 0}
 	<Toast type="success" dismissible={true} showToast={true} bind:successMessage />

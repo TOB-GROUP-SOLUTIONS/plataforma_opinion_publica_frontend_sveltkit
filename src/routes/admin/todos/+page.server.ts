@@ -12,13 +12,17 @@ export const load = async ({ cookies, locals, url, fetch }: any) => {
 	const order = url.searchParams.get('order') || 'id';
 	const direction = url.searchParams.get('direction') || 'desc';
 	const status = url.searchParams.get('status') || '';
+	const fromdate = url.searchParams.get('fromDate') || '';
+	const todate = url.searchParams.get('toDate') || '';
 
 	const params = new URLSearchParams({
 		page,
 		search,
 		order,
 		direction,
-		status
+		status,
+		fromdate,
+		todate
 	});
 
 	const [leadsresponse, usersResponse] = await Promise.all([
@@ -147,6 +151,47 @@ export const actions: Actions = {
 		});
 
 		if (!response.ok) throw error(500, 'Error al restaurar');
+
+		return { success: true };
+	},
+
+	savePersonalRecord: async ({ cookies, request }) => {
+		const token = cookies.get('token');
+		const data = await request.formData();
+		const leadId = data.get('lead_id');
+
+		const personalData = {
+			full_name: data.get('full_name'),
+			dni: data.get('dni'),
+			birth_date: data.get('birthDate'),
+			email: data.get('email'),
+			parent_full_name: data.get('parentName'),
+			parent_relation: data.get('relationshipType'),
+			parent_email: data.get('parentEmail'),
+			parent_phone: data.get('phone'),
+			program_type: data.get('programType'),
+			institution: data.get('school'),
+			associated_product: data.get('product'),
+			allergies: data.get('allergies'),
+			preexisting_conditions: data.get('preexisting_conditions'),
+			current_illnesses: data.get('current_illnesses'),
+			medical_observations: data.get('medical_observations'),
+			requires_medication: data.get('requires_medication'),
+			invoice_type: data.get('invoice_type'),
+			business_name: data.get('business_name'),
+			cuit_cuil: data.get('cuit_cuil'),
+			billing_address: data.get('billing_address'),
+			salary: data.get('salary') ? parseFloat(data.get('salary') as string) : null
+		};
+
+		const response = await api.patch({
+			fetch,
+			endpoint: `leads/${leadId}`,
+			body: JSON.stringify(personalData),
+			token
+		});
+
+		if (!response.ok) throw error(500, 'Error al guardar la ficha personal');
 
 		return { success: true };
 	}

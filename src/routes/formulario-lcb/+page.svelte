@@ -34,7 +34,12 @@
 			on:click={() => window.history.back()}
 		>
 			<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M6 18L18 6M6 6l12 12"
+				/>
 			</svg>
 		</button>
 
@@ -139,9 +144,7 @@
 			</div>
 
 			<div class="mb-4">
-				<label for="email_alumno" class="block text-sm text-gray-700 mb-1">
-					Email
-				</label>
+				<label for="email_alumno" class="block text-sm text-gray-700 mb-1"> Email </label>
 				<input
 					type="email"
 					id="email_alumno"
@@ -149,11 +152,10 @@
 					class="w-full px-3 py-2 border border-gray-300 rounded bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
 				/>
 			</div>
+			
 
 			<div class="mb-4">
-				<label for="telefono_alumno" class="block text-sm text-gray-700 mb-1">
-					Teléfono
-				</label>
+				<label for="telefono_alumno" class="block text-sm text-gray-700 mb-1"> Teléfono </label>
 				<input
 					type="tel"
 					id="telefono_alumno"
@@ -161,6 +163,37 @@
 					class="w-full px-3 py-2 border border-gray-300 rounded bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
 				/>
 			</div>
+
+			<div class="mb-4">
+				<label for="localidad" class="block text-sm text-gray-700 mb-1"> Localidad </label>
+				<input
+					type="text"
+					id="localidad"
+					name="localidad"
+					class="w-full px-3 py-2 border border-gray-300 rounded bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+				/>
+			</div>
+
+			<div class="mb-4">
+				<label for="dni" class="block text-sm text-gray-700 mb-1"> DNI </label>
+				<input
+					type="text"
+					id="dni"
+					name="dni"
+					class="w-full px-3 py-2 border border-gray-300 rounded bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+				/>
+			</div>
+
+			<div class="mb-4">
+				<label for="fecha_nacimiento" class="block text-sm text-gray-700 mb-1"> Fecha de Nacimiento </label>
+				<input
+					type="text"
+					id="fecha_nacimiento"
+					name="fecha_nacimiento"
+					class="w-full px-3 py-2 border border-gray-300 rounded bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+				/>
+			</div>
+
 
 			<div class="mb-4">
 				<label for="es_alumno" class="block text-sm text-gray-700 mb-2">
@@ -179,9 +212,7 @@
 			</div>
 
 			<div class="mb-4">
-				<label for="curso_actual" class="block text-sm text-gray-700 mb-1">
-					Curso actual
-				</label>
+				<label for="curso_actual" class="block text-sm text-gray-700 mb-1"> Curso actual </label>
 				<input
 					type="text"
 					id="curso_actual"
@@ -191,13 +222,41 @@
 			</div>
 
 			<div class="mb-6">
-				<label for="sede_actual" class="block text-sm text-gray-700 mb-1">
-					Sede actual
-				</label>
+				<label for="sede_actual" class="block text-sm text-gray-700 mb-1"> Sede actual </label>
 				<input
 					type="text"
 					id="sede_actual"
 					name="sede_actual"
+					class="w-full px-3 py-2 border border-gray-300 rounded bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+				/>
+			</div>
+
+			<div class="mb-6">
+				<label for="anio_curso" class="block text-sm text-gray-700 mb-1"> En que año fue la ultima vez que curso?</label>
+				<input
+					type="text"
+					id="anio_curso"
+					name="anio_curso"
+					class="w-full px-3 py-2 border border-gray-300 rounded bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+				/>
+			</div>
+
+			<div class="mb-6">
+				<label for="ultimo_nivel" class="block text-sm text-gray-700 mb-1"> Cual fue el ultimo nivel que curso?</label>
+				<input
+					type="text"
+					id="ultimo_nivel"
+					name="ultimo_nivel"
+					class="w-full px-3 py-2 border border-gray-300 rounded bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+				/>
+			</div>
+
+			<div class="mb-6">
+				<label for="completo_nivel" class="block text-sm text-gray-700 mb-1"> Completo el nivel? </label>
+				<input
+					type="text"
+					id="completo_nivel"
+					name="completo_nivel"
 					class="w-full px-3 py-2 border border-gray-300 rounded bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
 				/>
 			</div>

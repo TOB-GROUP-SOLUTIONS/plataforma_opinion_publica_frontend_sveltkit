@@ -20,6 +20,8 @@
 	function translate(label: string | null) {
 		if (!label) return;
 		if (label === 'createdAt') return 'fecha';
+		if (label === 'created_at') return 'fecha';
+
 		if (label === 'asc') return 'menor a mayor';
 		if (label === 'desc') return 'mayor a menor';
 		return label;

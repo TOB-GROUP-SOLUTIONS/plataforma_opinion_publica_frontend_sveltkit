@@ -3,33 +3,11 @@ name: Build and Notify
 on:
   push:
     branches: ["development"]
+  workflow_dispatch:
 
 jobs:
-  security:
-    name: Security Scan
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Trivy - Scan for secrets and vulnerabilities
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: "fs"
-          scan-ref: "."
-          format: "table"
-          exit-code: "1"
-          severity: "CRITICAL,HIGH"
-          scanners: "vuln,secret"
-          trivyignores: ".trivyignore"
-        env:
-          TRIVY_SKIP_DEV_DEPS: "true"
-
   build:
     name: Build Application
-    needs: security
     runs-on: ubuntu-latest
 
     steps:

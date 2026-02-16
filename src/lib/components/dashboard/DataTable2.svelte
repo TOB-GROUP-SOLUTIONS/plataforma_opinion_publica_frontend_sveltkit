@@ -109,7 +109,7 @@
 					{/each}
 
 					{#if showActions}
-						<TableBodyCell class="px-6 py-4 bg-white overflow-visible align-middle">
+						<TableBodyCell class="px-6 py-4 bg-white overflow-auto align-middle">
 							<div class="flex gap-2 justify-center items-center relative">
 								{#each actions as action}
 									<svelte:component

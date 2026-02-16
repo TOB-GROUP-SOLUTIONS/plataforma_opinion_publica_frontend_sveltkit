@@ -66,6 +66,7 @@
 					return '<span class="bg-red-600 rounded-full text-white px-7 py-2 ">No contestar</span>';
 				if (lead.interest_level?.value == 'NO_RESPONSE')
 					return '<span class="bg-yellow-600 rounded-full text-white px-7 py-2 ">Sin respuesta</span>';
+				return '-';
 			case 'created_at':
 				return new Date(lead.created_at).toLocaleDateString('es-AR');
 			case 'source':

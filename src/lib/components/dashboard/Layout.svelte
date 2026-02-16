@@ -13,7 +13,7 @@
 
     const style = {
         container: `bg-white h-screen overflow-hidden relative`,
-        main: `bg-white h-full overflow-y-auto pb-36 pt-4 px-2 md:pb-8 lg:px-4`,
+        main: `bg-white h-full overflow-y-auto pb-36 pt-4 px-2 md:pb-8 lg:px-4 text-xs md:text-sm lg:text-base`,
         mainContainer: `flex flex-col h-screen pl-0 w-full lg:pl-24`
     };
 
@@ -47,7 +47,6 @@
 		if (path.startsWith('/admin/propietarios')) return 'Clientes';
 		if (path.startsWith('/admin/unidades')) return 'Unidades';
 		if (path.startsWith('/admin/lotes')) return 'Lotes';
-		if (path.startsWith('/admin/perfil')) return 'Perfil';
 		if (path.startsWith('/admin/usuarios')) return 'Usuarios';
 		if (path.startsWith('/admin/configuracion-expensas')) return 'Configuración';
 

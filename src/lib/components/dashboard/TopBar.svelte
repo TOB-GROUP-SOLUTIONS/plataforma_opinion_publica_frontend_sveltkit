@@ -68,7 +68,6 @@
 						<span class="text-4xl text-[#DD052B]">{user?.firstname?.charAt(0).toUpperCase() ?? ''}</span>
 					</div>
 					<Dropdown triggeredBy=".acs" class="mt-2">
-						<a class="block text-xs text-gray-700" href="/admin/perfil"><DropdownItem class="text-center">Perfil</DropdownItem></a>
 						<DropdownItem class="text-center flex justify-center text-gray-600" slot="footer" on:click={() => form.requestSubmit()}><ArrowLeftToBracketOutline/> Cerrar sesión</DropdownItem>
 					</Dropdown>
 					<form

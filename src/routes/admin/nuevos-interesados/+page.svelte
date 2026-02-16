@@ -290,6 +290,8 @@
             } else {
                 errorMessage = result?.error ?? 'Error al asignar responsable';
             }
+
+			update();
         };
     }
 

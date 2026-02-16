@@ -115,7 +115,8 @@ export const actions: Actions = {
 		console.log('Asignando lead', leadId, 'to user', userId);
 
 		const UpdateLeadDto = {
-			assigned_to_user_id: userId
+			assigned_to_user_id: userId,
+			status: 13
 		};
 
 		console.log('UpdateLeadDto:', UpdateLeadDto);

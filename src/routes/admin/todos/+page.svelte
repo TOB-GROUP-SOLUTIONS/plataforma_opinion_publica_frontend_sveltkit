@@ -74,8 +74,8 @@
 			case 'city':
 				return lead.city || 'Corrientes'; // Placeholder - ajustar según tus datos
 			case 'responsable':
-				return lead.assigned_to
-					? `${lead.assigned_to.firstname} ${lead.assigned_to.lastname}`
+				return lead.assigned_to_user_id
+					? `${lead.assigned_to_user_id.firstname} ${lead.assigned_to_user_id.lastname}`
 					: 'Sin asignar';
 			default:
 				return '-';
@@ -111,8 +111,8 @@
 
 		// Buscar el lead seleccionado para obtener su responsable actual
 		const lead = leads.find((l: Lead) => l.id === selectedLeadId);
-		if (lead?.assigned_to) {
-			currentResponsable = `${lead.assigned_to.firstname} ${lead.assigned_to.lastname}`;
+		if (lead?.assigned_to_user_id) {
+			currentResponsable = `${lead.assigned_to_user_id.firstname} ${lead.assigned_to_user_id.lastname}`;
 		} else {
 			currentResponsable = 'Sin asignar';
 		}

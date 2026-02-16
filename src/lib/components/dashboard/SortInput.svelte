@@ -50,7 +50,6 @@
 	}
 </script>
 
-<Label forId="ordenar" class="mb-2 font-popMedium">Ordenación</Label>
 
 <Select
 	items={orderOpts}

@@ -290,6 +290,8 @@
             } else {
                 errorMessage = result?.error ?? 'Error al asignar responsable';
             }
+
+			update();
         };
     }
 
@@ -391,16 +393,16 @@
 
 <div class="min-h-screen bg-white p-6">
 
-	<div class="mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+	<div class="mb-6 flex flex-row gap-4 items-center justify-between w-full flex-wrap">
 		<button
 			on:click={handleNewLead}
-			class="bg-[#2E7D32] hover:bg-[#1B5E20] text-white px-6 py-2 rounded-lg flex items-center gap-2 transition-colors"
+			class="bg-[#2E7D32] hover:bg-[#1B5E20] text-white px-6 py-2 rounded-lg flex items-center gap-2 transition-colors h-[42px]"
 		>
 			<span class="text-xl">+</span>
 			Nuevo Formulario
 		</button>
 
-		<div class="flex gap-2 text-sm text-gray-500 whitespace-nowrap">
+		<div class="flex gap-2 text-sm text-gray-500 whitespace-nowrap items-center">
 			{#if isRefreshing}
 				<span class="flex items-center">
 					<svg class="animate-spin h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -429,8 +431,8 @@
 			</button>
 		</div>
 
-		<div class="flex flex-col md:flex-row gap-4 items-stretch md:items-end w-full md:w-auto">
-			<div class="w-full md:flex-1">
+		<div class="flex gap-4 items-center flex-1 min-w-max justify-end">
+			<div class="min-w-[300px] h-[42px] flex items-center">
 				<SearchInput
 					placeholder="Buscar por nombre, DNI, teléfono"
 				/>
@@ -442,7 +444,7 @@
 				/>
 			</div>
 
-			<button class="border border-gray-300 rounded-md px-3 py-2 flex items-center h-[42px] relative" on:click={() => (formModalFilter = true)}>
+			<button class="border border-gray-300 rounded-md px-3 py-2 flex items-center h-[42px] relative whitespace-nowrap" on:click={() => (formModalFilter = true)}>
 				Filtrar
 				<svg class="w-6 h-6 text-gray-500 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />

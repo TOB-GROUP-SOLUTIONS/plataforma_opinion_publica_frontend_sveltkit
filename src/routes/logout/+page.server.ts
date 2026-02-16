@@ -6,7 +6,7 @@ export async function load() {
 
 export const actions = {
 	async default({ cookies }) {
-		cookies.delete('token', { path: '/' });
+		cookies.delete('token', { path: '/' });		
 		redirect(303, '/');
 	}
 };

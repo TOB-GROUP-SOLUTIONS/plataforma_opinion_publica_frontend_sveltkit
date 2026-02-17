@@ -45,7 +45,12 @@ export const actions: Actions = {
             current_level: data.get('current_level'),
             last_course_year: data.get('last_course_year') ? parseInt(data.get('last_course_year') as string) : null,
             last_course: data.get('last_course'),
-            completed_level: data.get('completed_level') === 'true'
+            completed_level: data.get('completed_level') === 'true',
+            estimated_travel_month: data.get('estimated_travel_month'),
+            estimated_travel_year: data.get('estimated_travel_year') ? parseInt(data.get('estimated_travel_year') as string) : null,
+            passport_number: data.get('passport_number'),
+            passport_validity: data.get('passport_validity') ? new Date(data.get('passport_validity') as string) : null,
+            passport_file_id: data.get('passport_file_id') ? parseInt(data.get('passport_file_id') as string) : null
         };
 
         console.log('Creating lead from public referral:', CreateLeadDto);

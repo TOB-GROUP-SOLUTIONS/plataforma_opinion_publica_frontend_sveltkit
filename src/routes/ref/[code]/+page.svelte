@@ -12,6 +12,9 @@
 	let isSubmitting = false;
 	let successMessage = '';
 	let errorMessage = '';
+	let passportFileId: number | null = null;
+	let isUploadingFile = false;
+	let uploadError = '';
 
 	$: if (form?.success) {
 		successMessage = '¡Formulario enviado con éxito! Ya puedes cerrar esta ventana.';
@@ -35,6 +38,28 @@
 		{ name: 'Sede Virtual', value: 'sede_virtual' }
 	];
 
+	const monthOptions = [
+		{ name: 'Enero', value: 'Enero' },
+		{ name: 'Febrero', value: 'Febrero' },
+		{ name: 'Marzo', value: 'Marzo' },
+		{ name: 'Abril', value: 'Abril' },
+		{ name: 'Mayo', value: 'Mayo' },
+		{ name: 'Junio', value: 'Junio' },
+		{ name: 'Julio', value: 'Julio' },
+		{ name: 'Agosto', value: 'Agosto' },
+		{ name: 'Septiembre', value: 'Septiembre' },
+		{ name: 'Octubre', value: 'Octubre' },
+		{ name: 'Noviembre', value: 'Noviembre' },
+		{ name: 'Diciembre', value: 'Diciembre' }
+	];
+
+	const yearOptions = [
+		{ name: '2025', value: 2025 },
+		{ name: '2026', value: 2026 },
+		{ name: '2027', value: 2027 },
+		{ name: '2028', value: 2028 }
+	];
+
 	function handleSubmit() {
 		isSubmitting = true;
 		return async ({ update }: any) => {
@@ -45,18 +70,20 @@
 
 	function fillTestData() {
 		const fields = {
-			full_name: 'Juan Pérez García',
-			dni: '35456123',
-			email: 'juan.perez@email.com',
-			phone: '+54 11 4567-8901',
-			birth_date: '2005-03-15',
-			nationality: 'Argentina',
-			city: 'Buenos Aires',
-			source: 'Redes Sociales',
-			current_level: 'Advanced 1',
-			last_course_year: '2024',
-			last_course: 'Level 7',
-			objective: 'Mejorar mi inglés para estudios universitarios en el exterior'
+			'full_name': 'Juan Pérez García',
+			'dni': '35456123',
+			'email': 'juan.perez@email.com',
+			'phone': '+54 11 4567-8901',
+			'birth_date': '2005-03-15',
+			'nationality': 'Argentina',
+			'city': 'Buenos Aires',
+			'source': 'Redes Sociales',
+			'current_level': 'Advanced 1',
+			'last_course_year': '2024',
+			'last_course': 'Level 7',
+			'objective': 'Mejorar mi inglés para estudios universitarios en el exterior',
+			'passport_number': 'AA123456',
+			'passport_validity': '2030-06-15'
 		};
 
 		Object.entries(fields).forEach(([id, value]) => {
@@ -75,6 +102,64 @@
 
 		const program = document.getElementById('program') as HTMLSelectElement;
 		if (program) program.value = 'tutoria';
+
+		const estimatedTravelMonth = document.getElementById('estimated_travel_month') as HTMLSelectElement;
+		if (estimatedTravelMonth) estimatedTravelMonth.value = 'Julio';
+
+		const estimatedTravelYear = document.getElementById('estimated_travel_year') as HTMLSelectElement;
+		if (estimatedTravelYear) estimatedTravelYear.value = '2026';
+	}
+
+	async function handlePassportFileUpload(event: Event) {
+		const input = event.target as HTMLInputElement;
+		const file = input.files?.[0];
+		
+		if (!file) {
+			passportFileId = null;
+			return;
+		}
+
+		// Validar tamaño (máximo 5MB)
+		const maxSize = 5 * 1024 * 1024; // 5MB
+		if (file.size > maxSize) {
+			uploadError = 'El archivo no debe superar los 5MB';
+			input.value = '';
+			return;
+		}
+
+		// Validar tipo de archivo
+		const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+		if (!allowedTypes.includes(file.type)) {
+			uploadError = 'Formato no válido. Use JPG, PNG o PDF';
+			input.value = '';
+			return;
+		}
+
+		isUploadingFile = true;
+		uploadError = '';
+
+		try {
+			const formData = new FormData();
+			formData.append('file', file);
+
+			const response = await fetch('/api/files/upload', {
+				method: 'POST',
+				body: formData
+			});
+
+			if (!response.ok) {
+				throw new Error('Error al subir el archivo');
+			}
+
+			const result = await response.json();
+			passportFileId = result.id;
+		} catch (error) {
+			uploadError = 'Error al subir la foto del pasaporte. Intente nuevamente.';
+			passportFileId = null;
+			input.value = '';
+		} finally {
+			isUploadingFile = false;
+		}
 	}
 </script>
 
@@ -118,8 +203,9 @@
 					</div>
 				</div>
 			{:else}
-				<form class="space-y-6" method="POST" use:enhance={handleSubmit}>
-					<input type="hidden" name="referral_code" value={referralCode} />
+			<form class="space-y-6" method="POST" use:enhance={handleSubmit} enctype="multipart/form-data">
+				<input type="hidden" name="referral_code" value={referralCode} />
+				<input type="hidden" name="passport_file_id" value={passportFileId || ''} />
 
 					<div class="flex justify-end">
 						<button
@@ -349,18 +435,69 @@
 								</Label>
 							</div>
 
+						<div>
+							<Label for="program" class="block text-sm font-medium text-gray-700">
+								Programa de Interés
+							</Label>
+							<div class="mt-1">
+								<select
+									id="program"
+									name="program"
+									class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+								>
+									<option value="" disabled selected>Selecciona una opción</option>
+									{#each programOptions as option}
+										<option value={option.value}>{option.name}</option>
+									{/each}
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="border border-[#0C2C65] rounded-lg p-6 bg-gray-50">
+					<h3 class="text-lg font-semibold text-[#0C2C65] mb-4 pb-2 border-b border-[#0C2C65]/20">
+						Planificación del Viaje
+					</h3>
+
+					<div class="space-y-4">
+						<div>
+							<Label for="objective" class="block text-sm font-medium text-gray-700">
+								¿Cuál es el objetivo del viaje de estudio?
+							</Label>
+							<div class="mt-1">
+								<Input
+									id="objective"
+									name="objective"
+									type="text"
+									class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+								/>
+							</div>
+						</div>
+
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<div>
-								<Label for="program" class="block text-sm font-medium text-gray-700">
-									Programa de Interés
+								<Label class="block text-sm font-medium text-gray-700">
+									Mes y año estimado del viaje
 								</Label>
-								<div class="mt-1">
+								<div class="mt-1 grid grid-cols-2 gap-2">
 									<select
-										id="program"
-										name="program"
+										id="estimated_travel_month"
+										name="estimated_travel_month"
 										class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 									>
-										<option value="" disabled selected>Selecciona una opción</option>
-										{#each programOptions as option}
+										<option value="" disabled selected>Mes</option>
+										{#each monthOptions as option}
+											<option value={option.value}>{option.name}</option>
+										{/each}
+									</select>
+									<select
+										id="estimated_travel_year"
+										name="estimated_travel_year"
+										class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+									>
+										<option value="" disabled selected>Año</option>
+										{#each yearOptions as option}
 											<option value={option.value}>{option.name}</option>
 										{/each}
 									</select>
@@ -368,23 +505,74 @@
 							</div>
 
 							<div>
-								<Label for="objective" class="block text-sm font-medium text-gray-700">
-									¿Cuál es el objetivo del viaje de estudio?
+								<Label for="passport_number" class="block text-sm font-medium text-gray-700">
+									Número de pasaporte
 								</Label>
 								<div class="mt-1">
 									<Input
-										id="objective"
-										name="objective"
+										id="passport_number"
+										name="passport_number"
 										type="text"
+										placeholder="AA123456"
 										class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
 									/>
 								</div>
 							</div>
 						</div>
-					</div>
 
-					<div>
-						<Button
+						<div>
+							<Label for="passport_validity" class="block text-sm font-medium text-gray-700">
+								Validez del pasaporte
+							</Label>
+							<div class="mt-1">
+								<Input
+									id="passport_validity"
+									name="passport_validity"
+									type="date"
+									class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+								/>
+							</div>
+						</div>
+
+						<div>
+							<Label for="passport_file" class="block text-sm font-medium text-gray-700">
+								Foto del pasaporte
+							</Label>
+							<div class="mt-1">
+								<input
+									id="passport_file"
+									name="passport_file"
+									type="file"
+									accept="image/jpeg,image/png,image/jpg,application/pdf"
+									on:change={handlePassportFileUpload}
+									disabled={isUploadingFile}
+									class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-[#0C2C65] hover:file:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
+								/>
+							</div>
+							{#if isUploadingFile}
+								<p class="mt-1 text-xs text-blue-600 flex items-center">
+									<svg class="animate-spin -ml-1 mr-2 h-3 w-3 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+										<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+										<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+									</svg>
+									Subiendo archivo...
+								</p>
+							{/if}
+							{#if uploadError}
+								<p class="mt-1 text-xs text-red-600">{uploadError}</p>
+							{/if}
+							{#if passportFileId}
+								<p class="mt-1 text-xs text-green-600">✓ Archivo subido correctamente</p>
+							{/if}
+							<p class="mt-1 text-xs text-gray-400">
+								Formatos: JPG, PNG, PDF (máx. 5MB)
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div>
+					<Button
 							type="submit"
 							disabled={isSubmitting}
 							class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#0C2C65] hover:bg-[#081d45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"

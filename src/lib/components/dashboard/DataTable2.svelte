@@ -109,7 +109,7 @@
 					{/each}
 
 					{#if showActions}
-						<TableBodyCell class="px-6 py-4 bg-white overflow-visible align-middle">
+						<TableBodyCell class="px-6 py-4 bg-white overflow-auto align-middle">
 							<div class="flex gap-2 justify-center items-center relative">
 								{#each actions as action}
 									<svelte:component
@@ -204,6 +204,12 @@
 															event: 'confirmPayment',
 															icon: ReceiptSolid,
 															class: 'text-sm bg-[#666666] text-white rounded-full'
+														},
+														{
+															label: 'Formulario "Mas informacion"',
+															event: 'sendMoreInfoForm',
+																icon: ReceiptSolid,
+															class: 'text-sm bg-[#666666] text-white rounded-full'
 														}
 													]
 												: [])
@@ -213,10 +219,11 @@
 										on:change_status={() => dispatch('change_status', { data: obj })}
 										on:add_budget={() => dispatch('add_budget', { data: obj })}
 										on:confirmPayment={() => dispatch('confirmPayment', { data: obj })}
+										on:sendMoreInfoForm={() => dispatch('sendMoreInfoForm', { data: obj })}
 									/>
 								{/if}
 
-								{#if $page.url.pathname === '/admin/todos'}
+								{#if $page.url.pathname === '/admin/todos'}	
 									<ActionsDropdown
 										actions={[
 											{

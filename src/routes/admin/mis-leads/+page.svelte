@@ -26,11 +26,17 @@
 	let identifierToView = {} as any;
 	let selectBudgetId: number | null = null;
 	let showPersonalRecordModal = false;
+	let showFormModal = false;
+	let selectedLeadIdForm: number | null = null;
+	let formModalUrl: string = '';
 	let formModalFilter = false;
 	let fechaDesde: string = '';
 	let fechaHasta: string = '';
 	let count: number = 0;
 	let modalOrdering: string = '';
+	
+	// Obtener URL pública del env
+	const PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL || 'http://localhost:5173';
 
 	$: count = (fechaDesde ? 1 : 0) + (fechaHasta ? 1 : 0);
 
@@ -82,8 +88,8 @@
 			case 'city':
 				return lead.city || 'Corrientes'; // Placeholder - ajustar según tus datos
 			case 'responsable':
-				return lead.assigned_to
-					? `${lead.assigned_to.firstname} ${lead.assigned_to.lastname}`
+				return lead.assigned_to_user_id
+					? `${lead.assigned_to_user_id.firstname} ${lead.assigned_to_user_id.lastname}`
 					: 'Sin asignar';
 			default:
 				return '-';
@@ -120,8 +126,8 @@
 
 		// Buscar el lead seleccionado para obtener su responsable actual
 		const lead = leads.find((l: Lead) => l.id === selectedLeadId);
-		if (lead?.assigned_to) {
-			currentResponsable = `${lead.assigned_to.firstname} ${lead.assigned_to.lastname}`;
+		if (lead?.assigned_to_user_id) {
+			currentResponsable = `${lead.assigned_to_user_id.firstname} ${lead.assigned_to_user_id.lastname}`;
 		} else {
 			currentResponsable = 'Sin asignar';
 		}
@@ -328,6 +334,12 @@
 			selectedFile = input.files[0];
 		}
 	}
+
+	function handleViewForm(e: CustomEvent) {
+		selectedLeadIdForm = e.detail?.data?.id ?? e.detail?.id;
+		formModalUrl = `${PUBLIC_URL}/formulario-ver-mas/${selectedLeadIdForm}`;
+		showFormModal = true;
+	}
 </script>
 
 <svelte:head>
@@ -369,6 +381,7 @@
 			{handleChangeStatus}
 			{handleAddBudget}
 			{handleConfirmPayment}
+			{handleViewForm}
 		/>
 	</div>
 
@@ -807,6 +820,48 @@
 		on:close={() => (showPersonalRecordModal = false)}
 	/>
 {/if}
+
+<!-- Modal: Ver Formulario -->
+<Modal bind:open={showFormModal} size="md" autoclose={false}>
+	<div class="p-6 space-y-6">
+		<h3 class="text-2xl font-semibold text-gray-600 text-center">Enlace del Formulario</h3>
+		
+		<hr class="border-gray-300" />
+
+		<div class="space-y-3">
+			<label class="block text-sm font-medium text-gray-700">Link del formulario</label>
+			<div class="flex gap-2">
+				<input 
+					type="text" 
+					value={formModalUrl}
+					readonly
+					class="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700"
+				/>
+				<button
+					type="button"
+					on:click={() => {
+						navigator.clipboard.writeText(formModalUrl);
+						successMessage = 'Link copiado al portapapeles';
+					}}
+					class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+				>
+					Copiar
+				</button>
+			</div>
+		</div>
+
+		<!-- Botones -->
+		<div class="flex gap-3 justify-center pt-4">
+			<button
+				type="button"
+				on:click={() => (showFormModal = false)}
+				class="px-6 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg font-medium transition-colors"
+			>
+				Cerrar
+			</button>
+		</div>
+	</div>
+</Modal>
 
 {#if successMessage.length > 0}
 	<Toast type="success" dismissible={true} showToast={true} bind:successMessage />

@@ -1,6 +1,14 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { page } from '$app/stores';
 	export let data: any = {};
+
+	$: leadId = $page.params.leadId;
+	console.log('Data print', data)
+
+	$: lead = data || null;
+
+	console.log('Lead data:', lead);
 
 	let isSaving = false;
 </script>
@@ -24,7 +32,7 @@
 			}}
 			class="bg-white rounded-lg p-6 space-y-6 mx-auto overflow-y-auto"
 		>
-			<input type="hidden" name="lead_id" value={data.id || ''} />
+			<input type="hidden" name="lead_id" value={leadId || ''} />
 			
 			<!-- A. Datos del alumno -->
 			<div>
@@ -34,28 +42,28 @@
 						type="text"
 						name="full_name"
 						placeholder="Nombre completo"
-						value={data.full_name || ''}
+						value={data?.lead?.lead?.full_name || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<input
 						type="text"
 						name="dni"
 						placeholder="DNI"
-						value={data.dni || ''}
+						value={data?.lead?.dni || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<input
 						type="text"
 						name="birthDate"
 						placeholder="Fecha de nacimiento"
-						value={data.birthDate || ''}
+						value={data?.lead?.birthDate || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<input
 						type="text"
 						name="email"
 						placeholder="Email del alumno"
-						value={data.email || ''}
+						value={data?.lead?.email || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 				</div>
@@ -69,7 +77,7 @@
 						type="text"
 						name="parentName"
 						placeholder="Nombre completo"
-						value={data.parent_full_name || ''}
+						value={data?.lead?.parent_full_name || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<select
@@ -77,26 +85,26 @@
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					>
 						<option value="">Relación con el alumno</option>
-						<option value="Padre" selected={data.parent_relation === 'Padre'}>Padre</option>
-						<option value="Madre" selected={data.parent_relation === 'Madre'}>Madre</option>
-						<option value="Tutor" selected={data.parent_relation === 'Tutor'}>Tutor</option>
-						<option value="Tutora" selected={data.parent_relation === 'Tutora'}>Tutora</option>
-						<option value="Abuelo" selected={data.parent_relation === 'Abuelo'}>Abuelo</option>
-						<option value="Abuela" selected={data.parent_relation === 'Abuela'}>Abuela</option>
-						<option value="Otro" selected={data.parent_relation === 'Otro'}>Otro</option>
+						<option value="Padre" selected={data?.lead?.parent_relation === 'Padre'}>Padre</option>
+						<option value="Madre" selected={data?.lead?.parent_relation === 'Madre'}>Madre</option>
+						<option value="Tutor" selected={data?.lead?.parent_relation === 'Tutor'}>Tutor</option>
+						<option value="Tutora" selected={data?.lead?.parent_relation === 'Tutora'}>Tutora</option>
+						<option value="Abuelo" selected={data?.lead?.parent_relation === 'Abuelo'}>Abuelo</option>
+						<option value="Abuela" selected={data?.lead?.parent_relation === 'Abuela'}>Abuela</option>
+						<option value="Otro" selected={data?.lead?.parent_relation === 'Otro'}>Otro</option>
 					</select>
 					<input
 						type="text"
 						name="parentEmail"
 						placeholder="Email"
-						value={data.parentEmail || ''}
+						value={data?.lead?.parentEmail || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<input
 						type="text"
 						name="phone"
 						placeholder="Teléfono"
-						value={data.phone || ''}
+						value={data?.lead?.phone || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 				</div>
@@ -110,8 +118,8 @@
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					>
 						<option value="">¿Es alumno del Liceo / instituto?</option>
-						<option value="Sí">Sí</option>
-						<option value="No">No</option>
+						<option value="Sí" selected={data?.lead?.is_liceo_student === true}>Sí</option>
+						<option value="No" selected={data?.lead?.is_liceo_student === false}>No</option>
 					</select>
 					<select
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
@@ -155,9 +163,9 @@
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					>
 						<option value="">Tipo de programa</option>
-						<option value="Tutoría" selected={data.program_type === 'Tutoría'}>Tutoría</option>
-						<option value="Grupo" selected={data.program_type === 'Grupo'}>Grupo</option>
-						<option value="Individual" selected={data.program_type === 'Individual'}
+						<option value="Tutoría" selected={data?.lead?.program_type === 'Tutoría'}>Tutoría</option>
+						<option value="Grupo" selected={data?.lead?.program_type === 'Grupo'}>Grupo</option>
+						<option value="Individual" selected={data?.lead?.program_type === 'Individual'}
 							>Individual</option
 						>
 					</select>
@@ -166,15 +174,15 @@
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					>
 						<option value="">Colegio o institución</option>
-						<option value="colegio" selected={data.institution === 'Liceo Británico'}>Colegio</option>
-						<option value="instituto" selected={data.institution === 'Instituto Cambridge'}>Instituto</option>
+						<option value="colegio" selected={data?.lead?.institution === 'Liceo Británico'}>Colegio</option>
+						<option value="instituto" selected={data?.lead?.institution === 'Instituto Cambridge'}>Instituto</option>
 					</select>
 					<input
 						type="text"
 						name="assigned_to"
 						placeholder="Responsable asignado"
-						value={data.assigned_to
-							? `${data.assigned_to.firstname} ${data.assigned_to.lastname}`
+						value={data?.lead?.assigned_to
+							? `${data?.lead?.assigned_to.firstname} ${data?.lead?.assigned_to.lastname}`
 							: ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent bg-gray-100 cursor-not-allowed"
 					/>
@@ -182,7 +190,7 @@
 						type="text"
 						name="product"
 						placeholder="Producto asociado"
-						value={data.product || ''}
+						value={data?.lead?.product || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 				</div>
@@ -208,28 +216,28 @@
 						type="text"
 						name="preexisting_conditions"
 						placeholder="Condiciones preexistentes"
-						value={data.preexisting_conditions || ''}
+						value={data?.lead?.preexisting_conditions || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<input
 						type="text"
 						name="current_illnesses"
 						placeholder="Enfermedades actuales"
-						value={data.current_illnesses || ''}
+						value={data?.lead?.current_illnesses || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<input
 						type="text"
 						name="medical_observations"
 						placeholder="Observacion para el equipo de TOGETHER"
-						value={data.medical_observations || ''}
+						value={data?.lead?.medical_observations || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<input
 						type="text"
 						name="requires_medication"
 						placeholder="¿Requiere Medicacion?"
-						value={data.requires_medication || ''}
+						value={data?.lead?.requires_medication || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 				</div>
@@ -244,10 +252,10 @@
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					>
 						<option value="">Tipo de factura</option>
-						<option value="A" selected={data.invoice_type === 'A'}>A</option>
-						<option value="B" selected={data.invoice_type === 'B'}>B</option>
-						<option value="C" selected={data.invoice_type === 'C'}>C</option>
-						<option value="E" selected={data.invoice_type === 'E'}>E</option>
+						<option value="A" selected={lead?.invoice_type === 'A'}>A</option>
+						<option value="B" selected={lead?.invoice_type === 'B'}>B</option>
+						<option value="C" selected={lead?.invoice_type === 'C'}>C</option>
+						<option value="E" selected={lead?.invoice_type === 'E'}>E</option>
 					</select>
 					<input
 						type="text"

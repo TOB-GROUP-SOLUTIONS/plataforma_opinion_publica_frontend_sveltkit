@@ -115,8 +115,11 @@ export const actions: Actions = {
 		console.log('Asignando lead', leadId, 'to user', userId);
 
 		const UpdateLeadDto = {
-			assigned_to: userId
+			assigned_to_user_id: userId,
+			status: 13
 		};
+
+		console.log('UpdateLeadDto:', UpdateLeadDto);
 
 		const response = await api.patch({
 			fetch,
@@ -124,6 +127,8 @@ export const actions: Actions = {
 			body: JSON.stringify(UpdateLeadDto),
 			token
 		});
+
+		console.log('Asignar Lead Response:', response);
 
 		if (!response.ok) throw error(500, 'Error al asignar el lead');
 

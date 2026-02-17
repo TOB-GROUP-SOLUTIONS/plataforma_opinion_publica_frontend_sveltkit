@@ -31,7 +31,7 @@ export interface Lead {
   created_at: Date;
   updatedAt: Date;
   deletedAt?: Date;
-  assigned_to?: {
+  assigned_to_user_id?: {
     id: number;
     firstname: string;
     lastname: string;

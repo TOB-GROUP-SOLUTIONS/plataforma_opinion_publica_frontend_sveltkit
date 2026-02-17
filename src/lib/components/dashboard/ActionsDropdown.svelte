@@ -7,6 +7,7 @@
 	let isOpen = false;
 	let buttonElement: HTMLButtonElement;
 	let dropdownStyle = '';
+	let dropdownElement: HTMLDivElement;
 	
 	const dispatch = createEventDispatcher();
 	
@@ -19,9 +20,21 @@
 	
 	function updateDropdownPosition() {
 		const rect = buttonElement.getBoundingClientRect();
+		const dropdownHeight = 250; // Altura aproximada del menú
+		const spaceBelow = window.innerHeight - rect.bottom;
+		
+		let top: number;
+		if (spaceBelow < dropdownHeight) {
+			// Abrir hacia arriba
+			top = rect.top - dropdownHeight - 8;
+		} else {
+			// Abrir hacia abajo
+			top = rect.bottom + 8;
+		}
+		
 		dropdownStyle = `
 			position: fixed;
-			top: ${rect.bottom + 8}px;
+			top: ${top}px;
 			right: ${window.innerWidth - rect.right}px;
 		`;
 	}
@@ -57,7 +70,7 @@
 	</button>
 	
 	{#if isOpen}
-		<div style={dropdownStyle} class="w-72 bg-white rounded-lg shadow-xl border border-gray-200 z-[99999] overflow-hidden">
+		<div bind:this={dropdownElement} style={dropdownStyle} class="w-72 bg-white rounded-lg shadow-xl border border-gray-200 z-[1000] overflow-hidden">
 
             <h1 class="p-4 font-semibold text-gray-700 text-center">Seleccionar Acción</h1>
 

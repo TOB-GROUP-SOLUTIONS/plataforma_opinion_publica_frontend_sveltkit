@@ -1,6 +1,7 @@
 import { Title } from "chart.js";
 import {UsersGroupSolid, HomeSolid, ClipboardOutline, BuildingSolid,UsersSolid, BookSolid} from "flowbite-svelte-icons"
-
+import MisLeds from "./components/ui/misLeds.svelte";
+import LCB from "./components/ui/LCB.svelte";
 export const data = [
 
 	{
@@ -47,7 +48,7 @@ export const data = [
 
 	{
 		title: 'Mis leads',
-		icon: UsersGroupSolid,
+		icon: MisLeds,
 		link: '/admin/mis-leads',
 		sub_items: [
 			{
@@ -71,7 +72,7 @@ export const data = [
 
 	{
 		title: 'LCB',
-		icon: BookSolid,
+		icon: LCB,
 		link: '/admin/lcb',
 	},
 ];

@@ -132,7 +132,7 @@
 	<div class="flex justify-center gap-4 p-4 sm:flex-row flex-col"></div>
 </div>
 
-<div class="w-full max-w-screen-4xl rounded-lg mx-auto bg-white px-6 py-8 mt-6">
+<div class="w-full max-w-screen-4xl rounded-lg mx-auto bg-gray-200 px-6 py-8 mt-6">
 	<div class="w-full flex flex-col justify-center items-center mb-4">
 		<h2 class="text-xl font-semibold text-[#0C2C65] dark:text-white mb-2 text-center">Próximos vencimientos de Presupuestos</h2>
 	</div>

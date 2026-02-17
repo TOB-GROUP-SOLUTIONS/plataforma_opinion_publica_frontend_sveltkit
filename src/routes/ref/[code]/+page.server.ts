@@ -32,13 +32,25 @@ export const actions: Actions = {
             email: data.get('email'),
             phone: data.get('phone'),
             city: data.get('city'),
-            age: data.get('age') ? parseInt(data.get('age') as string) : null,
-            programa: data.get('program'),
+            dni: data.get('dni'),
+            birth_date: data.get('birth_date') ? new Date(data.get('birth_date') as string) : null,
+            nationality: data.get('nationality'),
+            source: data.get('source') || 'Referido',
+            program_type: data.get('program'),
             referralCode: data.get('referral_code'),
             status: 1,
-            source: 'Referido',
             objective: data.get('objective'),
-            notes: data.get('consultation')
+            is_liceo_student: data.get('is_liceo_student') === 'true',
+            sede: data.get('sede'),
+            current_level: data.get('current_level'),
+            last_course_year: data.get('last_course_year') ? parseInt(data.get('last_course_year') as string) : null,
+            last_course: data.get('last_course'),
+            completed_level: data.get('completed_level') === 'true',
+            estimated_travel_month: data.get('estimated_travel_month'),
+            estimated_travel_year: data.get('estimated_travel_year') ? parseInt(data.get('estimated_travel_year') as string) : null,
+            passport_number: data.get('passport_number'),
+            passport_validity: data.get('passport_validity') ? new Date(data.get('passport_validity') as string) : null,
+            passport_file_id: data.get('passport_file_id') ? parseInt(data.get('passport_file_id') as string) : null
         };
 
         console.log('Creating lead from public referral:', CreateLeadDto);

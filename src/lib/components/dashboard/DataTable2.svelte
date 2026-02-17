@@ -32,7 +32,7 @@
 	import { page } from '$app/stores';
 
 	export let user: any;
-	export let columns: Record<string, string>[] = [];
+	export let columns: any[] = [];
 	export let data: any;
 
 	export let render: (key: string, obj: any) => any;
@@ -64,7 +64,7 @@
 		const tableContainer = document.querySelector('.overflow-x-auto.relative')!;
 		const scroll = document.getElementById('scroll')!;
 		const scrollContainer = document.getElementById('scrollContainer')!;
-		scroll.style.width = mytable.clientWidth + 'px';
+		if (mytable) scroll.style.width = mytable.clientWidth + 'px';
 		scrollContainer.addEventListener('scroll', syncScroll);
 		tableContainer.addEventListener('scroll', syncScroll2);
 	});
@@ -80,14 +80,15 @@
 <div class="overflow-visible">
 	<Table class="bg-white w-full table-fixed">
 		<TableHead>
-			{#each headers as col, i}
+			{#each columns as col, i}
 				<TableHeadCell
-					class="px-6 py-4 bg-white text-[#0C2C65] text-sm font-semibold uppercase border-b border-gray-200"
+					class="px-6 py-4 bg-white text-[#0C2C65] text-sm font-semibold uppercase border-b border-gray-200 {col.class ||
+						''}"
 				>
-					{#if orderCols.includes(keys[i])}
-						<SortBtn key={keys[i]} label={col} />
+					{#if orderCols.includes(col.key)}
+						<SortBtn key={col.key} label={col.label} />
 					{:else}
-						{col}
+						{col.label}
 					{/if}
 				</TableHeadCell>
 			{/each}
@@ -102,9 +103,9 @@
 		<TableBody>
 			{#each data as obj}
 				<TableBodyRow class="bg-white border-b border-gray-200">
-					{#each keys as key}
-						<TableBodyCell tdClass="px-6 py-4 text-[#6F6C6C] align-middle">
-							{@html render(key, obj)}
+					{#each columns as col}
+						<TableBodyCell tdClass="px-6 py-4 text-[#6F6C6C] align-middle {col.class || ''}">
+							{@html render(col.key, obj)}
 						</TableBodyCell>
 					{/each}
 
@@ -208,7 +209,7 @@
 														{
 															label: 'Formulario "Mas informacion"',
 															event: 'sendMoreInfoForm',
-																icon: ReceiptSolid,
+															icon: ReceiptSolid,
 															class: 'text-sm bg-[#666666] text-white rounded-full'
 														}
 													]
@@ -218,15 +219,15 @@
 														{
 															label: 'Formulario "Mas informacion"',
 															event: 'sendMoreInfoForm',
-																icon: ReceiptSolid,
+															icon: ReceiptSolid,
 															class: 'text-sm bg-[#666666] text-white rounded-full'
 														},
-													{
+														{
 															label: 'Ver comprobante',
 															event: 'view_proof',
 															icon: ReceiptSolid,
 															class: 'text-sm bg-[#666666] text-white rounded-full'
-														},
+														}
 													]
 												: [])
 										]}
@@ -240,7 +241,7 @@
 									/>
 								{/if}
 
-								{#if $page.url.pathname === '/admin/todos'}	
+								{#if $page.url.pathname === '/admin/todos'}
 									<ActionsDropdown
 										actions={[
 											{

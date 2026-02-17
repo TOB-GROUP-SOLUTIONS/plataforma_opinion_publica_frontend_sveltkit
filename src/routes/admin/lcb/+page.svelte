@@ -33,6 +33,8 @@
 	let editingReference: Reference | null = null;
 	let confirmDelete = false;
 	let identifierToDelete: string = '';
+	let showGenerateLinkModal = false;
+	let referenceToGenerateLink: Reference | null = null;
 
 	$: if (data?.referrers) {
 		references = data.referrers || [];
@@ -50,7 +52,7 @@
 	const columns = [
 		{ key: 'name', label: 'Nombre' },
 		{ key: 'contact_email', label: 'Email' },
-		{ key: 'link_form', label: 'Link Formulario' }
+		{ key: 'link_form', label: 'Link Formulario', class: 'w-[40%]' }
 	];
 
 	function render(key: string, obj: Reference): any {
@@ -66,7 +68,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                         </svg>
                     </button>
-                    <a href="${obj.link_form}" target="_blank" class="text-blue-600 hover:underline truncate block max-w-[150px] text-xs">${obj.link_form}</a>
+                    <a href="${obj.link_form}" target="_blank" class="text-blue-600 hover:underline truncate block max-w-[250px] text-xs">${obj.link_form}</a>
                    </div>`
 				: '<span class="text-gray-400">Sin link</span>';
 		}
@@ -86,12 +88,17 @@
 		confirmDelete = true;
 	}
 
-	async function handleGenerateLink(event: any) {
+	function handleGenerateLink(event: any) {
 		const obj = event.detail?.data || event;
-		if (!confirm(`¿Generar link para ${obj.name}?`)) return;
+		referenceToGenerateLink = obj;
+		showGenerateLinkModal = true;
+	}
+
+	async function confirmGenerateLink() {
+		if (!referenceToGenerateLink) return;
 
 		const formData = new FormData();
-		formData.append('id', obj.id);
+		formData.append('id', String(referenceToGenerateLink?.id));
 
 		try {
 			const response = await fetch('?/generateLink', {
@@ -99,18 +106,21 @@
 				body: formData
 			});
 
-			if (response.ok) {
-				const result = await response.json();
-				// SvelteKit actions return serialized data.
-				// If we use invalidateAll, the page reloads and shows the new link.
+			const result = await response.json();
+
+			if (response.ok && result.type === 'success') {
 				await invalidateAll();
 				successMessage = 'Link generado y guardado.';
 			} else {
-				errorMessage = 'Error al generar link';
+				errorMessage = result?.data?.error || 'Error al generar link';
 			}
 		} catch (e) {
+			console.error('Error generating link:', e);
 			errorMessage = 'Error de conexión';
 		}
+
+		showGenerateLinkModal = false;
+		referenceToGenerateLink = null;
 	}
 
 	function handleCreateReference() {
@@ -327,3 +337,30 @@
 	identifier={identifierToDelete}
 	dataNameToDelete="el LCB"
 />
+
+<Modal bind:open={showGenerateLinkModal} size="sm" autoclose={false}>
+	<div class="text-center p-4">
+		<svg
+			class="mx-auto mb-4 w-12 h-12 text-yellow-400"
+			fill="none"
+			stroke="currentColor"
+			viewBox="0 0 24 24"
+		>
+			<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				stroke-width="2"
+				d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+			/>
+		</svg>
+		<h3 class="mb-5 text-lg font-normal text-gray-500">
+			¿Generar link para <span class="font-semibold text-gray-900"
+				>{referenceToGenerateLink?.name}</span
+			>?
+		</h3>
+		<div class="flex justify-center gap-3">
+			<Button color="alternative" on:click={() => (showGenerateLinkModal = false)}>Cancelar</Button>
+			<Button color="blue" on:click={confirmGenerateLink}>Aceptar</Button>
+		</div>
+	</div>
+</Modal>

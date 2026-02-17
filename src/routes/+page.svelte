@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Toast from '$lib/components/ui/Toast.svelte';
-	import { Label, Input, Card, Helper, Spinner, Button } from 'flowbite-svelte';
+	import { Label, Input, Card, Helper, Button } from 'flowbite-svelte';
+	import { Circle2 } from 'svelte-loading-spinners';
 	export let mainClass = 'bg-white-200 dark:bg-white-900 w-full min-h-screen flex flex-col';
 	import { EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
 	export let mainDivClass =
@@ -94,7 +95,7 @@
 					disabled={sending}
 				>
 					{#if sending}
-						<Spinner class="w-6 h-6 text-white" />
+						<Circle2 size="24" colorOuter="#ffffff" colorCenter="#ffffff" colorInner="#0C2C65" />
 					{:else}
 						Ingresar
 					{/if}

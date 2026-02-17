@@ -212,6 +212,16 @@
 															class: 'text-sm bg-[#666666] text-white rounded-full'
 														}
 													]
+												: []),
+											...(statusFilter === '15'
+												? [
+														{
+															label: 'Formulario "Mas informacion"',
+															event: 'sendMoreInfoForm',
+																icon: ReceiptSolid,
+															class: 'text-sm bg-[#666666] text-white rounded-full'
+														}
+													]
 												: [])
 										]}
 										on:view={() => dispatch('view', { data: obj })}

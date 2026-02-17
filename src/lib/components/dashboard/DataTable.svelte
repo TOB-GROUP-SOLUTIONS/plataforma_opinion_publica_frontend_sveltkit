@@ -11,6 +11,8 @@
 	export let handleAddBudget: undefined | ((e: any) => void) = undefined;
 	export let handleConfirmPayment: undefined | ((e: any) => void) = undefined;
 	export let handleViewForm: undefined | ((e: any) => void) = undefined;
+	export let handleViewProof: undefined | ((e: any) => void) = undefined;
+
 	export let handleDelete: (e: any) => void;
 	export let handleEdit: (e: any) => void;
 	export let columns: Record<string, string>[] = [];
@@ -54,6 +56,7 @@
 		on:view={handleView}
 		on:change_status={handleChangeStatus}
 		on:sendMoreInfoForm={handleViewForm}
+		on:view_proof={handleViewProof}
 		on:asingToUser={handleAssign}
 		on:add_budget={handleAddBudget}
 		on:files={handleFiles}

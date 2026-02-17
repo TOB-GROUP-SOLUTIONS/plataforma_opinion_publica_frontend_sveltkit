@@ -36,11 +36,16 @@ export const actions: Actions = {
             birth_date: data.get('birth_date') ? new Date(data.get('birth_date') as string) : null,
             nationality: data.get('nationality'),
             source: data.get('source') || 'Referido',
-            programa: data.get('program'),
+            program_type: data.get('program'),
             referralCode: data.get('referral_code'),
             status: 1,
             objective: data.get('objective'),
-            notes: data.get('consultation')
+            is_liceo_student: data.get('is_liceo_student') === 'true',
+            sede: data.get('sede'),
+            current_level: data.get('current_level'),
+            last_course_year: data.get('last_course_year') ? parseInt(data.get('last_course_year') as string) : null,
+            last_course: data.get('last_course'),
+            completed_level: data.get('completed_level') === 'true'
         };
 
         console.log('Creating lead from public referral:', CreateLeadDto);

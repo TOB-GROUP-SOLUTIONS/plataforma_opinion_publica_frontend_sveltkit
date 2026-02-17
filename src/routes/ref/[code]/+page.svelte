@@ -28,6 +28,13 @@
 		{ name: 'Grupos', value: 'grupos' }
 	];
 
+	const sedeOptions = [
+		{ name: 'Barrio Norte', value: 'barrio_norte' },
+		{ name: 'Adrogué', value: 'adrogue' },
+		{ name: 'Martínez', value: 'martinez' },
+		{ name: 'Sede Virtual', value: 'sede_virtual' }
+	];
+
 	function handleSubmit() {
 		isSubmitting = true;
 		return async ({ update }: any) => {
@@ -199,49 +206,136 @@
 						</div>
 					</div>
 
-					<div>
-						<Label for="program" class="block text-sm font-medium text-gray-700">
-							Programa de Interés
-						</Label>
-						<div class="mt-1">
-							<select
-								id="program"
-								name="program"
-								class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							>
-								<option value="" disabled selected>Selecciona una opción</option>
-								{#each programOptions as option}
-									<option value={option.value}>{option.name}</option>
-								{/each}
-							</select>
-						</div>
-					</div>
+					<div class="border border-[#0C2C65] rounded-lg p-6 bg-gray-50">
+						<h3 class="text-lg font-semibold text-[#0C2C65] mb-4 pb-2 border-b border-[#0C2C65]/20">
+							Información del Alumno - Datos del Cursado
+						</h3>
 
-					<div>
-						<Label for="objective" class="block text-sm font-medium text-gray-700">
-							¿Cuál es el objetivo del viaje de estudio?
-						</Label>
-						<div class="mt-1">
-							<Input
-								id="objective"
-								name="objective"
-								type="text"
-								class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-							/>
-						</div>
-					</div>
+						<div class="space-y-4">
+							<div class="flex items-center">
+								<input
+									id="is_liceo_student"
+									name="is_liceo_student"
+									type="checkbox"
+									value="true"
+									class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+								/>
+								<Label for="is_liceo_student" class="ml-2 block text-sm text-gray-700">
+									¿Actualmente es alumno del Liceo Cultural Británico (LCB)?
+								</Label>
+							</div>
 
-					<div>
-						<Label for="consultation" class="block text-sm font-medium text-gray-700">
-							Consulta / Comentarios
-						</Label>
-						<div class="mt-1">
-							<Textarea
-								id="consultation"
-								name="consultation"
-								rows={4}
-								class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-							/>
+							<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+								<div>
+									<Label for="sede" class="block text-sm font-medium text-gray-700">
+										¿En qué sede estudia?
+									</Label>
+									<div class="mt-1">
+										<select
+											id="sede"
+											name="sede"
+											class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+										>
+											<option value="" disabled selected>Selecciona una sede</option>
+											{#each sedeOptions as option}
+												<option value={option.value}>{option.name}</option>
+											{/each}
+										</select>
+									</div>
+								</div>
+
+								<div>
+									<Label for="current_level" class="block text-sm font-medium text-gray-700">
+										¿En qué curso está actualmente?
+									</Label>
+									<div class="mt-1">
+										<Input
+											id="current_level"
+											name="current_level"
+											type="text"
+											placeholder="Ej: Advanced 1, Level 7"
+											class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+										/>
+									</div>
+								</div>
+							</div>
+
+							<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+								<div>
+									<Label for="last_course_year" class="block text-sm font-medium text-gray-700">
+										¿En qué año cursó por última vez en el Liceo?
+									</Label>
+									<div class="mt-1">
+										<Input
+											id="last_course_year"
+											name="last_course_year"
+											type="number"
+											placeholder="2024"
+											class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+										/>
+									</div>
+								</div>
+
+								<div>
+									<Label for="last_course" class="block text-sm font-medium text-gray-700">
+										¿Cuál fue el último nivel que cursó?
+									</Label>
+									<div class="mt-1">
+										<Input
+											id="last_course"
+											name="last_course"
+											type="text"
+											placeholder="Ej: Beginners 2"
+											class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+										/>
+									</div>
+								</div>
+							</div>
+
+							<div class="flex items-center">
+								<input
+									id="completed_level"
+									name="completed_level"
+									type="checkbox"
+									value="true"
+									class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+								/>
+								<Label for="completed_level" class="ml-2 block text-sm text-gray-700">
+									¿Completó el nivel?
+								</Label>
+							</div>
+
+							<div>
+								<Label for="program" class="block text-sm font-medium text-gray-700">
+									Programa de Interés
+								</Label>
+								<div class="mt-1">
+									<select
+										id="program"
+										name="program"
+										class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+									>
+										<option value="" disabled selected>Selecciona una opción</option>
+										{#each programOptions as option}
+											<option value={option.value}>{option.name}</option>
+										{/each}
+									</select>
+								</div>
+							</div>
+
+							<div>
+								<Label for="objective" class="block text-sm font-medium text-gray-700">
+									¿Cuál es el objetivo del viaje de estudio?
+								</Label>
+								<div class="mt-1">
+									<Input
+										id="objective"
+										name="objective"
+										type="text"
+										class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+									/>
+								</div>
+							</div>
 						</div>
 					</div>
 

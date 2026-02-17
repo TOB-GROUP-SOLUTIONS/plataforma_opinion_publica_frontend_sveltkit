@@ -43,14 +43,14 @@
 
 <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
 	<div class="sm:mx-auto sm:w-full sm:max-w-md">
-		<h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Formulario de Referido</h2>
+		<h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Formulario para LCB</h2>
 		<p class="mt-2 text-center text-sm text-gray-600">
 			Invitado por <span class="font-medium text-blue-600">{referrer?.name}</span>
 		</p>
 	</div>
 
-	<div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-		<div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+	<div class="mt-8 sm:mx-auto sm:w-full sm:max-w-3xl">
+		<div class="bg-white py-2 px-6 shadow sm:rounded-lg sm:px-10">
 			{#if successMessage}
 				<div class="rounded-md bg-green-50 p-4 mb-4">
 					<div class="flex">
@@ -80,68 +80,121 @@
 				<form class="space-y-6" method="POST" use:enhance={handleSubmit}>
 					<input type="hidden" name="referral_code" value={referralCode} />
 
-					<div>
-						<Label for="full_name" class="block text-sm font-medium text-gray-700">
-							Nombre y Apellido <span class="text-red-500">*</span>
-						</Label>
-						<div class="mt-1">
-							<Input
-								id="full_name"
-								name="full_name"
-								type="text"
-								required
-								class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-							/>
-						</div>
-					</div>
+					<div class="border border-[#0C2C65] rounded-lg p-6 bg-gray-50">
+						<h3 class="text-lg font-semibold text-[#0C2C65] mb-4 pb-2 border-b border-[#0C2C65]/20">
+							Datos de Identificación y Origen
+						</h3>
 
-					<div>
-						<Label for="email" class="block text-sm font-medium text-gray-700">Email</Label>
-						<div class="mt-1">
-							<Input
-								id="email"
-								name="email"
-								type="email"
-								class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-							/>
-						</div>
-					</div>
+						<div class="space-y-4">
+							<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+								<div>
+									<Label for="full_name" class="block text-sm font-medium text-gray-700">
+										Nombre y Apellido <span class="text-red-500">*</span>
+									</Label>
+									<div class="mt-1">
+										<Input
+											id="full_name"
+											name="full_name"
+											type="text"
+											required
+											class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+										/>
+									</div>
+								</div>
 
-					<div>
-						<Label for="phone" class="block text-sm font-medium text-gray-700">
-							Teléfono / WhatsApp
-						</Label>
-						<div class="mt-1">
-							<Input
-								id="phone"
-								name="phone"
-								type="tel"
-								class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-							/>
-						</div>
-					</div>
-
-					<div class="grid grid-cols-2 gap-4">
-						<div>
-							<Label for="city" class="block text-sm font-medium text-gray-700">Ciudad</Label>
-							<div class="mt-1">
-								<Input
-									id="city"
-									name="city"
-									type="text"
-									class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-								/>
+								<div>
+									<Label for="dni" class="block text-sm font-medium text-gray-700">DNI</Label>
+									<div class="mt-1">
+										<Input
+											id="dni"
+											name="dni"
+											type="text"
+											class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+										/>
+									</div>
+								</div>
 							</div>
-						</div>
-						<div>
-							<Label for="age" class="block text-sm font-medium text-gray-700">Edad</Label>
-							<div class="mt-1">
-								<Input
-									id="age"
-									name="age"
-									type="number"
-									class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-								/>
+
+							<div>
+								<Label for="email" class="block text-sm font-medium text-gray-700">Email</Label>
+								<div class="mt-1">
+									<Input
+										id="email"
+										name="email"
+										type="email"
+										class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+									/>
+								</div>
+							</div>
+
+							<div>
+								<Label for="phone" class="block text-sm font-medium text-gray-700">
+									Teléfono / WhatsApp
+								</Label>
+								<div class="mt-1">
+									<Input
+										id="phone"
+										name="phone"
+										type="tel"
+										class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+									/>
+								</div>
+							</div>
+
+							<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+								<div>
+									<Label for="birth_date" class="block text-sm font-medium text-gray-700">
+										Fecha de Nacimiento
+									</Label>
+									<div class="mt-1">
+										<Input
+											id="birth_date"
+											name="birth_date"
+											type="date"
+											class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+										/>
+									</div>
+								</div>
+								<div>
+									<Label for="nationality" class="block text-sm font-medium text-gray-700">
+										Nacionalidad
+									</Label>
+									<div class="mt-1">
+										<Input
+											id="nationality"
+											name="nationality"
+											type="text"
+											placeholder="Ej: Argentina"
+											class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+										/>
+									</div>
+								</div>
+								<div>
+									<Label for="city" class="block text-sm font-medium text-gray-700">Ciudad</Label>
+									<div class="mt-1">
+										<Input
+											id="city"
+											name="city"
+											type="text"
+											class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+										/>
+									</div>
+								</div>
+							</div>
+
+							<div>
+								<Label for="source" class="block text-sm font-medium text-gray-700">
+									¿Cómo conociste a Together?
+								</Label>
+								<div class="mt-1">
+									<Input
+										id="source"
+										name="source"
+										type="text"
+										placeholder="Web, Redes, Mail, etc."
+										class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+									/>
+								</div>
 							</div>
 						</div>
 					</div>

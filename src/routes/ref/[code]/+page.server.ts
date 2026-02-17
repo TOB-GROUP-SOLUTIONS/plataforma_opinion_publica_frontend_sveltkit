@@ -32,11 +32,13 @@ export const actions: Actions = {
             email: data.get('email'),
             phone: data.get('phone'),
             city: data.get('city'),
-            age: data.get('age') ? parseInt(data.get('age') as string) : null,
+            dni: data.get('dni'),
+            birth_date: data.get('birth_date') ? new Date(data.get('birth_date') as string) : null,
+            nationality: data.get('nationality'),
+            source: data.get('source') || 'Referido',
             programa: data.get('program'),
             referralCode: data.get('referral_code'),
             status: 1,
-            source: 'Referido',
             objective: data.get('objective'),
             notes: data.get('consultation')
         };

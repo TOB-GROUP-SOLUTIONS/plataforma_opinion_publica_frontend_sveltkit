@@ -15,7 +15,7 @@
 
 	export let handleDelete: (e: any) => void;
 	export let handleEdit: (e: any) => void;
-	export let columns: Record<string, string>[] = [];
+	export let columns: any[] = [];
 	export let data: any;
 	export let render: (key: string, obj: any) => any;
 	export let actions: any = [];

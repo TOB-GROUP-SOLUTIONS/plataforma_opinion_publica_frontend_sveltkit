@@ -14,7 +14,7 @@
 	let errorMessage = '';
 
 	$: if (form?.success) {
-		successMessage = '¡Formulario enviado con éxito!';
+		successMessage = '¡Formulario enviado con éxito! Ya puedes cerrar esta ventana.';
 		isSubmitting = false;
 	}
 	$: if (form?.error) {
@@ -41,6 +41,40 @@
 			isSubmitting = false;
 			await update();
 		};
+	}
+
+	function fillTestData() {
+		const fields = {
+			full_name: 'Juan Pérez García',
+			dni: '35456123',
+			email: 'juan.perez@email.com',
+			phone: '+54 11 4567-8901',
+			birth_date: '2005-03-15',
+			nationality: 'Argentina',
+			city: 'Buenos Aires',
+			source: 'Redes Sociales',
+			current_level: 'Advanced 1',
+			last_course_year: '2024',
+			last_course: 'Level 7',
+			objective: 'Mejorar mi inglés para estudios universitarios en el exterior'
+		};
+
+		Object.entries(fields).forEach(([id, value]) => {
+			const element = document.getElementById(id) as HTMLInputElement;
+			if (element) element.value = value;
+		});
+
+		const isLiceoStudent = document.getElementById('is_liceo_student') as HTMLInputElement;
+		if (isLiceoStudent) isLiceoStudent.checked = true;
+
+		const completedLevel = document.getElementById('completed_level') as HTMLInputElement;
+		if (completedLevel) completedLevel.checked = true;
+
+		const sede = document.getElementById('sede') as HTMLSelectElement;
+		if (sede) sede.value = 'barrio_norte';
+
+		const program = document.getElementById('program') as HTMLSelectElement;
+		if (program) program.value = 'tutoria';
 	}
 </script>
 
@@ -86,6 +120,16 @@
 			{:else}
 				<form class="space-y-6" method="POST" use:enhance={handleSubmit}>
 					<input type="hidden" name="referral_code" value={referralCode} />
+
+					<div class="flex justify-end">
+						<button
+							type="button"
+							on:click={fillTestData}
+							class="text-xs text-gray-500 hover:text-blue-600 underline"
+						>
+							Llenar datos de prueba
+						</button>
+					</div>
 
 					<div class="border border-[#0C2C65] rounded-lg p-6 bg-gray-50">
 						<h3 class="text-lg font-semibold text-[#0C2C65] mb-4 pb-2 border-b border-[#0C2C65]/20">
@@ -352,7 +396,7 @@
 			{/if}
 
 			{#if errorMessage}
-				<div class="mt-4">
+				<div class="mt-8">
 					<Toast type="error" showToast={true} successMessage={errorMessage} />
 				</div>
 			{/if}

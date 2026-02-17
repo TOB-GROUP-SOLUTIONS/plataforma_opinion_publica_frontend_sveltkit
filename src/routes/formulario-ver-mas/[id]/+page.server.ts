@@ -1,43 +1,21 @@
 import type { PageServerLoad, Actions } from './$types';
 import { fail } from '@sveltejs/kit';
+import * as api from '$lib/api';
 
-export const load: PageServerLoad = async ({ locals, url }) => {
-	// TODO: Obtener el ID del lead desde la URL o parámetros
-	const leadId = url.searchParams.get('id');
-	
-	// TODO: Cargar los datos del lead desde el backend
-	// Por ejemplo:
-	// const response = await fetch(`${API_URL}/leads/${leadId}`, {
-	// 	headers: {
-	// 		Authorization: `Bearer ${locals.user?.token}`
-	// 	}
-	// });
-	// const leadData = await response.json();
+export const load: PageServerLoad = async ({ locals, params }) => {
+	const leadId = params.id;
+
+	if (!leadId) {
+		return fail(400, { error: 'ID del lead requerido' });
+	}
+
+	const response = await api.get({
+		fetch,
+		endpoint: `leads/${leadId}`,
+	});
 	
 	return {
-		// TODO: Retornar los datos reales del lead
-		id: leadId || '',
-		full_name: '',
-		dni: '',
-		birthDate: '',
-		email: '',
-		parent_full_name: '',
-		parent_relation: '',
-		parentEmail: '',
-		phone: '',
-		program_type: '',
-		institution: '',
-		assigned_to: null,
-		product: '',
-		preexisting_conditions: '',
-		current_illnesses: '',
-		medical_observations: '',
-		requires_medication: '',
-		invoice_type: '',
-		business_name: '',
-		cuit_cuil: '',
-		billing_address: '',
-		salary: ''
+		lead: response.data || null,
 	};
 };
 
@@ -73,19 +51,6 @@ export const actions: Actions = {
 			salary: formData.get('salary')
 		};
 
-		// TODO: Enviar los datos al backend
-		// const response = await fetch(`${API_URL}/leads/${data.lead_id}/personal-record`, {
-		// 	method: 'POST',
-		// 	headers: {
-		// 		'Content-Type': 'application/json',
-		// 		Authorization: `Bearer ${locals.user?.token}`
-		// 	},
-		// 	body: JSON.stringify(data)
-		// });
-
-		// if (!response.ok) {
-		// 	return fail(500, { message: 'Error al guardar los datos' });
-		// }
 
 		return { success: true };
 	}

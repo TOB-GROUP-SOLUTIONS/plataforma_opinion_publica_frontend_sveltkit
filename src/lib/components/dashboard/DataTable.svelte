@@ -10,6 +10,7 @@
 	export let handleRedirect: undefined | ((e: any) => void) = undefined;
 	export let handleAddBudget: undefined | ((e: any) => void) = undefined;
 	export let handleConfirmPayment: undefined | ((e: any) => void) = undefined;
+	export let handleViewForm: undefined | ((e: any) => void) = undefined;
 	export let handleDelete: (e: any) => void;
 	export let handleEdit: (e: any) => void;
 	export let columns: Record<string, string>[] = [];
@@ -52,6 +53,7 @@
 		on:goToArea={handleGoToArea}
 		on:view={handleView}
 		on:change_status={handleChangeStatus}
+		on:sendMoreInfoForm={handleViewForm}
 		on:asingToUser={handleAssign}
 		on:add_budget={handleAddBudget}
 		on:files={handleFiles}

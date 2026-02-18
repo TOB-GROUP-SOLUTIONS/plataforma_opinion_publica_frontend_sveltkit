@@ -54,7 +54,12 @@ export const actions: Actions = {
             parent_full_name: data.get('parent_full_name'),
             parent_relation: data.get('parent_relation'),
             parent_email: data.get('parent_email'),
-            parent_phone: data.get('parent_phone')
+            parent_phone: data.get('parent_phone'),
+            special_diet: data.get('special_diet'),
+            preexisting_conditions: data.get('preexisting_conditions'),
+            requires_medication: data.get('requires_medication') === 'true',
+            medical_observations: data.get('medical_observations'),
+            is_smoker: data.get('is_smoker') === 'true'
         };
 
         console.log('Creating lead from public referral:', CreateLeadDto);

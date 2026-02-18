@@ -83,7 +83,11 @@
 			'last_course': 'Level 7',
 			'objective': 'Mejorar mi inglés para estudios universitarios en el exterior',
 			'passport_number': 'AA123456',
-			'passport_validity': '2030-06-15'
+			'passport_validity': '2030-06-15',
+			'parent_full_name': 'María García',
+			'parent_relation': 'Madre',
+			'parent_email': 'maria.garcia@email.com',
+			'parent_phone': '+54 11 9876-5432'
 		};
 
 		Object.entries(fields).forEach(([id, value]) => {
@@ -567,6 +571,75 @@
 							<p class="mt-1 text-xs text-gray-400">
 								Formatos: JPG, PNG, PDF (máx. 5MB)
 							</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="border border-[#0C2C65] rounded-lg p-6 bg-gray-50">
+					<h3 class="text-lg font-semibold text-[#0C2C65] mb-4 pb-2 border-b border-[#0C2C65]/20">
+						Datos del Tutor o Responsable
+					</h3>
+
+					<div class="space-y-4">
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<div>
+								<Label for="parent_full_name" class="block text-sm font-medium text-gray-700">
+									Apellido y nombre del padre, madre o tutor
+								</Label>
+								<div class="mt-1">
+									<Input
+										id="parent_full_name"
+										name="parent_full_name"
+										type="text"
+										class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+									/>
+								</div>
+							</div>
+
+							<div>
+								<Label for="parent_relation" class="block text-sm font-medium text-gray-700">
+									Parentesco con el menor de edad
+								</Label>
+								<div class="mt-1">
+									<Input
+										id="parent_relation"
+										name="parent_relation"
+										type="text"
+										placeholder="Ej: Padre, Madre, Tutor legal"
+										class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+									/>
+								</div>
+							</div>
+						</div>
+
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<div>
+								<Label for="parent_email" class="block text-sm font-medium text-gray-700">
+									Correo electrónico del tutor
+								</Label>
+								<div class="mt-1">
+									<Input
+										id="parent_email"
+										name="parent_email"
+										type="email"
+										class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+									/>
+								</div>
+							</div>
+
+							<div>
+								<Label for="parent_phone" class="block text-sm font-medium text-gray-700">
+									Teléfono del tutor
+								</Label>
+								<div class="mt-1">
+									<Input
+										id="parent_phone"
+										name="parent_phone"
+										type="tel"
+										class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+									/>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

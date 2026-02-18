@@ -70,20 +70,27 @@
 
 	function fillTestData() {
 		const fields = {
-			full_name: 'Juan Pérez García',
-			dni: '35456123',
-			email: 'juan.perez@email.com',
-			phone: '+54 11 4567-8901',
-			birth_date: '2005-03-15',
-			nationality: 'Argentina',
-			city: 'Buenos Aires',
-			source: 'Redes Sociales',
-			current_level: 'Advanced 1',
-			last_course_year: '2024',
-			last_course: 'Level 7',
-			objective: 'Mejorar mi inglés para estudios universitarios en el exterior',
-			passport_number: 'AA123456',
-			passport_validity: '2030-06-15'
+			'full_name': 'Juan Pérez García',
+			'dni': '35456123',
+			'email': 'juan.perez@email.com',
+			'phone': '+54 11 4567-8901',
+			'birth_date': '2005-03-15',
+			'nationality': 'Argentina',
+			'city': 'Buenos Aires',
+			'source': 'Redes Sociales',
+			'current_level': 'Advanced 1',
+			'last_course_year': '2024',
+			'last_course': 'Level 7',
+			'objective': 'Mejorar mi inglés para estudios universitarios en el exterior',
+			'passport_number': 'AA123456',
+			'passport_validity': '2030-06-15',
+			'parent_full_name': 'María García',
+			'parent_relation': 'Madre',
+			'parent_email': 'maria.garcia@email.com',
+			'parent_phone': '+54 11 9876-5432',
+			'special_diet': '',
+			'preexisting_conditions': 'Alergia a maní - reacción leve',
+			'medical_observations': ''
 		};
 
 		Object.entries(fields).forEach(([id, value]) => {
@@ -112,6 +119,12 @@
 			'estimated_travel_year'
 		) as HTMLSelectElement;
 		if (estimatedTravelYear) estimatedTravelYear.value = '2026';
+
+		const requiresMedication = document.getElementById('requires_medication') as HTMLInputElement;
+		if (requiresMedication) requiresMedication.checked = false;
+
+		const isSmoker = document.getElementById('is_smoker') as HTMLInputElement;
+		if (isSmoker) isSmoker.checked = false;
 	}
 
 	async function handlePassportFileUpload(event: Event) {
@@ -594,8 +607,156 @@
 						</div>
 					</div>
 
-					<div>
-						<Button
+				<div class="border border-[#0C2C65] rounded-lg p-6 bg-gray-50">
+					<h3 class="text-lg font-semibold text-[#0C2C65] mb-4 pb-2 border-b border-[#0C2C65]/20">
+						Datos del Tutor o Responsable
+					</h3>
+
+					<div class="space-y-4">
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<div>
+								<Label for="parent_full_name" class="block text-sm font-medium text-gray-700">
+									Apellido y nombre del padre, madre o tutor
+								</Label>
+								<div class="mt-1">
+									<Input
+										id="parent_full_name"
+										name="parent_full_name"
+										type="text"
+										class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+									/>
+								</div>
+							</div>
+
+							<div>
+								<Label for="parent_relation" class="block text-sm font-medium text-gray-700">
+									Parentesco con el menor de edad
+								</Label>
+								<div class="mt-1">
+									<Input
+										id="parent_relation"
+										name="parent_relation"
+										type="text"
+										placeholder="Ej: Padre, Madre, Tutor legal"
+										class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+									/>
+								</div>
+							</div>
+						</div>
+
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<div>
+								<Label for="parent_email" class="block text-sm font-medium text-gray-700">
+									Correo electrónico del tutor
+								</Label>
+								<div class="mt-1">
+									<Input
+										id="parent_email"
+										name="parent_email"
+										type="email"
+										class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+									/>
+								</div>
+							</div>
+
+							<div>
+								<Label for="parent_phone" class="block text-sm font-medium text-gray-700">
+									Teléfono del tutor
+								</Label>
+								<div class="mt-1">
+									<Input
+										id="parent_phone"
+										name="parent_phone"
+										type="tel"
+										class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+									/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="border border-[#0C2C65] rounded-lg p-6 bg-gray-50">
+					<h3 class="text-lg font-semibold text-[#0C2C65] mb-4 pb-2 border-b border-[#0C2C65]/20">
+						Información Médica
+					</h3>
+
+					<div class="space-y-4">
+						<div>
+							<Label for="special_diet" class="block text-sm font-medium text-gray-700">
+								Dietas especiales o vegetarianas
+							</Label>
+							<div class="mt-1">
+								<Input
+									id="special_diet"
+									name="special_diet"
+									type="text"
+									placeholder="Ej: Vegetariano, Sin gluten, etc."
+									class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+								/>
+							</div>
+						</div>
+
+						<div>
+							<Label for="preexisting_conditions" class="block text-sm font-medium text-gray-700">
+								Patologías, Alergias y condiciones médicas preexistentes
+							</Label>
+							<div class="mt-1">
+								<Textarea
+									id="preexisting_conditions"
+									name="preexisting_conditions"
+									rows={3}
+									placeholder="Describa cualquier condición médica relevante..."
+									class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+								/>
+							</div>
+						</div>
+
+						<div class="flex items-center">
+							<input
+								id="requires_medication"
+								name="requires_medication"
+								type="checkbox"
+								value="true"
+								class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+							/>
+							<Label for="requires_medication" class="ml-2 block text-sm text-gray-700">
+								¿Requiere medicación?
+							</Label>
+						</div>
+
+						<div>
+							<Label for="medical_observations" class="block text-sm font-medium text-gray-700">
+								Especificar nombre y dosis de la medicación
+							</Label>
+							<div class="mt-1">
+								<Textarea
+									id="medical_observations"
+									name="medical_observations"
+									rows={2}
+									placeholder="Nombre del medicamento, dosis, frecuencia..."
+									class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+								/>
+							</div>
+						</div>
+
+						<div class="flex items-center">
+							<input
+								id="is_smoker"
+								name="is_smoker"
+								type="checkbox"
+								value="true"
+								class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+							/>
+							<Label for="is_smoker" class="ml-2 block text-sm text-gray-700">
+								¿Fuma?
+							</Label>
+						</div>
+					</div>
+				</div>
+
+				<div>
+					<Button
 							type="submit"
 							disabled={isSubmitting}
 							class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#0C2C65] hover:bg-[#081d45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"

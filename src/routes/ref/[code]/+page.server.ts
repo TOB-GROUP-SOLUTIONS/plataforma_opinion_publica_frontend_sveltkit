@@ -50,7 +50,16 @@ export const actions: Actions = {
             estimated_travel_year: data.get('estimated_travel_year') ? parseInt(data.get('estimated_travel_year') as string) : null,
             passport_number: data.get('passport_number'),
             passport_validity: data.get('passport_validity') ? new Date(data.get('passport_validity') as string) : null,
-            passport_file_id: data.get('passport_file_id') ? parseInt(data.get('passport_file_id') as string) : null
+            passport_file_id: data.get('passport_file_id') ? parseInt(data.get('passport_file_id') as string) : null,
+            parent_full_name: data.get('parent_full_name'),
+            parent_relation: data.get('parent_relation'),
+            parent_email: data.get('parent_email'),
+            parent_phone: data.get('parent_phone'),
+            special_diet: data.get('special_diet'),
+            preexisting_conditions: data.get('preexisting_conditions'),
+            requires_medication: data.get('requires_medication') === 'true',
+            medical_observations: data.get('medical_observations'),
+            is_smoker: data.get('is_smoker') === 'true'
         };
 
         console.log('Creating lead from public referral:', CreateLeadDto);

@@ -12,6 +12,10 @@
 	export let handleConfirmPayment: undefined | ((e: any) => void) = undefined;
 	export let handleViewForm: undefined | ((e: any) => void) = undefined;
 	export let handleViewProof: undefined | ((e: any) => void) = undefined;
+	export let handleDownload: undefined | ((e: any) => void) = undefined;
+	export let handleGoToLead: undefined | ((e: any) => void) = undefined;
+
+
 
 	export let handleDelete: (e: any) => void;
 	export let handleEdit: (e: any) => void;
@@ -62,6 +66,8 @@
 		on:files={handleFiles}
 		on:ver-historial={handleRedirect}
 		on:delete={handleDelete}
+		on:download={handleDownload}
+		on:goToLead={handleGoToLead}
 		on:edit={handleEdit}
 		on:generate_form
 	/>

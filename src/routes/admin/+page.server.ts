@@ -40,7 +40,6 @@ export const load = async ({ cookies, locals, url, fetch }: any) => {
       }
     }
 
-    console.log('Search response:', searchResults);
 
     if (res.ok) {
       return {

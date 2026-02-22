@@ -33,21 +33,22 @@
 
 	$: budgets = data?.budgets ?? [];
 
-	// ✅ Hacer results reactivo - se actualiza automáticamente cuando data cambia
 	$: results = data?.searchResults ?? [];
 	let searching = false;
 
-	console.log('Budgets:', budgets);
-
-	// Handlers mínimos para DataTable (evitan error de props faltantes)
-	function handleEdit(item: any) {
-		console.log('edit', item);
-	}
-	function handleDelete(item: any) {
-		console.log('delete', item);
+	function handleView(item: any) {
+		console.log('view', item);
 	}
 
-	// Al montar la página, asegurarse de que el query param validDate esté presente con la fecha de hoy
+    function handleDownload(item: any) {
+        const fileUrl = item.file?.url || item.file_id;
+        window.open(fileUrl, '_blank');
+    }
+
+	function handleGoToLead(item: any) {
+		goto('/admin/mis-leads')
+	}
+
 	onMount(() => {
 	  try {
 	    const params = new URLSearchParams(window.location.search);
@@ -61,7 +62,6 @@
 	  }
 	});
 
-	// --- lógica de búsqueda: actualizar query param `search` con debounce ---
 	let search = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('search') ?? '' : '';
 	let searchTimer: any;
 	function onSearchInput() {
@@ -165,9 +165,10 @@
 			orderCols={[ 'date' ]}
 			data={budgets}
 			render={renderBudget}
-			defaultActions={[ 'view' ]}
-			handleEdit={handleEdit}
-			handleDelete={handleDelete}
+			defaultActions={['view', 'change_status', 'download']}
+			handleView={(e) => handleView(e.detail.data)}
+			handleDownload={(e) => handleDownload(e.detail.data)}
+			handleGoToLead={(e) => handleGoToLead(e.detail.data)}
 		/>
 	</div>
 </div>

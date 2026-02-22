@@ -96,6 +96,28 @@
 		}
 	}
 
+	const typeRouteMap: Record<string, (r: any) => string> = {
+		'LEAD':          (r) => `/admin/todos?query=${encodeURIComponent(r.title ?? '')}`,
+		'PRESUPUESTO':   (r) => `/admin?search=${encodeURIComponent(r.title ?? '')}`,
+		'LCB-PROFESORES':(r) => `/admin/lcb`,
+	};
+
+	const typeLabelMap: Record<string, string> = {
+		'LEAD':           '👤 Lead',
+		'PRESUPUESTO':    '📄 Presupuesto',
+		'LCB-PROFESORES': '🏫 LCB / Profesor',
+	};
+
+	function handleResultClick(r: any) {
+		search = '';
+		const buildUrl = typeRouteMap[r.type];
+		if (buildUrl) {
+			goto(buildUrl(r));
+		} else {
+			console.warn('Tipo de resultado desconocido:', r.type);
+		}
+	}
+
 	console.log('Initial search results:', results);
 </script>
 
@@ -115,11 +137,11 @@
 				<div class="absolute top-full mt-2 w-full max-w-[898px] bg-white border rounded shadow z-50 p-2 max-h-64 overflow-auto">
 					<ul>
 						{#each results as r}
-							<li class="p-2 hover:bg-gray-100 rounded cursor-pointer">
+							<li class="p-2 hover:bg-gray-100 rounded cursor-pointer" on:click={() => handleResultClick(r)}>
 								<div class="font-medium">{r.title} <span class="text-sm text-gray-500">({r.type})</span></div>
-								{#if r.subtitle}
+									{#if r.subtitle}
 									<div class="text-sm text-gray-600">{r.subtitle}</div>
-								{/if}
+									{/if}
 							</li>
 						{/each}
 					</ul>

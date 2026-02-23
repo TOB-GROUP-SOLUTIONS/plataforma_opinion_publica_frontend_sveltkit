@@ -175,10 +175,7 @@
 						class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-100"
 					/>
 				</div>
-
-				<!-- Programa de Interés y ¿Cómo nos contactaste? -->
-				<div class="grid grid-cols-2 gap-6">
-					<div>
+				<div>
 						<Label for="programa" class="mb-3 block">
 							<span class="text-gray-700">Programa de interés</span>
 						</Label>
@@ -191,40 +188,7 @@
 							disabled={isSubmittingForm}
 							class="w-full"
 						/>
-					</div>
-
-					<div>
-						<Label for="contact_method" class="mb-3 block">
-							<span class="text-gray-700">¿Cómo nos contactaste?</span>
-						</Label>
-						<Select
-							id="contact_method"
-							items={contactMethods}
-							bind:value={formData.contactMethod}
-							placeholder="Elegir"
-							clearable={false}
-							disabled={isSubmittingForm}
-							class="w-full"
-						/>
-					</div>
 				</div>
-
-
-                				<!-- Objetivo del viaje de estudio -->
-				<div>
-					<Label for="age" class="mb-3 block">
-						<span class="text-gray-700">Edad</span>
-					</Label>
-					<Input
-						id="age"
-						name="age"
-						type="number"
-						bind:value={formData.age}
-						disabled={isSubmittingForm}
-						class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-gray-100"
-					/>
-				</div>
-
 				<!-- Objetivo del viaje de estudio -->
 				<div>
 					<Label for="objective" class="mb-3 block">
@@ -271,7 +235,7 @@
 						disabled={isSubmittingForm || !formData.full_name}
 						class="px-6"
 					>
-						{isSubmittingForm ? 'Guardando...' : 'Guardar'}
+						{isSubmittingForm ? 'Enviando...' : 'Enviar'}
 					</Button>
 				</div>
 

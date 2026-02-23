@@ -8,6 +8,8 @@
 	import Toast from '$lib/components/ui/Toast.svelte';
 	import { enhance } from '$app/forms';
 	import DataTable from '$lib/components/dashboard/DataTable.svelte';
+	import SearchIcon from '$lib/components/ui/searchIcon.svelte';
+	import CalendarIcon from '$lib/components/ui/calendarIcon.svelte';
 	
 	export let data;
 	/*     let user = data.user;
@@ -48,6 +50,15 @@
 	function handleGoToLead(item: any) {
 		goto('/admin/mis-leads')
 	}
+
+    // Handlers requeridos por DataTable (stubs mínimos)
+    function handleEdit(item: any) {
+        console.log('edit', item);
+    }
+
+    function handleDelete(item: any) {
+        console.log('delete', item);
+    }
 
 	onMount(() => {
 	  try {
@@ -125,39 +136,57 @@
 	<title>Inicio</title>
 </svelte:head>
 <div class="w-full max-w-screen-4xl rounded-lg mx-auto bg-transparent dark:bg-gray-800 px-6 py-8">
-	<div class="w-full flex flex-col justify-center items-center mb-8">
-		<h1 class="text-3xl font-semibold text-[#0C2C65] dark:text-white mb-4 text-center">
-			Centro de Busqueda
-		</h1>
-    <div class="w-full max-w-[898px] flex justify-center relative">
-			<Input id="globalSearch" placeholder="Buscar por nombre,DNI,telefono" class="h-12 max-w-[898px] bg-[#02325A26]" bind:value={search} on:input={onSearchInput} />
-			{#if searching}
-				<div class="absolute top-full mt-2 w-full max-w-[898px] bg-white border rounded shadow z-50 p-3 text-center">Buscando...</div>
-			{:else if results && results.length > 0}
-				<div class="absolute top-full mt-2 w-full max-w-[898px] bg-white border rounded shadow z-50 p-2 max-h-64 overflow-auto">
-					<ul>
-						{#each results as r}
-							<li class="p-2 hover:bg-gray-100 rounded cursor-pointer" on:click={() => handleResultClick(r)}>
-								<div class="font-medium">{r.title} <span class="text-sm text-gray-500">({r.type})</span></div>
-									{#if r.subtitle}
-									<div class="text-sm text-gray-600">{r.subtitle}</div>
-									{/if}
-							</li>
-						{/each}
-					</ul>
-				</div>
-			{:else if search.trim() !== ''}
-				<div class="absolute top-full mt-2 w-full max-w-[898px] bg-white border rounded shadow z-50 p-3 text-center">No hay resultados</div>
-			{/if}
-		</div>
-	</div>
-	<div class="flex justify-center gap-4 p-4 sm:flex-row flex-col"></div>
+    <div class="w-full flex flex-col justify-center items-center mb-8">
+        <div class="w-full max-w-[898px]">
+            <div class="bg-white rounded-lg p-4 flex items-center gap-4 shadow-sm border-t-2 border-[#0C2C65]/70">
+                <div class="w-20 h-20 rounded-md bg-gradient-to-br from-[#0C2C65]/40 to-[#0C2C65] flex items-center justify-center shadow-sm">
+                    <SearchIcon />
+                </div>
+                <div>
+                    <h1 class="text-2xl font-semibold text-[#0C2C65]">Centro de Búsqueda</h1>
+                    <p class="text-sm text-gray-500 mt-1">Encuentra presupuestos, clientes y contactos</p>
+                </div>
+            </div>
+
+            <div class="mt-4 relative bg-white rounded-lg p-4">
+                <Input id="globalSearch" placeholder="Buscar por nombre, DNI, teléfono" class="h-12 w-full bg-[#F3F4F6] pl-12 rounded-lg" bind:value={search} on:input={onSearchInput} />
+                {#if searching}
+                    <div class="absolute top-full mt-2 w-full bg-white border rounded shadow z-50 p-3 text-center">Buscando...</div>
+                {:else if results && results.length > 0}
+                    <div class="absolute top-full mt-2 w-full bg-white border rounded shadow z-50 p-2 max-h-64 overflow-auto">
+                        <ul>
+                            {#each results as r}
+                                <li class="p-2 hover:bg-gray-100 rounded cursor-pointer" on:click={() => handleResultClick(r)}>
+                                    <div class="font-medium">{r.title} <span class="text-sm text-gray-500">({r.type})</span></div>
+                                        {#if r.subtitle}
+                                        <div class="text-sm text-gray-600">{r.subtitle}</div>
+                                        {/if}
+                                </li>
+                            {/each}
+                        </ul>
+                    </div>
+                {:else if search.trim() !== ''}
+                    <div class="absolute top-full mt-2 w-full bg-white border rounded shadow z-50 p-3 text-center">No hay resultados</div>
+                {/if}
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-center gap-4 p-4 sm:flex-row flex-col"></div>
 </div>
 
-<div class="w-full max-w-screen-4xl rounded-lg mx-auto bg-gray-200 px-6 py-8 mt-6">
-	<div class="w-full flex flex-col justify-center items-center mb-4">
-		<h2 class="text-xl font-semibold text-[#0C2C65] dark:text-white mb-2 text-center">Próximos vencimientos de Presupuestos</h2>
-	</div>
+<div class="w-full max-w-screen-4xl rounded-lg mx-auto px-6 py-8 mt-6">
+	<div class="w-full mb-4">
+        <div class="bg-white rounded-lg p-4 flex items-center gap-4 shadow-md border-t-2 border-[#0C2C65]/20">
+            <!-- Icon container: alineado a la izquierda, tamaño fijo y sombra -->
+            <div class="w-20 h-20 rounded-md bg-gradient-to-br from-[#0C2C65]/40 to-[#0C2C65] flex items-center justify-center shadow-md">
+                <CalendarIcon />
+            </div>
+            <!-- Texto a la derecha del ícono -->
+            <div class="flex-1 text-left">
+                <h2 class="text-xl font-semibold text-red-600 dark:text-white mb-0">Próximos vencimientos de Presupuestos</h2>
+            </div>
+        </div>
+    </div>
 
 	<div class="bg-white rounded-lg overflow-hidden">
 		<DataTable
@@ -169,6 +198,8 @@
 			handleView={(e) => handleView(e.detail.data)}
 			handleDownload={(e) => handleDownload(e.detail.data)}
 			handleGoToLead={(e) => handleGoToLead(e.detail.data)}
+			handleEdit={(e) => handleEdit(e.detail.data)}
+			handleDelete={(e) => handleDelete(e.detail.data)}
 		/>
 	</div>
 </div>

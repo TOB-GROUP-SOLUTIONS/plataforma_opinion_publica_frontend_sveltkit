@@ -11,6 +11,8 @@
     import { Modal, Button, Label, Input, Textarea } from 'flowbite-svelte';
     import Toast from '$lib/components/ui/Toast.svelte';
 	import Select from 'svelte-select';
+	import PersonalRecord from '$lib/components/dashboard/PersonalRecord.svelte';
+
 	import SortInput from '$lib/components/dashboard/SortInput.svelte';
 
 	export let data;
@@ -20,8 +22,11 @@
     let fechaDesde: string = '';
     let fechaHasta: string = '';
     let count: number = 0;
+	let identifierToView = '';
     let modalOrdering: string = '';
     let selectedProgram: string = '';
+	let showPersonalRecordModal = false;
+
 
     $: count = (fechaDesde ? 1 : 0) + (fechaHasta ? 1 : 0) + (selectedProgram ? 1 : 0);
 
@@ -193,8 +198,9 @@
 
     function handleView(e: CustomEvent) {
         const id = e.detail.id;
-        //goto(`/admin/nuevos-interesados/${id}`);
-    }
+		identifierToView = { ...e.detail.data };
+		showPersonalRecordModal = true;
+	}
 
     let showAssignModal = false;
     let isSubmittingAssign = false;
@@ -854,6 +860,14 @@
 		</div>
 	</div>
 </Modal>
+
+
+{#if showPersonalRecordModal}
+	<PersonalRecord
+		data={identifierToView}
+		on:close={() => (showPersonalRecordModal = false)}
+	/>
+{/if}
 
 {#if successMessage.length > 0}
 	<Toast type="success" dismissible={true} showToast={true} bind:successMessage />

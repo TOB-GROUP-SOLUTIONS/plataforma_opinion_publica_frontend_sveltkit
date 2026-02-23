@@ -38,7 +38,7 @@
 	let proofUrl: string = '';
 	
 	// Obtener URL pública del env
-	const PUBLIC_URL = import.meta.env.PUBLIC_APP_URL || 'http://localhost:5173';
+	const PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL || 'http://localhost:5173';
 
 	$: count = (fechaDesde ? 1 : 0) + (fechaHasta ? 1 : 0);
 

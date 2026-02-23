@@ -33,21 +33,22 @@
 
 	$: budgets = data?.budgets ?? [];
 
-	// ✅ Hacer results reactivo - se actualiza automáticamente cuando data cambia
 	$: results = data?.searchResults ?? [];
 	let searching = false;
 
-	console.log('Budgets:', budgets);
-
-	// Handlers mínimos para DataTable (evitan error de props faltantes)
-	function handleEdit(item: any) {
-		console.log('edit', item);
-	}
-	function handleDelete(item: any) {
-		console.log('delete', item);
+	function handleView(item: any) {
+		console.log('view', item);
 	}
 
-	// Al montar la página, asegurarse de que el query param validDate esté presente con la fecha de hoy
+    function handleDownload(item: any) {
+        const fileUrl = item.file?.url || item.file_id;
+        window.open(fileUrl, '_blank');
+    }
+
+	function handleGoToLead(item: any) {
+		goto('/admin/mis-leads')
+	}
+
 	onMount(() => {
 	  try {
 	    const params = new URLSearchParams(window.location.search);
@@ -61,7 +62,6 @@
 	  }
 	});
 
-	// --- lógica de búsqueda: actualizar query param `search` con debounce ---
 	let search = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('search') ?? '' : '';
 	let searchTimer: any;
 	function onSearchInput() {
@@ -96,6 +96,28 @@
 		}
 	}
 
+	const typeRouteMap: Record<string, (r: any) => string> = {
+		'LEAD':          (r) => `/admin/todos?query=${encodeURIComponent(r.title ?? '')}`,
+		'PRESUPUESTO':   (r) => `/admin?search=${encodeURIComponent(r.title ?? '')}`,
+		'LCB-PROFESORES':(r) => `/admin/lcb`,
+	};
+
+	const typeLabelMap: Record<string, string> = {
+		'LEAD':           '👤 Lead',
+		'PRESUPUESTO':    '📄 Presupuesto',
+		'LCB-PROFESORES': '🏫 LCB / Profesor',
+	};
+
+	function handleResultClick(r: any) {
+		search = '';
+		const buildUrl = typeRouteMap[r.type];
+		if (buildUrl) {
+			goto(buildUrl(r));
+		} else {
+			console.warn('Tipo de resultado desconocido:', r.type);
+		}
+	}
+
 	console.log('Initial search results:', results);
 </script>
 
@@ -115,11 +137,11 @@
 				<div class="absolute top-full mt-2 w-full max-w-[898px] bg-white border rounded shadow z-50 p-2 max-h-64 overflow-auto">
 					<ul>
 						{#each results as r}
-							<li class="p-2 hover:bg-gray-100 rounded cursor-pointer">
+							<li class="p-2 hover:bg-gray-100 rounded cursor-pointer" on:click={() => handleResultClick(r)}>
 								<div class="font-medium">{r.title} <span class="text-sm text-gray-500">({r.type})</span></div>
-								{#if r.subtitle}
+									{#if r.subtitle}
 									<div class="text-sm text-gray-600">{r.subtitle}</div>
-								{/if}
+									{/if}
 							</li>
 						{/each}
 					</ul>
@@ -143,9 +165,10 @@
 			orderCols={[ 'date' ]}
 			data={budgets}
 			render={renderBudget}
-			defaultActions={[ 'view' ]}
-			handleEdit={handleEdit}
-			handleDelete={handleDelete}
+			defaultActions={['view', 'change_status', 'download']}
+			handleView={(e) => handleView(e.detail.data)}
+			handleDownload={(e) => handleDownload(e.detail.data)}
+			handleGoToLead={(e) => handleGoToLead(e.detail.data)}
 		/>
 	</div>
 </div>

@@ -25,7 +25,8 @@
 		ExclamationCircleSolid,
 		UserSolid,
 		ReceiptSolid,
-		CogSolid
+		CogSolid,
+		DownloadSolid
 	} from 'flowbite-svelte-icons';
 	import SortBtn from '../SortBtn.svelte';
 	import ActionsDropdown from './ActionsDropdown.svelte';
@@ -266,6 +267,33 @@
 										on:view={() => dispatch('view', { data: obj })}
 										on:asingToUser={() => dispatch('asingToUser', { data: obj })}
 										on:change_status={() => dispatch('change_status', { data: obj })}
+									/>
+								{/if}
+								{#if $page.url.pathname === '/admin' || $page.url.pathname === '/admin/'}
+									<ActionsDropdown
+										actions={[
+											{
+												label: 'Ver Presupuesto',
+												event: 'view',
+												icon: EyeOutline,
+												class: 'bg-[#4D6591] text-white rounded-full text-sm'
+											},
+											{
+												label: 'Descargar',
+												event: 'download',
+												icon: DownloadSolid,
+												class: ' text-sm bg-[#7597D5] text-white rounded-full'
+											},
+											{
+												label: 'Ir al Lead',
+												event: 'goToLead',
+												icon: CogSolid,
+												class: ' text-sm  bg-green-600 text-white rounded-full'
+											}
+										]}
+										on:view={() => dispatch('view', { data: obj })}
+										on:download={() => dispatch('download', { data: obj })}
+										on:goToLead={() => dispatch('goToLead', { data: obj })}
 									/>
 								{/if}
 							</div>

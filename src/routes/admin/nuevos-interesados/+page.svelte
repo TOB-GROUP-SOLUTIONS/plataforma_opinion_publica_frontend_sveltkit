@@ -306,6 +306,26 @@
 			update();
         };
     }
+	let	sending = false;
+
+	const addNote = ({}) => {
+		sending = true;
+		return async ({ result, update }: any) => {
+			console.log(result)
+			await update();
+			if (result.type === 'success') {
+				successMessage = result.data.message;
+				errorMessage = '';
+				sending = false;
+				formModalNote = false;
+			} else {
+				errorMessage = result.data.message;
+				sending = false;
+			}
+
+			await update({ invalidateAll: false, errorMessage, successMessage });
+		};
+	};
 
 	async function handleDelete(e: CustomEvent) {
 		if (!confirm('¿Estás seguro de eliminar este lead?')) return;
@@ -363,6 +383,8 @@
 		goto(`?${params.toString()}`);
 		formModalFilter = false;
 	}
+
+	let identifierToEdit = {} as any;
 
 	function handleApplyDateFilter() {
 		if (fechaHasta && fechaDesde && fechaHasta < fechaDesde) {
@@ -875,16 +897,25 @@
 			Notas
 		</h3>
 	</div>
-	<form class="flex flex-col space-y-4" method="POST" action={'?/addNote'}>
+	<form class="flex flex-col space-y-4" method="POST" action={'?/addNote'} use:enhance={addNote}>
+		<input type="hidden" value={identifierToView?.id} name="id" />
 		<Label class="space-y-2">
 			<textarea
-				value={identifierToView?.note || ''}
-				name="note"
+				value={identifierToView?.notes || ''}
+				name="notes"
 				placeholder="Escribe una nota de observación..."
 				rows="8"
 				class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#7f8c8d] focus:border-[#7f8c8d] block w-full p-2.5"
 			/>
 		</Label>
+
+		<Button
+			class="w-full bg-[#2A2E37] hover:bg-[#2A2E37] shadow-xl text-sm sm:text-base"
+			disabled={sending}
+			type="submit"
+		>
+			Confirmar
+		</Button>
 
 		<Button
 			type="button"

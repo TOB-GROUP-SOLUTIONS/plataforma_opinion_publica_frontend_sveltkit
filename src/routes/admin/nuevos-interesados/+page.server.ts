@@ -149,5 +149,33 @@ export const actions: Actions = {
 		if (!response.ok) throw error(500, 'Error al restaurar');
 
 		return { success: true };
+	},
+
+	addNote: async ({ cookies, request }) => {
+		const token = cookies.get('token');
+		const data = await request.formData();
+		const leadId = data.get('id');
+		const notes = data.get('notes');
+
+		console.log('Updating lead with data:', leadId);	
+
+		const updateData = {
+			notes: notes
+		};
+
+		const response = await api.patch({
+			fetch,
+			endpoint: `leads/${leadId}`,
+			body: JSON.stringify(updateData),
+			token
+		});
+
+		console.log('Lead update response:', response);
+
+		if (!response.ok) throw error(500, 'Error al agregar la nota');
+
+		return {
+			message: '¡Nota guardada!'
+		};
 	}
 };

@@ -136,10 +136,9 @@
 	<title>Inicio</title>
 </svelte:head>
 <div class="w-full max-w-screen-4xl rounded-lg mx-auto bg-transparent dark:bg-gray-800 px-6 py-8">
-    <div class="w-full flex flex-col justify-center items-center mb-8">
-        <div class="w-full max-w-[898px]">
-            <div class="bg-white rounded-lg p-4 flex items-center gap-4 shadow-sm border-t-2 border-[#0C2C65]/70">
-                <div class="w-20 h-20 rounded-md bg-gradient-to-br from-[#0C2C65]/40 to-[#0C2C65] flex items-center justify-center shadow-sm">
+    <div class="w-full flex flex-col justify-center mb-8">
+<div class="w-full max-w-[1700px] mx-auto">            <div class="bg-white rounded-lg p-4 flex items-center gap-4 shadow-sm border-t-2 border-[#0C2C65]/70">
+                <div class="w-12 h-12 rounded-md bg-gradient-to-br from-[#0C2C65]/40 to-[#0C2C65] flex items-center justify-center shadow-sm">
                     <SearchIcon />
                 </div>
                 <div>
@@ -174,34 +173,38 @@
     <div class="flex justify-center gap-4 p-4 sm:flex-row flex-col"></div>
 </div>
 
-<div class="w-full max-w-screen-4xl rounded-lg mx-auto px-6 py-8 mt-6">
-	<div class="w-full mb-4">
+<div class="w-full max-w-screen-4xl mx-auto px-6 py-8 mt-6">
+    <div class="w-full max-w-[1700px] mx-auto space-y-4">
+
+        <!-- Header -->
         <div class="bg-white rounded-lg p-4 flex items-center gap-4 shadow-md border-t-2 border-[#0C2C65]/20">
-            <!-- Icon container: alineado a la izquierda, tamaño fijo y sombra -->
-            <div class="w-20 h-20 rounded-md bg-gradient-to-br from-[#0C2C65]/40 to-[#0C2C65] flex items-center justify-center shadow-md">
-                <CalendarIcon />
-            </div>
-            <!-- Texto a la derecha del ícono -->
+			<div class="w-12 h-12 rounded-md bg-gradient-to-br from-[#0C2C65]/40 to-[#0C2C65] flex items-center justify-center">
+			<CalendarIcon />
+			</div>
             <div class="flex-1 text-left">
-                <h2 class="text-xl font-semibold text-red-600 dark:text-white mb-0">Próximos vencimientos de Presupuestos</h2>
+                <h2 class="text-xl font-semibold text-red-600 dark:text-white">
+                    Próximos vencimientos de Presupuestos
+                </h2>
             </div>
         </div>
-    </div>
 
-	<div class="bg-white rounded-lg overflow-hidden">
-		<DataTable
-			columns={columnsBudgets}
-			orderCols={[ 'date' ]}
-			data={budgets}
-			render={renderBudget}
-			defaultActions={['view', 'change_status', 'download']}
-			handleView={(e) => handleView(e.detail.data)}
-			handleDownload={(e) => handleDownload(e.detail.data)}
-			handleGoToLead={(e) => handleGoToLead(e.detail.data)}
-			handleEdit={(e) => handleEdit(e.detail.data)}
-			handleDelete={(e) => handleDelete(e.detail.data)}
-		/>
-	</div>
+        <!-- Tabla -->
+        <div class="bg-white rounded-lg overflow-hidden">
+            <DataTable
+                columns={columnsBudgets}
+                orderCols={['date']}
+                data={budgets}
+                render={renderBudget}
+                defaultActions={['view', 'change_status', 'download']}
+                handleView={(e) => handleView(e.detail.data)}
+                handleDownload={(e) => handleDownload(e.detail.data)}
+                handleGoToLead={(e) => handleGoToLead(e.detail.data)}
+                handleEdit={(e) => handleEdit(e.detail.data)}
+                handleDelete={(e) => handleDelete(e.detail.data)}
+            />
+        </div>
+
+    </div>
 </div>
 
 {#if successMessage.length > 0}

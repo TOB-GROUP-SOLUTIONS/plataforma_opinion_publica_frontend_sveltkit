@@ -94,6 +94,20 @@
 		{ key: 'responsable', label: 'Responsable' }
 	];
 
+	async function downloadProof(url: string) {
+		const response = await fetch(url, { credentials: 'include' });
+		const blob = await response.blob();
+
+		const blobUrl = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = blobUrl;
+		a.download = 'comprobante';
+		document.body.appendChild(a);
+		a.click();
+		a.remove();
+		URL.revokeObjectURL(blobUrl);
+	}
+
 	function render(key: string, lead: Lead) {
 		switch (key) {
 			case 'full_name':
@@ -430,7 +444,7 @@
 		const proofFileUrl = e.detail?.data?.budgets?.[0]?.file?.url ?? '';
 		if (proofFileUrl) {
 			proofUrl = proofFileUrl;
-			window.open(proofFileUrl, '_blank');
+			showViewProofModal = true;
 		} else {
 			errorMessage = 'No se encontró el comprobante de pago';
 		}
@@ -962,76 +976,104 @@
 	</div>
 </Modal>
 
-<Modal bind:open={formModalNoteBudget} size="md" autoclose={false} class="w-full">
-	<div class="text-sm font-bold text-gray-500 dark:text-white space-y-4">
-		<h3 class="text-lg font-bold text-gray-900 dark:text-white">
-			Notas
-		</h3>
+<!-- Modal: Ver Comprobante de Pago -->
+<Modal bind:open={showViewProofModal} size="xl" autoclose={false}>
+	<div class="p-6 space-y-6">
+		<h3 class="text-2xl font-semibold text-gray-600 text-center">Comprobante de Pago</h3>
+		
+		<hr class="border-gray-300" />
+
+		<!-- Visualizador del comprobante -->
+		<div class="space-y-4">
+			{#if proofUrl}
+				<!-- Si es PDF, mostrar iframe -->
+				{#if proofUrl.toLowerCase().endsWith('.pdf')}
+					<div class="w-full h-[600px] border border-gray-300 rounded-lg overflow-hidden">
+						<iframe
+							src={proofUrl}
+							title="Comprobante de Pago"
+							class="w-full h-full"
+							frameborder="0"
+						/>
+					</div>
+				<!-- Si es imagen, mostrar img -->
+				{:else if proofUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i)}
+					<div class="w-full flex justify-center">
+						<img
+							src={proofUrl}
+							alt="Comprobante de Pago"
+							class="max-w-full max-h-[600px] object-contain border border-gray-300 rounded-lg"
+						/>
+					</div>
+				<!-- Para otros tipos de archivo, mostrar enlace de descarga -->
+				{:else}
+					<div class="text-center py-12">
+						<svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+							/>
+						</svg>
+						<p class="text-gray-600 mb-4">No se puede previsualizar este tipo de archivo</p>
+						<a
+							href={proofUrl}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="inline-flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+						>
+							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+								/>
+							</svg>
+							Descargar Comprobante
+						</a>
+					</div>
+				{/if}
+
+				<!-- Botón de descarga siempre visible -->
+				<div class="flex justify-center">
+					<a
+						href={proofUrl}
+						download
+						target="_blank"
+						rel="noopener noreferrer"
+						class="inline-flex items-center gap-2 px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+					>
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+							/>
+						</svg>
+						Descargar
+					</a>
+				</div>
+			{:else}
+				<div class="text-center py-12 text-gray-500">
+					<p>No hay comprobante disponible</p>
+				</div>
+			{/if}
+		</div>
+
+		<!-- Botón de cerrar -->
+		<div class="flex justify-center pt-4">
+			<button
+				type="button"
+				on:click={() => (showViewProofModal = false)}
+				class="px-6 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg font-medium transition-colors"
+			>
+				Cerrar
+			</button>
+		</div>
 	</div>
-	<form class="flex flex-col space-y-4" method="POST" action={'?/addNote'} use:enhance={addNote}>
-		<input type="hidden" value={identifierToEdit?.budgets[0]?.id} name="id" />
-		<Label class="space-y-2">
-			<textarea
-				value={identifierToEdit?.budgets[0]?.notes || ''}
-				name="notes"
-				placeholder="Escribe una nota de observación..."
-				rows="8"
-				class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#7f8c8d] focus:border-[#7f8c8d] block w-full p-2.5"
-			/>
-		</Label>
-
-		<Button
-			class="w-full bg-[#2A2E37] hover:bg-[#2A2E37] shadow-xl text-sm sm:text-base"
-			disabled={sending}
-			type="submit"
-		>
-			Confirmar
-		</Button>
-
-		<Button
-			type="button"
-			on:click={() => (formModalNoteBudget = false)}
-			class="w-full bg-gray-100 hover:bg-gray-200 hover:text-gray-700 text-gray-600 mt-4"
-		>
-			Cerrar
-		</Button>
-	</form>
-</Modal>
-
-<Modal bind:open={formModalNotePayment} size="md" autoclose={false} class="w-full">
-	<div class="text-sm font-bold text-gray-500 dark:text-white space-y-4">
-		<h3 class="text-lg font-bold text-gray-900 dark:text-white">
-			Notas
-		</h3>
-	</div>
-	<form class="flex flex-col space-y-4" method="POST" action={'?/addNotePayment'} use:enhance={addNotePayment}>
-		<input type="hidden" value={identifierToEdit?.budgets[0]?.id} name="id" />
-		<Label class="space-y-2">
-			<textarea
-				value={identifierToEdit?.budgets[0]?.payments[0]?.notes || ''}
-				name="notes"
-				placeholder="Escribe una nota de observación..."
-				rows="8"
-				class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#7f8c8d] focus:border-[#7f8c8d] block w-full p-2.5"
-			/>
-		</Label>
-
-		<Button
-			class="w-full bg-[#2A2E37] hover:bg-[#2A2E37] shadow-xl text-sm sm:text-base"
-			disabled={sending}
-			type="submit"
-		>
-			Confirmar
-		</Button>
-
-		<Button
-			type="button"
-			on:click={() => (formModalNotePayment = false)}
-			class="w-full bg-gray-100 hover:bg-gray-200 hover:text-gray-700 text-gray-600 mt-4"
-		>
-			Cerrar
-		</Button>
-	</form>
 </Modal>
 
 {#if successMessage.length > 0}

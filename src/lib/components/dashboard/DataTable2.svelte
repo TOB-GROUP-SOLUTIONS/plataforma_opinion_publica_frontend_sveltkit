@@ -227,7 +227,7 @@
 															class: 'text-sm bg-[#666666] text-white rounded-full'
 														},
 														{
-															label: 'Formulario "Mas informacion"',
+															label: 'JM - FORMUALRIO DE CONTRATACIÓN',
 															event: 'sendMoreInfoForm',
 															icon: ReceiptSolid,
 															class: 'text-sm bg-[#666666] text-white rounded-full'
@@ -237,7 +237,7 @@
 											...(statusFilter === '15'
 												? [
 														{
-															label: 'Formulario "Mas informacion"',
+															label: 'JM - FORMUALRIO DE CONTRATACIÓN',
 															event: 'sendMoreInfoForm',
 															icon: ReceiptSolid,
 															class: 'text-sm bg-[#666666] text-white rounded-full'

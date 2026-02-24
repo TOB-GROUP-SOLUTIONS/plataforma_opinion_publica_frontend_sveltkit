@@ -29,6 +29,7 @@
 	export let orderCols: string[] = [];
 	export let statusFilter: string | null = null;
 	export let handleGoToArea: undefined | ((e: any) => void) = undefined;
+	export let highlightedLeadId: number | null = null;
 </script>
 
 <div class="md:hidden block">
@@ -57,6 +58,7 @@
 		{actions}
 		{defaultActions}
 		{statusFilter}
+		{highlightedLeadId}
 		on:confirmPayment={handleConfirmPayment}
 		on:goToArea={handleGoToArea}
 		on:view={handleView}

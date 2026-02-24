@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 	import DataTable from '$lib/components/dashboard/DataTable.svelte';
 	import SearchInput from '$lib/components/dashboard/SearchInput.svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
@@ -38,6 +39,27 @@
 	let showViewProofModal = false;
 	let proofUrl: string = '';
 	let formModalNoteBudget = false;
+	let highlightedLeadId: number | null = null;
+
+	onMount(() => {
+		const highlightParam = $page.url.searchParams.get('highlight');
+		if (highlightParam) {
+			highlightedLeadId = Number(highlightParam);
+			// Scroll a la fila resaltada
+			setTimeout(() => {
+				const row = document.getElementById(`lead-row-${highlightedLeadId}`);
+				if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			}, 300);
+			// Quitar el highlight después de 4 segundos
+			setTimeout(() => {
+				highlightedLeadId = null;
+				// Limpiar el param de la URL sin navegar
+				const params = new URLSearchParams($page.url.searchParams);
+				params.delete('highlight');
+				goto(`?${params.toString()}`, { replaceState: true, noScroll: true });
+			}, 4000);
+		}
+	});
 	
 	// Obtener URL pública del env
 	const PUBLIC_APP_URL = env.PUBLIC_APP_URL;
@@ -458,6 +480,7 @@
 			{handleViewProof}
 			{handleNote}
 			{handleNotePayment}
+			{highlightedLeadId}
 		/>
 	</div>
 

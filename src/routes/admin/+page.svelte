@@ -63,7 +63,9 @@
 	}
 
 	function handleGoToLead(item: any) {
-		goto('/admin/mis-leads');
+		console.log(item);
+		const leadId = item?.lead?.id;
+		goto(leadId ? `/admin/mis-leads?query=${leadId}` : '/admin/mis-leads');
 	}
 
 	// Handlers requeridos por DataTable (stubs mínimos)

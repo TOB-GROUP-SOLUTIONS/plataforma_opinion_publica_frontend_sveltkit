@@ -47,6 +47,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let orderCols: string[] = [];
+	export let highlightedLeadId: number | null = null;
 
 	function syncScroll() {
 		const tableContainer = document.querySelector('.overflow-x-auto.relative')!;
@@ -103,7 +104,12 @@
 		</TableHead>
 		<TableBody>
 			{#each data as obj}
-				<TableBodyRow class="bg-white border-b border-gray-200">
+				<TableBodyRow
+					id="lead-row-{obj.id}"
+					class="border-b border-gray-200 transition-all duration-700 {highlightedLeadId === obj.id
+						? 'bg-yellow-100 ring-2 ring-yellow-400'
+						: 'bg-white'}"
+				>
 					{#each columns as col}
 						<TableBodyCell tdClass="px-6 py-4 text-[#6F6C6C] align-middle {col.class || ''}">
 							{@html render(col.key, obj)}

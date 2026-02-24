@@ -108,9 +108,9 @@
 	}
 
 	const typeRouteMap: Record<string, (r: any) => string> = {
-		'LEAD':          (r) => `/admin/todos?query=${encodeURIComponent(r.title ?? '')}`,
-		'PRESUPUESTO':   (r) => `/admin?search=${encodeURIComponent(r.title ?? '')}`,
-		'LCB-PROFESORES':(r) => `/admin/lcb`,
+		LEAD: (r) => `/admin/todos?query=${encodeURIComponent(r.title ?? '')}`,
+		PRESUPUESTO: (r) => `/admin?search=${encodeURIComponent(r.title ?? '')}`,
+		'LCB-PROFESORES': (r) => `/admin/lcb`
 	};
 
 	const typeLabelMap: Record<string, string> = {

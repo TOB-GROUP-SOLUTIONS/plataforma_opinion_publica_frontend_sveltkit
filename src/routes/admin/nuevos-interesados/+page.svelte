@@ -205,6 +205,7 @@
     let showAssignModal = false;
     let isSubmittingAssign = false;
     let assignSuccessMsg = '';
+	let formModalNote = false;
     let selectedLeadId: number | null = null;
     let selectedUser: { label: string; value: number } | null = null;
     $: userOptions = (data?.users ?? []).map((u: any) => ({
@@ -229,6 +230,11 @@
         showChangeStatusModal = true;
         selectedStatus = null;
     }
+
+	const handleNote = async ({ detail }: any) => {
+		identifierToView = { ...detail.data };
+		formModalNote = true;
+	};
 
     function handleChangeStatusEnhanced() {
         isSubmittingStatus = true;
@@ -476,6 +482,7 @@
 			{handleChangeStatus}
 			{handleEdit}
 			{handleDelete}
+			{handleNote}
 		/>
 	</div>
 
@@ -861,6 +868,33 @@
 	</div>
 </Modal>
 
+
+<Modal bind:open={formModalNote} size="md" autoclose={false} class="w-full">
+	<div class="text-sm font-bold text-gray-500 dark:text-white space-y-4">
+		<h3 class="text-lg font-bold text-gray-900 dark:text-white">
+			Notas
+		</h3>
+	</div>
+	<form class="flex flex-col space-y-4" method="POST" action={'?/addNote'}>
+		<Label class="space-y-2">
+			<textarea
+				value={identifierToView?.note || ''}
+				name="note"
+				placeholder="Escribe una nota de observación..."
+				rows="8"
+				class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#7f8c8d] focus:border-[#7f8c8d] block w-full p-2.5"
+			/>
+		</Label>
+
+		<Button
+			type="button"
+			on:click={() => (formModalNote = false)}
+			class="w-full bg-gray-100 hover:bg-gray-200 hover:text-gray-700 text-gray-600 mt-4"
+		>
+			Cerrar
+		</Button>
+	</form>
+</Modal>
 
 {#if showPersonalRecordModal}
 	<PersonalRecord

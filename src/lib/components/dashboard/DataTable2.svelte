@@ -131,6 +131,12 @@
 												class: 'bg-[#4D6591] text-white rounded-full'
 											},
 											{
+												label: 'Ver Notas',
+												event: 'view_note',
+												icon: ReceiptSolid,
+												class: 'text-sm bg-[#666666] text-white rounded-full'
+											},
+											{
 												label: 'Asignar responsable',
 												event: 'asingToUser',
 												icon: UserSolid,
@@ -139,6 +145,7 @@
 										]}
 										on:view={() => dispatch('view', { data: obj })}
 										on:asingToUser={() => dispatch('asingToUser', { data: obj })}
+										on:notes={() => dispatch('view_note', { data: obj })}
 									/>
 								{/if}
 
@@ -239,6 +246,7 @@
 										on:confirmPayment={() => dispatch('confirmPayment', { data: obj })}
 										on:sendMoreInfoForm={() => dispatch('sendMoreInfoForm', { data: obj })}
 										on:view_proof={() => dispatch('view_proof', { data: obj })}
+										on:notes={() => dispatch('view_note', { data: obj })}
 									/>
 								{/if}
 

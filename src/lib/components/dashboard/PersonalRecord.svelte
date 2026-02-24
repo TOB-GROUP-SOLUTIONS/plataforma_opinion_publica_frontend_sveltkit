@@ -87,10 +87,10 @@
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						/>
 						<input
-							type="text"
-							name="birthDate"
+							type="date"
+							name="birth_date"
 							placeholder="Fecha de nacimiento"
-							value={data.birthDate || ''}
+							value={data.birth_date ? data.birth_date.toString().slice(0, 10) : ''}
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						/>
@@ -111,14 +111,14 @@
 					<div class="grid grid-cols-2 gap-4">
 						<input
 							type="text"
-							name="parentName"
+							name="parent_full_name"
 							placeholder="Nombre completo"
 							value={data.parent_full_name || ''}
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						/>
 						<select
-							name="relationshipType"
+							name="parent_relation"
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						>
@@ -133,9 +133,9 @@
 						</select>
 						<input
 							type="text"
-							name="parentEmail"
+							name="parent_email"
 							placeholder="Email"
-							value={data.parentEmail || ''}
+							value={data.parent_email || ''}
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						/>
@@ -155,48 +155,59 @@
 					<h3 class="text-[#1e3a5f] font-semibold mb-4">C. Información académica</h3>
 					<div class="grid grid-cols-2 gap-4">
 						<select
+							name="is_liceo_student"
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						>
 							<option value="">¿Es alumno del Liceo / instituto?</option>
-							<option value="Sí">Sí</option>
-							<option value="No">No</option>
+							<option value="true" selected={data.is_liceo_student === true}>Sí</option>
+							<option value="false" selected={data.is_liceo_student === false}>No</option>
 						</select>
 						<select
+							name="current_level"
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						>
 							<option value="">Nivel actual</option>
-							<option value="Primaria">Primaria</option>
-							<option value="Secundaria">Secundaria</option>
-							<option value="Terciario">Terciario</option>
-							<option value="Universitario">Universitario</option>
-							<option value="Otro">Otro</option>
+							<option value="Primaria" selected={data.current_level === 'Primaria'}>Primaria</option>
+							<option value="Secundaria" selected={data.current_level === 'Secundaria'}>Secundaria</option>
+							<option value="Terciario" selected={data.current_level === 'Terciario'}>Terciario</option>
+							<option value="Universitario" selected={data.current_level === 'Universitario'}>Universitario</option>
+							<option value="Otro" selected={data.current_level === 'Otro'}>Otro</option>
 						</select>
 						<input
 							type="text"
+							name="sede"
 							placeholder="Sede"
+							value={data.sede || ''}
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						/>
 						<input
 							type="text"
+							name="last_course"
 							placeholder="Último curso realizado"
+							value={data.last_course || ''}
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						/>
 						<input
-							type="text"
+							type="number"
+							name="last_course_year"
 							placeholder="Año en que cursó por última vez"
+							value={data.last_course_year || ''}
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						/>
-						<input
-							type="text"
-							placeholder="¿Completó el nivel?"
+						<select
+							name="completed_level"
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-						/>
+						>
+							<option value="">¿Completó el nivel?</option>
+							<option value="true" selected={data.completed_level === true}>Sí</option>
+							<option value="false" selected={data.completed_level === false}>No</option>
+						</select>
 					</div>
 				</div>
 
@@ -205,41 +216,39 @@
 					<h3 class="text-[#1e3a5f] font-semibold mb-4">D. Información del programa contratado</h3>
 					<div class="grid grid-cols-2 gap-4">
 						<select
-							name="programType"
+							name="program_type"
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						>
 							<option value="">Tipo de programa</option>
 							<option value="Tutoría" selected={data.program_type === 'Tutoría'}>Tutoría</option>
 							<option value="Grupo" selected={data.program_type === 'Grupo'}>Grupo</option>
-							<option value="Individual" selected={data.program_type === 'Individual'}
-								>Individual</option
-							>
+							<option value="Individual" selected={data.program_type === 'Individual'}>Individual</option>
 						</select>
 						<select
-							name="school"
+							name="institution"
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						>
 							<option value="">Colegio o institución</option>
-							<option value="colegio" selected={data.institution === 'Liceo Británico'}>Colegio</option>
-							<option value="instituto" selected={data.institution === 'Instituto Cambridge'}>Instituto</option>
+							<option value="Liceo Británico" selected={data.institution === 'Liceo Británico'}>Liceo Británico</option>
+							<option value="Instituto Cambridge" selected={data.institution === 'Instituto Cambridge'}>Instituto Cambridge</option>
 						</select>
 						<input
 							type="text"
 							name="assigned_to"
 							placeholder="Responsable asignado"
-							value={data.assigned_to
-								? `${data.assigned_to.firstname} ${data.assigned_to.lastname}`
+							value={data.assigned_to_user_id
+								? `${data.assigned_to_user_id.firstname} ${data.assigned_to_user_id.lastname}`
 								: ''}
 							disabled={true}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						/>
 						<input
 							type="text"
-							name="product"
+							name="associated_product"
 							placeholder="Producto asociado"
-							value={data.product || ''}
+							value={data.associated_product || ''}
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						/>
@@ -252,15 +261,17 @@
 					<div class="grid grid-cols-2 gap-4">
 						<input
 							type="text"
-							name="blood_type"
+							name="special_diet"
 							placeholder="Dieta especial"
+							value={data.special_diet || ''}
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-						/>	
+						/>
 						<input
 							type="text"
 							name="allergies"
 							placeholder="Alergias"
+							value={data.allergies || ''}
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						/>
@@ -283,19 +294,20 @@
 						<input
 							type="text"
 							name="medical_observations"
-							placeholder="Observacion para el equipo de TOGETHER"
+							placeholder="Observación para el equipo de TOGETHER"
 							value={data.medical_observations || ''}
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						/>
-						<input
-							type="text"
+						<select
 							name="requires_medication"
-							placeholder="¿Requiere Medicacion?"
-							value={data.requires_medication || ''}
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-						/>
+						>
+							<option value="">¿Requiere medicación?</option>
+							<option value="true" selected={data.requires_medication === true}>Sí</option>
+							<option value="false" selected={data.requires_medication === false}>No</option>
+						</select>
 					</div>
 				</div>
 
@@ -318,6 +330,7 @@
 							type="text"
 							name="business_name"
 							placeholder="Razón social"
+							value={data.business_name || ''}
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						/>
@@ -325,6 +338,7 @@
 							type="text"
 							name="cuit_cuil"
 							placeholder="CUIT / CUIL"
+							value={data.cuit_cuil || ''}
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						/>
@@ -332,13 +346,15 @@
 							type="text"
 							name="billing_address"
 							placeholder="Dirección completa"
+							value={data.billing_address || ''}
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						/>
 						<input
-							type="text"
+							type="number"
 							name="salary"
 							placeholder="Sueldo"
+							value={data.salary || ''}
 							disabled={!isEditing}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						/>
@@ -353,6 +369,7 @@
 							type="text"
 							placeholder="DNI del alumno"
 							disabled={!isEditing}
+							value={data.dni || ''}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						/>
 					</div>

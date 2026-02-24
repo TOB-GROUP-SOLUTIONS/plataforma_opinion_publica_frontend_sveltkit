@@ -39,12 +39,27 @@
 	let searching = false;
 
 	function handleView(item: any) {
-		console.log('view', item);
-	}
-
-	function handleDownload(item: any) {
 		const fileUrl = item.file?.url || item.file_id;
 		window.open(fileUrl, '_blank');
+	}
+
+	async function handleDownload(item: any) {
+		const fileUrl = item.file?.url || item.file_id;
+		if (!fileUrl) return;
+
+		const response = await fetch(fileUrl);
+		const blob = await response.blob();
+
+		const url = window.URL.createObjectURL(blob);
+		const a = document.createElement('a');
+
+		a.href = url;
+		a.download = item.file?.name || 'archivo';
+		document.body.appendChild(a);
+		a.click();
+
+		document.body.removeChild(a);
+		window.URL.revokeObjectURL(url);
 	}
 
 	function handleGoToLead(item: any) {
@@ -138,7 +153,7 @@
 	<title>Inicio</title>
 </svelte:head>
 <div class="w-full max-w-screen-4xl rounded-lg mx-auto bg-transparent dark:bg-gray-800 px-6 py-8">
-	<div class="w-full flex flex-col justify-center mb-8 shadow-md">
+	<div class="w-full flex flex-col justify-center mb-8">
 		<div class="w-full max-w-[1700px] mx-auto">
 			<div
 				class="bg-white rounded-lg p-4 flex items-center gap-4 border-t-2 border-[#0C2C65]/70"
@@ -201,9 +216,8 @@
 	<div class="flex justify-center gap-4 p-4 sm:flex-row flex-col"></div>
 </div>
 
-<div class="w-full max-w-screen-4xl mx-auto px-6 py-8 mt-6">
+<div class="w-full max-w-screen-4xl mx-auto px-6 pt-2 pb-8 mt-2">
 	<div class="w-full max-w-[1700px] mx-auto space-y-4">
-		<!-- Header -->
 		<div
 			class="bg-white rounded-lg p-4 flex items-center gap-4 shadow-md border-t-2 border-[#0C2C65]/20"
 		>

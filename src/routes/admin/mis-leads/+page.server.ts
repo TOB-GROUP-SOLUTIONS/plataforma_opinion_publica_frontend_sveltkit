@@ -203,7 +203,7 @@ export const actions: Actions = {
 		}
 
 
-		console.log(FilePaymentConfirmed)
+		console.log("FilePaymentConfirmed", FilePaymentConfirmed)
 
 		try {
 
@@ -335,5 +335,41 @@ export const actions: Actions = {
 		if (!response.ok) throw error(500, 'Error al actualizar el lead');
 
 		return { success: true };
+	},
+
+	addNote: async ({ cookies, request }) => {
+		const token = cookies.get('token');
+		const data = await request.formData();
+		const budgetId = data.get('id');
+		const notes = data.get('notes');
+
+		const response = await api.patch({
+			fetch,
+			endpoint: `budgets/${budgetId}`,
+			body: JSON.stringify({ notes }),
+			token
+		});
+
+		if (!response.ok) throw error(500, 'Error al agregar la nota');
+
+		return { message: '¡Nota guardada!' };
+	},
+
+	addNotePayment: async ({ cookies, request }) => {
+		const token = cookies.get('token');
+		const data = await request.formData();
+		const paymentId = data.get('id');
+		const notes = data.get('notes');
+
+		const response = await api.patch({
+			fetch,
+			endpoint: `payments/${paymentId}`,
+			body: JSON.stringify({ notes }),
+			token
+		});
+
+		if (!response.ok) throw error(500, 'Error al agregar la nota al pago');
+
+		return { message: '¡Nota del pago guardada!' };
 	}
 };

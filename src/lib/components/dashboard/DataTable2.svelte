@@ -132,7 +132,7 @@
 											},
 											{
 												label: 'Ver Notas',
-												event: 'view_note',
+												event: 'notes',
 												icon: ReceiptSolid,
 												class: 'text-sm bg-[#666666] text-white rounded-full'
 											},
@@ -145,8 +145,8 @@
 										]}
 										on:view={() => dispatch('view', { data: obj })}
 										on:asingToUser={() => dispatch('asingToUser', { data: obj })}
-										on:notes={() => dispatch('view_note', { data: obj })}
-									/>
+										on:notes={() => dispatch('notes', { data: obj })}
+									/>	
 								{/if}
 
 								{#if $page.url.pathname === '/admin/lcb'}
@@ -215,6 +215,12 @@
 															class: 'text-sm bg-[#666666] text-white rounded-full'
 														},
 														{
+															label: 'Ver Notas',
+															event: 'notes',
+															icon: EyeOutline,
+															class: 'text-sm bg-[#666666] text-white rounded-full'
+														},
+														{
 															label: 'Formulario "Mas informacion"',
 															event: 'sendMoreInfoForm',
 															icon: ReceiptSolid,
@@ -228,6 +234,12 @@
 															label: 'Formulario "Mas informacion"',
 															event: 'sendMoreInfoForm',
 															icon: ReceiptSolid,
+															class: 'text-sm bg-[#666666] text-white rounded-full'
+														},
+														{
+															label: 'Ver Notas',
+															event: 'notesPayment',
+															icon: EyeOutline,
 															class: 'text-sm bg-[#666666] text-white rounded-full'
 														},
 														{
@@ -245,8 +257,8 @@
 										on:add_budget={() => dispatch('add_budget', { data: obj })}
 										on:confirmPayment={() => dispatch('confirmPayment', { data: obj })}
 										on:sendMoreInfoForm={() => dispatch('sendMoreInfoForm', { data: obj })}
-										on:view_proof={() => dispatch('view_proof', { data: obj })}
-										on:notes={() => dispatch('view_note', { data: obj })}
+										on:notes={() => dispatch('notes', { data: obj })}
+										on:notesPayment={() => dispatch('notesPayment', { data: obj })}
 									/>
 								{/if}
 

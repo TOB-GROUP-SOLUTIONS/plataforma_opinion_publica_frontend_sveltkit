@@ -15,6 +15,7 @@
 	export let handleDownload: undefined | ((e: any) => void) = undefined;
 	export let handleGoToLead: undefined | ((e: any) => void) = undefined;
 	export let handleNote: undefined | ((e: any) => void) = undefined;
+	export let handleNotePayment: undefined | ((e: any) => void) = undefined;
 
 
 
@@ -60,6 +61,7 @@
 		on:goToArea={handleGoToArea}
 		on:view={handleView}
 		on:notes={handleNote}
+		on:notesPayment={handleNotePayment}
 		on:change_status={handleChangeStatus}
 		on:sendMoreInfoForm={handleViewForm}
 		on:view_proof={handleViewProof}

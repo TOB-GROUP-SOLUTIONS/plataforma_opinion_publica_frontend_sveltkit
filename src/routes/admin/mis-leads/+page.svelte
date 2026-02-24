@@ -37,6 +37,7 @@
 	let modalOrdering: string = '';
 	let showViewProofModal = false;
 	let proofUrl: string = '';
+	let formModalNoteBudget = false;
 	
 	// Obtener URL pública del env
 	const PUBLIC_APP_URL = env.PUBLIC_APP_URL;
@@ -117,6 +118,7 @@
 	let selectedLeadId: number | null = null;
 	let selectedUser: { label: string; value: number } | null = null;
 	let currentResponsable: string = '';
+	let sending = false;
 	$: statusFilter = $page.url.searchParams.get('status');
 	console.log('Status filter:', statusFilter);
 
@@ -241,6 +243,22 @@
 		goto(`?${params.toString()}`);
 	}
 
+	let identifierToEdit = {} as any;
+	let identifierToEditPayment = {} as any;
+	let formModalNotePayment = false;
+
+	const handleNote = async ({ detail }: any) => {
+		identifierToEdit = { ...detail.data };
+		formModalNoteBudget = true;
+	};
+
+	const handleNotePayment = async ({ detail }: any) => {
+		identifierToEdit = { ...detail.data };
+		console.log(identifierToEdit)
+		formModalNotePayment = true;
+	};	
+
+
 	let currentLeadStatus: string = '';
 	let currentLeadStatusColor: string = '';
 	let showBudgetModal = false;
@@ -315,6 +333,45 @@
 			}
 		};
 	}
+
+
+	const addNote = ({}) => {
+		sending = true;
+		return async ({ result, update }: any) => {
+			console.log(result)
+			await update();
+			if (result.type === 'success') {
+				successMessage = result.data.message;
+				errorMessage = '';
+				sending = false;
+				formModalNoteBudget = false;
+			} else {
+				errorMessage = result.data.message;
+				sending = false;
+			}
+
+			await update({ invalidateAll: false, errorMessage, successMessage });
+		};
+	};
+
+	const addNotePayment = ({}) => {
+		sending = true;
+		return async ({ result, update }: any) => {
+			console.log(result)
+			await update();
+			if (result.type === 'success') {
+				successMessage = result.data.message;
+				errorMessage = '';
+				sending = false;
+				formModalNotePayment = false;
+			} else {
+				errorMessage = result.data.message;
+				sending = false;
+			}
+
+			await update({ invalidateAll: false, errorMessage, successMessage });
+		};
+	};
 
 	function handleBudgetEnhanced() {
 		isSubmittingBudget = true;
@@ -399,6 +456,8 @@
 			{handleConfirmPayment}
 			{handleViewForm}
 			{handleViewProof}
+			{handleNote}
+			{handleNotePayment}
 		/>
 	</div>
 
@@ -978,6 +1037,78 @@
 			</button>
 		</div>
 	</div>
+</Modal>
+
+<Modal bind:open={formModalNoteBudget} size="md" autoclose={false} class="w-full">
+	<div class="text-sm font-bold text-gray-500 dark:text-white space-y-4">
+		<h3 class="text-lg font-bold text-gray-900 dark:text-white">
+			Notas
+		</h3>
+	</div>
+	<form class="flex flex-col space-y-4" method="POST" action={'?/addNote'} use:enhance={addNote}>
+		<input type="hidden" value={identifierToEdit?.budgets[0]?.id} name="id" />
+		<Label class="space-y-2">
+			<textarea
+				value={identifierToEdit?.budgets[0]?.notes || ''}
+				name="notes"
+				placeholder="Escribe una nota de observación..."
+				rows="8"
+				class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#7f8c8d] focus:border-[#7f8c8d] block w-full p-2.5"
+			/>
+		</Label>
+
+		<Button
+			class="w-full bg-[#2A2E37] hover:bg-[#2A2E37] shadow-xl text-sm sm:text-base"
+			disabled={sending}
+			type="submit"
+		>
+			Confirmar
+		</Button>
+
+		<Button
+			type="button"
+			on:click={() => (formModalNoteBudget = false)}
+			class="w-full bg-gray-100 hover:bg-gray-200 hover:text-gray-700 text-gray-600 mt-4"
+		>
+			Cerrar
+		</Button>
+	</form>
+</Modal>
+
+<Modal bind:open={formModalNotePayment} size="md" autoclose={false} class="w-full">
+	<div class="text-sm font-bold text-gray-500 dark:text-white space-y-4">
+		<h3 class="text-lg font-bold text-gray-900 dark:text-white">
+			Notas
+		</h3>
+	</div>
+	<form class="flex flex-col space-y-4" method="POST" action={'?/addNotePayment'} use:enhance={addNotePayment}>
+		<input type="hidden" value={identifierToEdit?.budgets[0]?.id} name="id" />
+		<Label class="space-y-2">
+			<textarea
+				value={identifierToEdit?.budgets[0]?.payments[0]?.notes || ''}
+				name="notes"
+				placeholder="Escribe una nota de observación..."
+				rows="8"
+				class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#7f8c8d] focus:border-[#7f8c8d] block w-full p-2.5"
+			/>
+		</Label>
+
+		<Button
+			class="w-full bg-[#2A2E37] hover:bg-[#2A2E37] shadow-xl text-sm sm:text-base"
+			disabled={sending}
+			type="submit"
+		>
+			Confirmar
+		</Button>
+
+		<Button
+			type="button"
+			on:click={() => (formModalNotePayment = false)}
+			class="w-full bg-gray-100 hover:bg-gray-200 hover:text-gray-700 text-gray-600 mt-4"
+		>
+			Cerrar
+		</Button>
+	</form>
 </Modal>
 
 {#if successMessage.length > 0}

@@ -232,7 +232,8 @@ export const actions: Actions = {
 			const paymentDto = {
 				receipt_id: fileId,
 				notes: notes,
-				budget_id: budgetId
+				budget_id: budgetId,
+				file_id: fileId
 			};
 
 			const paymentResponse = await api.post({

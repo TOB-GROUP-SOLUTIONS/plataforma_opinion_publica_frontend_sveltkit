@@ -425,12 +425,12 @@
 	}
 
 	function handleViewProof(e: CustomEvent) {
-		console.log('Ver comprobante:', e);
+		console.log('Ver comprobante:', e.detail);
 		// Obtener la URL del comprobante desde el evento
-		const proofFileUrl = e.detail?.data?.budgets?.[0]?.file?.url ?? e.detail?.data?.payment_proof_url ?? '';
+		const proofFileUrl = e.detail?.data?.budgets?.[0]?.file?.url ?? '';
 		if (proofFileUrl) {
 			proofUrl = proofFileUrl;
-			showViewProofModal = true;
+			window.open(proofFileUrl, '_blank');
 		} else {
 			errorMessage = 'No se encontró el comprobante de pago';
 		}
@@ -954,106 +954,6 @@
 			<button
 				type="button"
 				on:click={() => (showFormModal = false)}
-				class="px-6 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg font-medium transition-colors"
-			>
-				Cerrar
-			</button>
-		</div>
-	</div>
-</Modal>
-
-<!-- Modal: Ver Comprobante de Pago -->
-<Modal bind:open={showViewProofModal} size="xl" autoclose={false}>
-	<div class="p-6 space-y-6">
-		<h3 class="text-2xl font-semibold text-gray-600 text-center">Comprobante de Pago</h3>
-		
-		<hr class="border-gray-300" />
-
-		<!-- Visualizador del comprobante -->
-		<div class="space-y-4">
-			{#if proofUrl}
-				<!-- Si es PDF, mostrar iframe -->
-				{#if proofUrl.toLowerCase().endsWith('.pdf')}
-					<div class="w-full h-[600px] border border-gray-300 rounded-lg overflow-hidden">
-						<iframe
-							src={proofUrl}
-							title="Comprobante de Pago"
-							class="w-full h-full"
-							frameborder="0"
-						/>
-					</div>
-				<!-- Si es imagen, mostrar img -->
-				{:else if proofUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i)}
-					<div class="w-full flex justify-center">
-						<img
-							src={proofUrl}
-							alt="Comprobante de Pago"
-							class="max-w-full max-h-[600px] object-contain border border-gray-300 rounded-lg"
-						/>
-					</div>
-				<!-- Para otros tipos de archivo, mostrar enlace de descarga -->
-				{:else}
-					<div class="text-center py-12">
-						<svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-							/>
-						</svg>
-						<p class="text-gray-600 mb-4">No se puede previsualizar este tipo de archivo</p>
-						<a
-							href={proofUrl}
-							target="_blank"
-							rel="noopener noreferrer"
-							class="inline-flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
-						>
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-								/>
-							</svg>
-							Descargar Comprobante
-						</a>
-					</div>
-				{/if}
-
-				<!-- Botón de descarga siempre visible -->
-				<div class="flex justify-center">
-					<a
-						href={proofUrl}
-						download
-						target="_blank"
-						rel="noopener noreferrer"
-						class="inline-flex items-center gap-2 px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
-					>
-						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-							/>
-						</svg>
-						Descargar
-					</a>
-				</div>
-			{:else}
-				<div class="text-center py-12 text-gray-500">
-					<p>No hay comprobante disponible</p>
-				</div>
-			{/if}
-		</div>
-
-		<!-- Botón de cerrar -->
-		<div class="flex justify-center pt-4">
-			<button
-				type="button"
-				on:click={() => (showViewProofModal = false)}
 				class="px-6 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg font-medium transition-colors"
 			>
 				Cerrar

@@ -13,6 +13,7 @@
 	import PersonalRecord from '$lib/components/dashboard/PersonalRecord.svelte';
 	import { AdjustmentsHorizontalOutline } from 'flowbite-svelte-icons';
 	import { Tooltip } from 'flowbite-svelte';
+	import { env } from '$env/dynamic/public';
 
 	export let data;
 	let successMessage = '';
@@ -38,7 +39,7 @@
 	let proofUrl: string = '';
 	
 	// Obtener URL pública del env
-	const PUBLIC_URL = import.meta.env.VITE_PUBLIC_URL || 'http://localhost:5173';
+	const PUBLIC_APP_URL = env.PUBLIC_APP_URL;
 
 	$: count = (fechaDesde ? 1 : 0) + (fechaHasta ? 1 : 0);
 
@@ -340,7 +341,7 @@
 
 	function handleViewForm(e: CustomEvent) {
 		selectedLeadIdForm = e.detail?.data?.id ?? e.detail?.id;
-		formModalUrl = `${PUBLIC_URL}/formulario-ver-mas/${selectedLeadIdForm}`;
+		formModalUrl = `${PUBLIC_APP_URL}/formulario-ver-mas/${selectedLeadIdForm}`;
 		showFormModal = true;
 	}
 

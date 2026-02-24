@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	export let data: any = {};
 
-	$: leadId = $page.params.leadId;
+	$: leadId = data?.lead?.id || $page.params.id;
 	console.log('Data print', data)
 
 	$: lead = data || null;
@@ -42,7 +42,7 @@
 						type="text"
 						name="full_name"
 						placeholder="Nombre completo"
-						value={data?.lead?.lead?.full_name || ''}
+						value={data?.lead?.full_name || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<input
@@ -52,11 +52,10 @@
 						value={data?.lead?.dni || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
-					<input
-						type="text"
-						name="birthDate"
-						placeholder="Fecha de nacimiento"
-						value={data?.lead?.birthDate || ''}
+						<input
+						type="date"
+						name="birth_date"
+						value={data?.lead?.birth_date ? data.lead.birth_date.toString().slice(0, 10) : ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<input
@@ -75,13 +74,13 @@
 				<div class="grid grid-cols-2 gap-4">
 					<input
 						type="text"
-						name="parentName"
+						name="parent_full_name"
 						placeholder="Nombre completo"
 						value={data?.lead?.parent_full_name || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<select
-						name="relationshipType"
+						name="parent_relation"
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					>
 						<option value="">Relación con el alumno</option>
@@ -95,9 +94,9 @@
 					</select>
 					<input
 						type="text"
-						name="parentEmail"
+						name="parent_email"
 						placeholder="Email"
-						value={data?.lead?.parentEmail || ''}
+						value={data?.lead?.parent_email || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<input
@@ -115,42 +114,53 @@
 				<h3 class="text-[#1e3a5f] font-semibold mb-4">C. Información académica</h3>
 				<div class="grid grid-cols-2 gap-4">
 					<select
+						name="is_liceo_student"
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					>
 						<option value="">¿Es alumno del Liceo / instituto?</option>
-						<option value="Sí" selected={data?.lead?.is_liceo_student === true}>Sí</option>
-						<option value="No" selected={data?.lead?.is_liceo_student === false}>No</option>
+						<option value="true" selected={data?.lead?.is_liceo_student === true}>Sí</option>
+						<option value="false" selected={data?.lead?.is_liceo_student === false}>No</option>
 					</select>
 					<select
+						name="current_level"
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					>
 						<option value="">Nivel actual</option>
-						<option value="Primaria">Primaria</option>
-						<option value="Secundaria">Secundaria</option>
-						<option value="Terciario">Terciario</option>
-						<option value="Universitario">Universitario</option>
-						<option value="Otro">Otro</option>
+						<option value="Primaria" selected={data?.lead?.current_level === 'Primaria'}>Primaria</option>
+						<option value="Secundaria" selected={data?.lead?.current_level === 'Secundaria'}>Secundaria</option>
+						<option value="Terciario" selected={data?.lead?.current_level === 'Terciario'}>Terciario</option>
+						<option value="Universitario" selected={data?.lead?.current_level === 'Universitario'}>Universitario</option>
+						<option value="Otro" selected={data?.lead?.current_level === 'Otro'}>Otro</option>
 					</select>
 					<input
 						type="text"
+						name="sede"
 						placeholder="Sede"
+						value={data?.lead?.sede || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<input
 						type="text"
+						name="last_course"
 						placeholder="Último curso realizado"
+						value={data?.lead?.last_course || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<input
-						type="text"
+						type="number"
+						name="last_course_year"
 						placeholder="Año en que cursó por última vez"
+						value={data?.lead?.last_course_year || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
-					<input
-						type="text"
-						placeholder="¿Completó el nivel?"
+					<select
+						name="completed_level"
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
-					/>
+					>
+						<option value="">¿Completó el nivel?</option>
+						<option value="true" selected={data?.lead?.completed_level === true}>Sí</option>
+						<option value="false" selected={data?.lead?.completed_level === false}>No</option>
+					</select>
 				</div>
 			</div>
 
@@ -159,7 +169,7 @@
 				<h3 class="text-[#1e3a5f] font-semibold mb-4">D. Información del programa contratado</h3>
 				<div class="grid grid-cols-2 gap-4">
 					<select
-						name="programType"
+						name="program_type"
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					>
 						<option value="">Tipo de programa</option>
@@ -170,28 +180,29 @@
 						>
 					</select>
 					<select
-						name="school"
+						name="institution"
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					>
 						<option value="">Colegio o institución</option>
-						<option value="colegio" selected={data?.lead?.institution === 'Liceo Británico'}>Colegio</option>
-						<option value="instituto" selected={data?.lead?.institution === 'Instituto Cambridge'}>Instituto</option>
+						<option value="Liceo Británico" selected={data?.lead?.institution === 'Liceo Británico'}>Liceo Británico</option>
+						<option value="Instituto Cambridge" selected={data?.lead?.institution === 'Instituto Cambridge'}>Instituto Cambridge</option>
 					</select>
 					<input
 						type="text"
 						name="assigned_to"
 						placeholder="Responsable asignado"
-						value={data?.lead?.assigned_to
-							? `${data?.lead?.assigned_to.firstname} ${data?.lead?.assigned_to.lastname}`
+						value={data?.lead?.assigned_to_user_id
+							? `${data?.lead?.assigned_to_user_id.firstname} ${data?.lead?.assigned_to_user_id.lastname}`
 							: ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent bg-gray-100 cursor-not-allowed"
 					/>
 					<input
 						type="text"
-						name="product"
+						name="associated_product"
+						disabled
 						placeholder="Producto asociado"
 						value={data?.lead?.product || ''}
-						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
+						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent bg-gray-100 cursor-not-allowed"
 					/>
 				</div>
 			</div>
@@ -202,14 +213,16 @@
 				<div class="grid grid-cols-2 gap-4">
 					<input
 						type="text"
-						name="blood_type"
+						name="special_diet"
 						placeholder="Dieta especial"
+						value={data?.lead?.special_diet || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
-					/>	
+					/>
 					<input
 						type="text"
 						name="allergies"
 						placeholder="Alergias"
+						value={data?.lead?.allergies || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<input
@@ -229,17 +242,18 @@
 					<input
 						type="text"
 						name="medical_observations"
-						placeholder="Observacion para el equipo de TOGETHER"
+						placeholder="Observación para el equipo de TOGETHER"
 						value={data?.lead?.medical_observations || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
-					<input
-						type="text"
+					<select
 						name="requires_medication"
-						placeholder="¿Requiere Medicacion?"
-						value={data?.lead?.requires_medication || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
-					/>
+					>
+						<option value="">¿Requiere medicación?</option>
+						<option value="true" selected={data?.lead?.requires_medication === true}>Sí</option>
+						<option value="false" selected={data?.lead?.requires_medication === false}>No</option>
+					</select>
 				</div>
 			</div>
 
@@ -261,23 +275,27 @@
 						type="text"
 						name="business_name"
 						placeholder="Razón social"
+						value={data?.lead?.business_name || ''}	
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<input
 						type="text"
 						name="cuit_cuil"
+						value={data?.lead?.cuit_cuil || ''}
 						placeholder="CUIT / CUIL"
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<input
 						type="text"
 						name="billing_address"
-						placeholder="Dirección completa"
+						value={data?.lead?.billing_address || ''}
+						placeholder="Dirección completa"	
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
 					<input
 						type="text"
 						name="salary"
+						value={data?.lead?.salary || ''}
 						placeholder="Sueldo"
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>
@@ -290,6 +308,7 @@
 				<div class="grid grid-cols-2 gap-4">
 					<input
 						type="text"
+						value={data?.lead?.dni || ''}
 						placeholder="DNI del alumno"
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					/>

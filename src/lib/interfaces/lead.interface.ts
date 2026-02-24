@@ -11,6 +11,7 @@ export interface Lead {
     description?: string;
   };
   referrer_id?: number;
+  institution?: string;
   interest_level?: {
     id: number;
     key: string;

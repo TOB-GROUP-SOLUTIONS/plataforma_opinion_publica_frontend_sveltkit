@@ -17,7 +17,7 @@
 	<div class="rounded-lg  max-w-5xl mx-auto p-6">
 		<!-- Header -->
 		<div class="relative flex justify-center items-center mb-8">
-			<h2 class="text-2xl font-semibold text-[#1e3a5f]">Formulario Mas informacion</h2>
+			<h2 class="text-2xl font-semibold text-[#1e3a5f]">JM - FORMUALRIO DE CONTRATACIÓN</h2>
 		</div>
 
 		<!-- Formulario centrado -->

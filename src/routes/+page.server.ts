@@ -1,6 +1,7 @@
 import * as api from '$lib/api';
 import { redirect } from '@sveltejs/kit';
 import { fail } from '@sveltejs/kit';
+import { dev } from '$app/environment';
 
 export function load({ locals, url, cookies }: any) {
 	console.log('[+page.server.ts] - Load function - locals.user:', locals.user);

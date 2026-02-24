@@ -14,7 +14,6 @@ type fetchParams = {
 function getHeaders(body?: string | FormData, token?: string) {
   return {
     ...(token && { Authorization: `Bearer ${token}` }),
-    'Access-Control-Allow-Origin': '*',
     ...(typeof body === 'string' && { 'Content-Type': 'application/json' }),
   }
 }
@@ -24,7 +23,12 @@ async function connect(args: fetchParams, method = 'GET'): Promise<Response> {
   if (args.params) url += `?${args.params}`;
 
   try {
-    const response = await fetch(url, { method, headers: getHeaders(args.body, args.token), body: args.body });
+    const response = await fetch(url, { 
+      method, 
+      headers: getHeaders(args.body, args.token), 
+      body: args.body,
+      credentials: 'include', // IMPORTANTE: Enviar cookies en requests cross-origin
+    });
     const data = await response.json();
     return { ok: true, data };
 

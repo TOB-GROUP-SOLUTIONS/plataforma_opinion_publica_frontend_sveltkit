@@ -4,17 +4,37 @@
 	export let data: any = {};
 
 	$: leadId = data?.lead?.id || $page.params.id;
-	console.log('Data print', data)
 
 	$: lead = data || null;
 
-	console.log('Lead data:', lead);
-
 	let isSaving = false;
+	let submitted = false;
 </script>
 
 <div class="p-8">
-	<div class="rounded-lg  max-w-5xl mx-auto p-6">
+	{#if submitted}
+		<!-- Pantalla de éxito -->
+		<div class="flex flex-col items-center justify-center min-h-[60vh] text-center">
+			<div class="bg-white rounded-2xl shadow-xl p-12 max-w-md w-full mx-auto">
+				<!-- Ícono check animado -->
+				<div class="flex items-center justify-center mb-6">
+					<div class="check-circle w-24 h-24 rounded-full bg-green-100 flex items-center justify-center">
+						<svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+						</svg>
+					</div>
+				</div>
+				<h2 class="text-2xl font-bold text-[#1e3a5f] mb-3">¡Formulario enviado!</h2>
+				<p class="text-gray-500 text-base mb-2">
+					Tus datos fueron guardados correctamente.
+				</p>
+				<p class="text-gray-400 text-sm">
+					En breve nos pondremos en contacto con vos.
+				</p>
+			</div>
+		</div>
+	{:else}
+	<div class="rounded-lg max-w-5xl mx-auto p-6">
 		<!-- Header -->
 		<div class="relative flex justify-center items-center mb-8">
 			<h2 class="text-2xl font-semibold text-[#1e3a5f]">Formulario Mas informacion</h2>
@@ -28,6 +48,9 @@
 				isSaving = true;
 				return async ({ result }) => {
 					isSaving = false;
+					if (result.type === 'success') {
+						submitted = true;
+					}
 				};
 			}}
 			class="bg-white rounded-lg p-6 space-y-6 mx-auto overflow-y-auto"
@@ -263,6 +286,7 @@
 				<div class="grid grid-cols-2 gap-4">
 					<select
 						name="invoice_type"
+						value={data?.lead?.invoice_type || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					>
 						<option value="">Tipo de factura</option>
@@ -327,4 +351,16 @@
 			</div>
 		</form>
 	</div>
+	{/if}
 </div>
+
+<style>
+	.check-circle {
+		animation: pop 0.4s ease-out;
+	}
+	@keyframes pop {
+		0% { transform: scale(0.5); opacity: 0; }
+		70% { transform: scale(1.1); opacity: 1; }
+		100% { transform: scale(1); }
+	}
+</style>

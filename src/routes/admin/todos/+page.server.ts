@@ -155,33 +155,40 @@ export const actions: Actions = {
 		return { success: true };
 	},
 
-	savePersonalRecord: async ({ cookies, request }) => {
+	savePersonalRecord: async ({ cookies, request, fetch }) => {
 		const token = cookies.get('token');
 		const data = await request.formData();
 		const leadId = data.get('lead_id');
 
-		const personalData = {
-			full_name: data.get('full_name'),
-			dni: data.get('dni'),
-			birth_date: data.get('birthDate'),
-			email: data.get('email'),
-			parent_full_name: data.get('parentName'),
-			parent_relation: data.get('relationshipType'),
-			parent_email: data.get('parentEmail'),
-			parent_phone: data.get('phone'),
-			program_type: data.get('programType'),
-			institution: data.get('school'),
-			associated_product: data.get('product'),
-			allergies: data.get('allergies'),
-			preexisting_conditions: data.get('preexisting_conditions'),
-			current_illnesses: data.get('current_illnesses'),
-			medical_observations: data.get('medical_observations'),
-			requires_medication: data.get('requires_medication'),
-			invoice_type: data.get('invoice_type'),
-			business_name: data.get('business_name'),
-			cuit_cuil: data.get('cuit_cuil'),
-			billing_address: data.get('billing_address'),
-			salary: data.get('salary') ? parseFloat(data.get('salary') as string) : null
+		const personalData: Record<string, any> = {
+			full_name: data.get('full_name') || undefined,
+			email: data.get('email') || undefined,
+			phone: data.get('phone') || undefined,
+			dni: data.get('dni') || undefined,
+			birth_date: data.get('birth_date') || undefined,
+			parent_full_name: data.get('parent_full_name') || undefined,
+			parent_relation: data.get('parent_relation') || undefined,
+			parent_email: data.get('parent_email') || undefined,
+			is_liceo_student: (data.get('is_liceo_student') !== null && data.get('is_liceo_student') !== '') ? data.get('is_liceo_student') === 'true' : undefined,
+			current_level: data.get('current_level') || undefined,
+			last_course: data.get('last_course') || undefined,
+			last_course_year: data.get('last_course_year') ? parseInt(data.get('last_course_year') as string) : undefined,
+			completed_level: (data.get('completed_level') !== null && data.get('completed_level') !== '') ? data.get('completed_level') === 'true' : undefined,
+			program_type: data.get('program_type') || undefined,
+			institution: data.get('institution') || undefined,
+			associated_product: data.get('associated_product') || undefined,
+			assigned_to_user_id: data.get('assigned_to_user_id') ? parseInt(data.get('assigned_to_user_id') as string) : undefined,
+			allergies: data.get('allergies') || undefined,
+			special_diet: data.get('special_diet') || undefined,
+			preexisting_conditions: data.get('preexisting_conditions') || undefined,
+			current_illnesses: data.get('current_illnesses') || undefined,
+			medical_observations: data.get('medical_observations') || undefined,
+			requires_medication: (data.get('requires_medication') !== null && data.get('requires_medication') !== '') ? data.get('requires_medication') === 'true' : undefined,
+			invoice_type: data.get('invoice_type') || undefined,
+			business_name: data.get('business_name') || undefined,
+			cuit_cuil: data.get('cuit_cuil') || undefined,
+			billing_address: data.get('billing_address') || undefined,
+			salary: data.get('salary') ? parseFloat(data.get('salary') as string) : undefined
 		};
 
 		const response = await api.patch({

@@ -179,7 +179,7 @@
 			case 'programa':
 				return 'Tutoría'; 
 			case 'colegio':
-				return 'Colegio Mecenas'; // Placeholder - ajustar según tus datos
+				return lead.institution || '-';
 			case 'created_at':
 				return new Date(lead.created_at).toLocaleDateString('es-AR');
 			case 'source':

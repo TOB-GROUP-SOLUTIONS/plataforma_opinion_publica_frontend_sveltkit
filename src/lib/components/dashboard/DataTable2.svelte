@@ -263,7 +263,6 @@
 										on:add_budget={() => dispatch('add_budget', { data: obj })}
 										on:confirmPayment={() => dispatch('confirmPayment', { data: obj })}
 										on:sendMoreInfoForm={() => dispatch('sendMoreInfoForm', { data: obj })}
-										on:view_proof={() => dispatch('view_proof', { data: obj })}
 										on:notes={() => dispatch('notes', { data: obj })}
 										on:notesPayment={() => dispatch('notesPayment', { data: obj })}
 									/>

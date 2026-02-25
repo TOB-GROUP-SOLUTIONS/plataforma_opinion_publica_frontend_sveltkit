@@ -23,6 +23,9 @@ export async function handle({ event, resolve }: any) {
 			currentPath.startsWith('/new-password') ||
 			currentPath.startsWith('/reset-password') ||
 			currentPath.startsWith('/formulario-lcb') ||
+			currentPath.startsWith('/formulario-ver-mas') ||
+			currentPath.startsWith('/formulario') ||
+
 			currentPath.startsWith('/ref/')
 		) {
 			return await resolve(event);

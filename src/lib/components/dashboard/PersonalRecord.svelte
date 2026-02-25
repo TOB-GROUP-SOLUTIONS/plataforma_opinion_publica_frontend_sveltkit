@@ -8,6 +8,17 @@
 	let showModal = true;
 	let isEditing = false;
 	let isSaving = false;
+	export const users: any = {};
+
+	// Variables locales para los selects (necesario para que bind:value funcione en Svelte)
+	let parent_relation = data.parent_relation ?? '';
+	let is_liceo_student = data.is_liceo_student ?? '';
+	let current_level = data.current_level ?? '';
+	let completed_level = data.completed_level ?? '';
+	let program_type = data.program_type ?? '';
+	let institution = data.institution ?? '';
+	let requires_medication = data.requires_medication ?? '';
+	let invoice_type = data.invoice_type ?? '';
 
 	function closeModal() {
 		dispatch('close');
@@ -66,6 +77,15 @@
 				class="bg-white rounded-lg p-6 space-y-6 max-w-3xl mx-auto overflow-y-auto flex-1"
 			>
 				<input type="hidden" name="lead_id" value={data.id || ''} />
+				<!-- Inputs hidden para selects (los disabled no se envían en el form) -->
+				<input type="hidden" name="parent_relation" value={parent_relation} />
+				<input type="hidden" name="is_liceo_student" value={is_liceo_student === true ? 'true' : is_liceo_student === false ? 'false' : ''} />
+				<input type="hidden" name="current_level" value={current_level} />
+				<input type="hidden" name="completed_level" value={completed_level === true ? 'true' : completed_level === false ? 'false' : ''} />
+				<input type="hidden" name="program_type" value={program_type} />
+				<input type="hidden" name="institution" value={institution} />
+				<input type="hidden" name="requires_medication" value={requires_medication === true ? 'true' : requires_medication === false ? 'false' : ''} />
+				<input type="hidden" name="invoice_type" value={invoice_type} />
 				<!-- A. Datos del alumno -->
 				<div>
 					<h3 class="text-[#1e3a5f] font-semibold mb-4">A. Datos del alumno</h3>
@@ -120,16 +140,17 @@
 						<select
 							name="parent_relation"
 							disabled={!isEditing}
+							bind:value={parent_relation}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						>
 							<option value="">Relación con el alumno</option>
-							<option value="Padre" selected={data.parent_relation === 'Padre'}>Padre</option>
-							<option value="Madre" selected={data.parent_relation === 'Madre'}>Madre</option>
-							<option value="Tutor" selected={data.parent_relation === 'Tutor'}>Tutor</option>
-							<option value="Tutora" selected={data.parent_relation === 'Tutora'}>Tutora</option>
-							<option value="Abuelo" selected={data.parent_relation === 'Abuelo'}>Abuelo</option>
-							<option value="Abuela" selected={data.parent_relation === 'Abuela'}>Abuela</option>
-							<option value="Otro" selected={data.parent_relation === 'Otro'}>Otro</option>
+							<option value="Padre">Padre</option>
+							<option value="Madre">Madre</option>
+							<option value="Tutor">Tutor</option>
+							<option value="Tutora">Tutora</option>
+							<option value="Abuelo">Abuelo</option>
+							<option value="Abuela">Abuela</option>
+							<option value="Otro">Otro</option>
 						</select>
 						<input
 							type="text"
@@ -157,23 +178,25 @@
 						<select
 							name="is_liceo_student"
 							disabled={!isEditing}
+							bind:value={is_liceo_student}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						>
 							<option value="">¿Es alumno del Liceo / instituto?</option>
-							<option value="true" selected={data.is_liceo_student === true}>Sí</option>
-							<option value="false" selected={data.is_liceo_student === false}>No</option>
+							<option value={true}>Sí</option>
+							<option value={false}>No</option>
 						</select>
 						<select
 							name="current_level"
 							disabled={!isEditing}
+							bind:value={current_level}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						>
 							<option value="">Nivel actual</option>
-							<option value="Primaria" selected={data.current_level === 'Primaria'}>Primaria</option>
-							<option value="Secundaria" selected={data.current_level === 'Secundaria'}>Secundaria</option>
-							<option value="Terciario" selected={data.current_level === 'Terciario'}>Terciario</option>
-							<option value="Universitario" selected={data.current_level === 'Universitario'}>Universitario</option>
-							<option value="Otro" selected={data.current_level === 'Otro'}>Otro</option>
+							<option value="Primaria">Primaria</option>
+							<option value="Secundaria">Secundaria</option>
+							<option value="Terciario">Terciario</option>
+							<option value="Universitario">Universitario</option>
+							<option value="Otro">Otro</option>
 						</select>
 						<input
 							type="text"
@@ -202,11 +225,12 @@
 						<select
 							name="completed_level"
 							disabled={!isEditing}
+							bind:value={completed_level}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						>
 							<option value="">¿Completó el nivel?</option>
-							<option value="true" selected={data.completed_level === true}>Sí</option>
-							<option value="false" selected={data.completed_level === false}>No</option>
+							<option value={true}>Sí</option>
+							<option value={false}>No</option>
 						</select>
 					</div>
 				</div>
@@ -218,21 +242,23 @@
 						<select
 							name="program_type"
 							disabled={!isEditing}
+							bind:value={program_type}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						>
 							<option value="">Tipo de programa</option>
-							<option value="Tutoría" selected={data.program_type === 'Tutoría'}>Tutoría</option>
-							<option value="Grupo" selected={data.program_type === 'Grupo'}>Grupo</option>
-							<option value="Individual" selected={data.program_type === 'Individual'}>Individual</option>
+							<option value="Tutoría">Tutoría</option>
+							<option value="Grupo">Grupo</option>
+							<option value="Individual">Individual</option>
 						</select>
 						<select
 							name="institution"
 							disabled={!isEditing}
+							bind:value={institution}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						>
 							<option value="">Colegio o institución</option>
-							<option value="Liceo Británico" selected={data.institution === 'Liceo Británico'}>Liceo Británico</option>
-							<option value="Instituto Cambridge" selected={data.institution === 'Instituto Cambridge'}>Instituto Cambridge</option>
+							<option value="Liceo Británico">Liceo Británico</option>
+							<option value="Instituto Cambridge">Instituto Cambridge</option>
 						</select>
 						<input
 							type="text"
@@ -302,11 +328,12 @@
 						<select
 							name="requires_medication"
 							disabled={!isEditing}
+							bind:value={requires_medication}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						>
 							<option value="">¿Requiere medicación?</option>
-							<option value="true" selected={data.requires_medication === true}>Sí</option>
-							<option value="false" selected={data.requires_medication === false}>No</option>
+							<option value={true}>Sí</option>
+							<option value={false}>No</option>
 						</select>
 					</div>
 				</div>
@@ -318,13 +345,14 @@
 						<select
 							name="invoice_type"
 							disabled={!isEditing}
+							bind:value={invoice_type}
 							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
 						>
 							<option value="">Tipo de factura</option>
-							<option value="A" selected={data.invoice_type === 'A'}>A</option>
-							<option value="B" selected={data.invoice_type === 'B'}>B</option>
-							<option value="C" selected={data.invoice_type === 'C'}>C</option>
-							<option value="E" selected={data.invoice_type === 'E'}>E</option>
+							<option value="A">A</option>
+							<option value="B">B</option>
+							<option value="C">C</option>
+							<option value="E">E</option>
 						</select>
 						<input
 							type="text"
@@ -367,10 +395,11 @@
 					<div class="grid grid-cols-2 gap-4">
 						<input
 							type="text"
+							name="dni"
 							placeholder="DNI del alumno"
-							disabled={!isEditing}
+							readonly={!isEditing}
 							value={data.dni || ''}
-							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent {!isEditing ? 'bg-gray-100 cursor-not-allowed' : ''}"
 						/>
 					</div>
 				</div>

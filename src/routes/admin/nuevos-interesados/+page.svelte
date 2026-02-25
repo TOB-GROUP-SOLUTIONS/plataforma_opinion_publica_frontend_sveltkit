@@ -252,35 +252,32 @@
         };
     }
 
-    // Handler para use:enhance (no invocar enhance en tiempo de inicialización)
-    async function createFormHandler() {
+    // Handler para use:enhance — NO debe ser async para que enhanced funcione correctamente
+    function createFormHandler() {
 		return async ({ result, update }: any) => {
-
-			        // se resetea el flag de envío cuando llega el resultado
-        isSubmittingForm = false;
-
-        if (result.type === 'success') {
-            showNewFormModal = false;
-            successMessage = 'Formulario guardado correctamente';
-            // Resetear formulario (incluye consultation)
-            formData = {
-                full_name: '',
-                email: '',
-                phone: '',
-                city: '',
-                age: '',
-                programa: null,
-                contactMethod: null,
-                objective: '',
-                consultation: ''
-            };
-            await update();
-        } else {
-            errorMessage = result?.data?.error ?? 'Error al guardar el formulario';
-        }
-        };
-
-
+			// se resetea el flag de envío cuando llega el resultado
+			isSubmittingForm = false;
+			if (result.type === 'success') {
+				showNewFormModal = false;
+				successMessage = 'Formulario guardado correctamente';
+				// Resetear formulario
+				formData = {
+					full_name: '',
+					email: '',
+					phone: '',
+					city: '',
+					age: '',
+					programa: null,
+					contactMethod: null,
+					objective: '',
+					consultation: ''
+				};
+				await update();
+				await invalidateAll();
+			} else {
+				errorMessage = result?.data?.error ?? 'Error al guardar el formulario';
+			}
+		};
     }
 
     function handleAssign(e: CustomEvent) {
@@ -694,12 +691,12 @@
 
 	
 		<div>
-			<Label for="consultation" class="mb-3 block">
+			<Label for="observations" class="mb-3 block">
 				<span class="text-gray-700">Consulta / Comentarios</span>
 			</Label>
 			<Textarea
-				id="consultation"
-				name="consultation"
+				id="observations"
+				name="observations"
 				bind:value={formData.consultation}
 				rows={4}
 				disabled={isSubmittingForm}
@@ -930,6 +927,7 @@
 {#if showPersonalRecordModal}
 	<PersonalRecord
 		data={identifierToView}
+		users={data.users ?? []}
 		on:close={() => (showPersonalRecordModal = false)}
 	/>
 {/if}

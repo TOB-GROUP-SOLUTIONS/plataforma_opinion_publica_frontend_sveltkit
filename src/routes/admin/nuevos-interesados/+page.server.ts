@@ -1,6 +1,34 @@
-import { error, redirect } from '@sveltejs/kit';
+import { error, redirect, fail } from '@sveltejs/kit';
 import * as api from '$lib/api';
 import type { Actions } from './$types';
+
+/**
+ * NestJS puede devolver errores con distintas estructuras:
+ *  - { statusCode, message: string, error: string }
+ *  - { statusCode, message: { errors: { campo: 'msg' }, statusCode }, error: string }
+ *  - { statusCode, errors: { campo: 'msg' } }
+ * Esta función extrae un string legible de cualquiera de esas formas.
+ */
+function extractErrorMessage(data: any): string {
+	const msg = data?.message ?? data?.errors ?? data?.error ?? 'Error al crear el lead';
+
+	if (typeof msg === 'string') return msg;
+
+	if (Array.isArray(msg)) return msg.join(', ');
+
+	if (typeof msg === 'object' && msg !== null) {
+		// Puede ser { errors: { email: '...' }, statusCode: 422 }
+		const nested = msg.errors ?? msg.message ?? msg;
+		if (typeof nested === 'string') return nested;
+		if (typeof nested === 'object' && nested !== null) {
+			return Object.values(nested)
+				.filter((v) => typeof v === 'string')
+				.join(', ') || JSON.stringify(nested);
+		}
+	}
+
+	return 'Error desconocido';
+}
 
 export const load = async ({ cookies, locals, url, fetch }: any) => {
 	const token = cookies.get('token');
@@ -71,18 +99,25 @@ export const actions: Actions = {
 		const token = cookies.get('token');
 		const data = await request.formData();
 
-		const CreateLeadDto = {
+		const email = (data.get('email') as string)?.trim();
+
+		const CreateLeadDto: Record<string, any> = {
 			full_name: data.get('full_name'),
-			email: data.get('email'),
-			phone: data.get('phone'),
-			city: data.get('city'),
-			age: data.get('age') ? parseInt(data.get('age') as string) : null,
-			programa: data.get('program'),
+			phone: data.get('phone') || undefined,
+			city: data.get('city') || undefined,
+			age: data.get('age') ? parseInt(data.get('age') as string) : undefined,
+			program_type: data.get('program') || undefined,
 			status: 1,
-			source: data.get('source'),
-			objective: data.get('objective'),
-			notes: data.get('observations')
+			source: data.get('source') || undefined,
+			objective: data.get('objective') || undefined,
+			notes: data.get('observations') || undefined
 		};
+
+		// El email es opcional en el formulario inicial pero el backend lo valida con @IsEmail()
+		// solo lo incluimos si el usuario lo ingresó
+		if (email) {
+			CreateLeadDto.email = email;
+		}
 
 		try {
 			const response = await api.post({
@@ -94,14 +129,18 @@ export const actions: Actions = {
 
 			console.log('Create Lead Response:', response);
 
-			if (!response.ok) throw error(500, 'Error al crear el formulario');
-
+			if (!response.ok || response.data?.statusCode >= 400) {
+				const msgStr = extractErrorMessage(response.data);
+				console.error('Error del backend:', msgStr);
+				return fail(422, { error: msgStr });
+			}
 
 			return { success: true };
 		} catch (err: any) {
-			return {
+			console.error('Error en createLead:', err);
+			return fail(500, {
 				error: err.message || 'Error al guardar el formulario'
-			};
+			});
 		}
 	},
 

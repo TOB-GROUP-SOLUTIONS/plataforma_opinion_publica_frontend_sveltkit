@@ -799,6 +799,7 @@
 {#if showPersonalRecordModal}
 	<PersonalRecord
 		data={identifierToView}
+		users={data.users ?? []}
 		on:close={() => (showPersonalRecordModal = false)}
 	/>
 {/if}

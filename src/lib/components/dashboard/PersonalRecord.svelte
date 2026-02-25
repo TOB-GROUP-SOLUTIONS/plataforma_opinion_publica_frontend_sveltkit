@@ -8,7 +8,7 @@
 	let showModal = true;
 	let isEditing = false;
 	let isSaving = false;
-	export const users: any = {};
+	export let users: any[] = [];
 
 	// Variables locales para los selects (necesario para que bind:value funcione en Svelte)
 	let parent_relation = data.parent_relation ?? '';
@@ -19,6 +19,7 @@
 	let institution = data.institution ?? '';
 	let requires_medication = data.requires_medication ?? '';
 	let invoice_type = data.invoice_type ?? '';
+	let assigned_to_user_id = data.assigned_to_user_id?.id ?? data.assigned_to_user_id ?? '';
 
 	function closeModal() {
 		dispatch('close');
@@ -86,6 +87,7 @@
 				<input type="hidden" name="institution" value={institution} />
 				<input type="hidden" name="requires_medication" value={requires_medication === true ? 'true' : requires_medication === false ? 'false' : ''} />
 				<input type="hidden" name="invoice_type" value={invoice_type} />
+				<input type="hidden" name="assigned_to_user_id" value={assigned_to_user_id} />
 				<!-- A. Datos del alumno -->
 				<div>
 					<h3 class="text-[#1e3a5f] font-semibold mb-4">A. Datos del alumno</h3>
@@ -260,16 +262,27 @@
 							<option value="Liceo Británico">Liceo Británico</option>
 							<option value="Instituto Cambridge">Instituto Cambridge</option>
 						</select>
-						<input
-							type="text"
-							name="assigned_to"
-							placeholder="Responsable asignado"
-							value={data.assigned_to_user_id
-								? `${data.assigned_to_user_id.firstname} ${data.assigned_to_user_id.lastname}`
-								: ''}
-							disabled={true}
-							class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-						/>
+						{#if isEditing && users.length > 0}
+							<select
+								bind:value={assigned_to_user_id}
+								class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
+							>
+								<option value="">Seleccionar responsable</option>
+								{#each users as user}
+									<option value={user.id}>{user.firstname} {user.lastname}</option>
+								{/each}
+							</select>
+						{:else}
+							<input
+								type="text"
+								placeholder="Responsable asignado"
+								value={data.assigned_to_user_id
+									? `${data.assigned_to_user_id.firstname} ${data.assigned_to_user_id.lastname}`
+									: 'Sin asignar'}
+								disabled={true}
+								class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+							/>
+						{/if}
 						<input
 							type="text"
 							name="associated_product"

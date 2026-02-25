@@ -263,6 +263,7 @@
 				<div class="grid grid-cols-2 gap-4">
 					<select
 						name="invoice_type"
+						value={data?.lead?.invoice_type || ''}
 						class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
 					>
 						<option value="">Tipo de factura</option>

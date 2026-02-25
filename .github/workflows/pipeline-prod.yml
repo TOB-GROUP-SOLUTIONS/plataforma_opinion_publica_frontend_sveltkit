@@ -179,12 +179,12 @@ jobs:
       - name: Deploy to staging server
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.STAGING_HOST }}
-          port: ${{ secrets.STAGING_PORT }}
-          username: ${{ secrets.STAGING_USER }}
-          password: ${{ secrets.STAGING_PASSWORD }}
+          host: ${{ secrets.PROD_HOST }}
+          port: ${{ secrets.PROD_PORT }}
+          username: ${{ secrets.PROD_USER }}
+          password: ${{ secrets.PROD_PASSWORD }}
           script: |
-            cd ~/development/together/deploy/frontend
+            cd ~/apps/together/deploy/frontend
             docker compose pull
             docker compose up -d
             echo "Deploy completed!"

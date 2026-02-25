@@ -127,9 +127,9 @@
 	}
 
 	const typeRouteMap: Record<string, (r: any) => string> = {
-		LEAD: (r) => `/admin/todos`,
-		PRESUPUESTO: (r) => `/admin/todos`,
-		'LCB-PROFESORES': (r) => `/admin/lcb`
+		LEAD: (r) => `/admin/todos?query=${r.id}`,
+		PRESUPUESTO: (r) => `/admin/todos?query=${r.data.lead}`,
+		'LCB-PROFESORES': (r) => `/admin/lcb?query=${r.title}`
 	};
 
 	const typeLabelMap: Record<string, string> = {
@@ -140,6 +140,7 @@
 
 	function handleResultClick(r: any) {
 		search = '';
+		console.log('typeRouteMap', r);
 		const buildUrl = typeRouteMap[r.type];
 		if (buildUrl) {
 			goto(buildUrl(r));

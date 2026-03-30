@@ -7,12 +7,12 @@
     const style = {
         title: `mx-4 text-sm whitespace-pre font-bold text-white`,
         inactive: `text-white`,
-        active: `bg-[#DD052B] rounded-lg font-medium text-white`,
-        link: `flex items-center justify-start my-2 p-4 w-full rounded-lg hover:bg-[#DD052B] w-fit`,
+        active: `bg-[#272e3f] rounded-lg font-medium text-white`,
+        link: `flex items-center justify-start my-2 p-4 w-full rounded-lg hover:bg-[#272e3f] w-fit`,
         close: `lg:duration-700 lg:ease-out lg:invisible lg:opacity-0 lg:transition-all`,
         open: `lg:duration-500 lg:ease-in lg:h-auto lg:opacity-100 lg:transition-all lg:w-auto`,
-        subItemLink: `flex items-center gap-3 justify-start my-2 p-3 w-full rounded-lg hover:bg-[#DD052B] pl-10 text-white text-sm`,
-        subItemActive: `bg-[#DD052B] rounded-lg font-medium text-white`,
+        subItemLink: `flex items-center gap-3 justify-start my-2 p-3 w-full rounded-lg hover:bg-[#272e3f] pl-10 text-white text-sm`,
+        subItemActive: `bg-[#272e3f] rounded-lg font-medium text-white`,
         subItemBullet: `h-1 w-1 rounded-sm bg-white shrink-0`
     };
 
@@ -74,7 +74,7 @@
                             {@const subItemKey = `${item.title}/${subItem.title}`}
                             <li>
                                 <a
-                                    href={subItem.link}
+						href={`${subItem.link}${$page.url.search}`}
                                     class={`${style.subItemLink}
                                     ${subItem.link === $page.url.pathname ? style.subItemActive : ''}`}
                                 >
@@ -90,7 +90,7 @@
             {@const isActive = item.link === $page.url.pathname}
             <li>
                 <a
-                    href={item.link}
+					href={`${item.link}${$page.url.search}`}
                     class={`${style.link} 
                             ${isActive ? style.active : style.inactive}`}
                 >

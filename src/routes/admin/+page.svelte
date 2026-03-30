@@ -3,10 +3,6 @@
 	import { goto } from '$app/navigation';
 	export let data: any;
 
-	$: dias = String(data?.filters?.dias || '7');
-	$: redSocial = String(data?.filters?.redSocial || '');
-	$: entidadId = data?.filters?.entidadId ? String(data.filters.entidadId) : '';
-
 	// Computed dynamic data from API
 	$: overview = data?.dashboard || {};
 	$: kpis = overview.kpis || { 
@@ -16,7 +12,6 @@
 	};
 	$: topTemas = overview.topTemas || [];
 	$: cuentasActivas = overview.cuentasActivas || [];
-	$: entidadesDropdown = data?.entidades || [];
 
 	// Action to load and render ApexCharts seamlessly in Svelte without SSR issues
 	function chartAction(node: HTMLElement, options: any) {
@@ -92,35 +87,12 @@
 	<title>Vista General - Admin</title>
 </svelte:head>
 
-<div class="min-h-screen bg-gray-50 p-6 font-sans text-gray-800">
-	<!-- Top Bar -->
-	<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 px-2">
-		<h1 class="text-2xl font-bold text-gray-900">Vista General</h1>
-		<form method="GET" class="flex flex-wrap gap-3 items-center">
-			<select name="dias" value={dias} on:change={(e) => e.currentTarget.form.submit()} class="bg-white border border-gray-200 text-gray-700 text-sm rounded-lg py-2 px-3 outline-none focus:border-blue-500 shadow-sm cursor-pointer hover:bg-gray-50">
-				<option value="7">Últimos 7 días</option>
-				<option value="30">Últimos 30 días</option>
-				<option value="3000">Desde siempre</option>
-			</select>
-			<select name="redSocial" value={redSocial} on:change={(e) => e.currentTarget.form.submit()} class="bg-white border border-gray-200 text-gray-700 text-sm rounded-lg py-2 px-3 outline-none focus:border-blue-500 shadow-sm cursor-pointer hover:bg-gray-50">
-				<option value="">Todas las fuentes</option>
-				<option value="Facebook">Facebook</option>
-				<option value="X">X</option>
-				<option value="Instagram">Instagram</option>
-			</select>
-			<select name="entidadId" value={entidadId} on:change={(e) => e.currentTarget.form.submit()} class="bg-white border border-gray-200 text-gray-700 text-sm rounded-lg py-2 px-3 outline-none focus:border-blue-500 shadow-sm cursor-pointer hover:bg-gray-50">
-				<option value="">Todas las entidades</option>
-				{#each entidadesDropdown as entidad}
-					<option value={String(entidad.id)}>{entidad.entidad} ({entidad.tipo})</option>
-				{/each}
-			</select>
-			<button type="button" class="bg-white border border-gray-200 text-gray-700 text-sm rounded-lg px-4 py-2 hover:bg-gray-100 transition flex items-center gap-2 shadow-sm font-medium">
-				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-				Exportar
-			</button>
-		</form>
-	</div>
-
+<!--
+  Wrapper gris que cubre el área visible completa.
+  Compensa el padding del `Layout` para que no quede franja blanca alrededor.
+-->
+<div class="h-full w-full bg-gray-50 -mx-2 lg:-mx-4 -mt-4 -mb-36 md:-mb-8">
+	<div class="p-6 font-sans text-gray-800">
 	<!-- KPI Cards -->
 	<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
 		<div class="bg-white p-6 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] hover:shadow-md transition-shadow">
@@ -262,4 +234,5 @@
 			</div>
 		</div>
 	</div>
+</div>
 </div>

@@ -11,20 +11,25 @@
 
 	$: user = $page.data.user;
 
-    const style = {
-        container: `bg-white h-screen overflow-hidden relative`,
-        main: `bg-white h-full overflow-y-auto pb-36 pt-4 px-2 md:pb-8 lg:px-4 text-xs md:text-sm lg:text-base`,
-        mainContainer: `flex flex-col h-screen pl-0 w-full lg:pl-24`
-    };
+	$: isAdminRoute = $page.url.pathname.startsWith('/admin');
+
+	const style = {
+		containerBase: `h-screen overflow-hidden relative`,
+		mainBase: `h-full overflow-y-auto pb-36 pt-4 px-2 md:pb-8 lg:px-4 text-xs md:text-sm lg:text-base`,
+		mainContainer: `flex flex-col h-screen pl-0 w-full lg:pl-24`
+	};
 
 
 		// Diccionario de rutas a títulos
 	const routeTitles: Record<string, string> = {
-		'/admin': 'Inicio',
+		'/admin': 'Vista General',
 		'/admin/lcb': 'LCB',
 		'/admin/todos': 'Todos',
 		'/admin/mis-leads': 'Mis Leads',
 		'/admin/nuevos-interesados': 'Nuevos Interesados',
+		'/admin/entidades': 'Entidades',
+		'/admin/comentarios': 'Comentarios',
+		'/admin/articulos': 'Artículos',
 		// Agrega aquí más rutas y títulos según sea necesario
 	};
 
@@ -65,7 +70,7 @@
 	}
 </script>
 
-<div class={style.container}>
+<div class={`${isAdminRoute ? 'bg-gray-50' : 'bg-white'} ${style.containerBase}`}>
 	<div class="flex items-start">
 		<Overlay />
 		<Sidebar mobileOrientation="end" />
@@ -75,9 +80,7 @@
 			title={$title}
  
 			/>
-			<main
-				class={style.main}
-			>
+			<main class={`${isAdminRoute ? 'bg-gray-50' : 'bg-white'} ${style.mainBase}`}>
 				<slot />
 			</main>
 		</div>

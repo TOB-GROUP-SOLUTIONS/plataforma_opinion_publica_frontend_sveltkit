@@ -10,7 +10,7 @@
 		},
 		container: `pb-0 lg:pb-0`,
 		close: `duration-200 ease-out hidden transition-all lg:w-24`,
-		default: `bg-primary-600 h-svh overflow-y-auto top-0 lg:absolute lg:block lg:z-40`,
+		default: `bg-[#0f172a] h-svh overflow-y-auto top-0 lg:absolute lg:block lg:z-40`,
 		open: `absolute duration-100 ease-in transition-all w-8/12 z-40 sm:w-5/12 md:w-80`
 	};
 

@@ -1,18 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Toast from '$lib/components/ui/Toast.svelte';
-	import { Label, Input, Card, Helper, Button } from 'flowbite-svelte';
-	import { Circle2 } from 'svelte-loading-spinners';
-	export let mainClass = 'bg-white-200 dark:bg-white-900 w-full min-h-screen flex flex-col';
-	import { EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
-	export let mainDivClass =
-		'flex flex-col items-center justify-center px-6 pt-8 mx-auto  w-full pt:mt-0 dark:bg-white-900';
+	import { Label, Input, Card, Helper, Spinner, Button } from 'flowbite-svelte';
+	import { goto } from '$app/navigation';
 
 	let sending = false;
 	let successMessage = '';
-	let showPassword = false;
-
 	let errorMessage = '';
+
 	const handleSubmit = ({}) => {
 		sending = true;
 
@@ -31,79 +26,75 @@
 	};
 </script>
 
-<title>Together</title>
+<svelte:head>
+	<title>Iniciar Sesión - Club Deportivo Colón</title>
+	<meta name="description" content="Acceso administrativo al Club Deportivo Colón de Corrientes" />
+</svelte:head>
 
-<main class="w-full min-h-screen flex flex-col items-center justify-center relative">
-	<img
-		src="/images/bg.svg"
-		alt="Background"
-		class="absolute inset-0 w-full h-full object-cover z-0"
-	/>
+<!-- Fondo principal azul -->
+<div class="min-h-screen w-full bg-blue-800 flex items-center justify-center p-4 relative overflow-hidden">
+	<!-- Modal blanco -->
+	<div class="bg-white w-full max-w-md rounded-2xl shadow-2xl px-8 py-10 relative z-10">
+		
 
-	<div class="flex flex-col items-center justify-center px-6 pt-8 mx-auto w-full pt:mt-0 z-10">
-		<div class="w-full rounded-xl p-8 shadow-none text-black max-w-[589px] mx-auto relative">
-			<div class="flex justify-center items-center mb-4">
-				<img src="/images/logo.svg" alt="Together" width="374px" />
-			</div>
-			<form use:enhance={handleSubmit} method="post" action="?/login" class="mt-8 space-y-6">
-				<div>
-					<Label for="email" class="mb-2 text-[#081C3F]">Ingresar email</Label>
-					<Input
-						type="email"
-						name="email"
-						id="email"
-						placeholder="Ingrese su usuario"
-						required
-						class="border outline-none dark:border-white-600 dark:bg-white-700"
-					/>
-				</div>
-				<div>
-					<Label for="password" class="mb-2 text-[#081C3F]">Contraseña</Label>
-					<div class="relative">
-						<Input
-							type={showPassword ? 'text' : 'password'}
-							name="password"
-							id="password"
-							placeholder="Ingrese contraseña"
-							required
-							class="border outline-none dark:border-white-600 dark:bg-white-700"
-						/>
-
-						<button
-							type="button"
-							on:click={() => (showPassword = !showPassword)}
-							class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-600 hover:text-gray-800 focus:outline-none"
-							aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-						>
-							{#if showPassword}
-								<EyeSlashOutline class="shrink-0 h-6 w-6" />
-							{:else}
-								<EyeOutline class="shrink-0 h-6 w-6" />
-							{/if}
-						</button>
-					</div>
-				</div>
-
-				<Helper helperClass={'h-2 font-semibold mb-0 text-center'} color="red">
-					{errorMessage?.length > 0 ? errorMessage : ''}
-				</Helper>
-
-				<Button
-					type="submit"
-					class="text-white border border-primary-500 hover:bg-primary-500 hover:text-white w-full"
-					style="background: #0C2C65;"
-					disabled={sending}
-				>
-					{#if sending}
-						<Circle2 size="24" colorOuter="#ffffff" colorCenter="#ffffff" colorInner="#0C2C65" />
-					{:else}
-						Ingresar
-					{/if}
-				</Button>
-			</form>
+		<div class="text-center mb-8">
+			<h1 class="text-2xl font-bold text-gray-900 mb-2">
+				Opinión Pública
+			</h1>
+			<p class="text-gray-500 text-sm">
+				Iniciar Sesión
+			</p>
 		</div>
+
+		<!-- Formulario de login -->
+		<form use:enhance={handleSubmit} method="post" action="?/login" class="space-y-6">
+			<div class="space-y-1">
+				<Label for="email" class="text-gray-700 font-semibold mb-1 block">Email</Label>
+				<Input
+					type="email"
+					name="email"
+					id="email"
+					placeholder="Ingresa tu email"
+					required
+					class="w-full bg-gray-50 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-lg px-4 py-2.5"
+				/>
+			</div>
+			
+			<div class="space-y-1">
+				<Label for="password" class="text-gray-700 font-semibold mb-1 block">Contraseña</Label>
+				<Input
+					type="password"
+					name="password"
+					id="password"
+					placeholder="Ingresa tu contraseña"
+					required
+					class="w-full bg-gray-50 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-lg px-4 py-2.5"
+				/>
+			</div>
+
+			<!-- Mensaje de error -->
+			{#if errorMessage?.length > 0}
+				<div class="bg-red-50 border border-red-200 rounded-lg p-3 mt-4">
+					<p class="text-red-600 text-sm text-center">{errorMessage}</p>
+				</div>
+			{/if}
+
+			<!-- Botón de login -->
+			<button
+				type="submit"
+				disabled={sending}
+				class="w-full mt-6 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-3 px-4 rounded-lg transition-all duration-200 shadow hover:shadow-lg flex items-center justify-center space-x-2"
+			>
+				{#if sending}
+					<Spinner class="w-5 h-5 text-white" />
+					<span>Ingresando...</span>
+				{:else}
+					<span>Ingresar al Sistema</span>
+				{/if}
+			</button>
+		</form>
 	</div>
-</main>
+</div>
 
 {#if successMessage.length > 0}
 	<Toast type="success" dismissible={true} showToast={true} bind:successMessage />

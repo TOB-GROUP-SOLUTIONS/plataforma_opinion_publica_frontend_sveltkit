@@ -15,7 +15,7 @@
 
 	const style = {
 		containerBase: `h-screen overflow-hidden relative`,
-		mainBase: `h-full overflow-y-auto pb-36 pt-4 px-2 md:pb-8 lg:px-4 text-xs md:text-sm lg:text-base`,
+		mainBase: `flex-1 overflow-y-auto pb-36 pt-4 px-2 md:pb-8 lg:px-4 text-xs md:text-sm lg:text-base`,
 		mainContainer: `flex flex-col h-screen pl-0 w-full lg:pl-24`
 	};
 

@@ -18,9 +18,7 @@
 				reclamosStepsStore.update((store) => (store = { ...$reclamosStepsStore, step2: true }));
 				await update({ reset: false });
 			} else {
-				console.log('result', result);
 				if (result?.data?.message !== 'DNI inválido.') {
-					console.log();
 					ciudadanoStore.update((store: any) => (store = { ...ciudadanoStore, dni: dni }));
 					citizenFound = false;
 					reclamosStepsStore.update((store) => (store = { ...$reclamosStepsStore, step2: true }));

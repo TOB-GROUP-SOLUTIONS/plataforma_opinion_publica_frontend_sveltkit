@@ -4,12 +4,9 @@ import { fail } from '@sveltejs/kit';
 import { dev } from '$app/environment';
 
 export function load({ locals, url, cookies }: any) {
-	console.log('[+page.server.ts] - Load function - locals.user:', locals.user);
-	console.log('[+page.server.ts] - URL params:', url.searchParams.toString());
 
 	// Si hay un parámetro de tiempo en la URL, probablemente viene de un logout
 	if (url.searchParams.has('t')) {
-		console.log("[+page.server.ts] - Parámetro 't' detectado, procesando logout");
 		// Eliminar todas las cookies relacionadas con la autenticación
 		cookies.delete('token', { path: '/' });
 
@@ -34,16 +31,13 @@ export function load({ locals, url, cookies }: any) {
 	}
 
 	if (locals.user) {
-		console.log('[+page.server.ts] - Usuario autenticado, redirigiendo a /admin');
 		redirect(307, '/admin');
 	}
 
-	console.log('[+page.server.ts] - No hay usuario autenticado, mostrando login');
 }
 
 export const actions = {
 	async login({ fetch, request, cookies, url }: any) {
-		console.log('[+page.server.ts] - Iniciando acción de login');
 		const form = await request.formData();
 
 		const body = {
@@ -51,23 +45,13 @@ export const actions = {
 			password: form.get('password')
 		};
 
-		console.log('[+page.server.ts] - Enviando credenciales a auth/login-admin');
 		const res = await api.post({ fetch, endpoint: 'auth/login-admin', body: JSON.stringify(body) });
 
-		console.log('[+page.server.ts] - Respuesta del endpoint login-admin:', {
-			ok: res?.ok,
-			dataType: typeof res?.data,
-			hasStatusCode: !!res?.data?.statusCode,
-			hasAccessToken: !!res?.data?.access_token
-		});
-
 		if (res?.data?.statusCode === 401) {
-			console.log('[+page.server.ts] - Error 401: Credenciales incorrectas');
 			return fail(res?.data?.statusCode || 500, { error: 'Credenciales incorrectas' });
 		}
 
 		if (res?.data?.access_token) {
-			console.log('[+page.server.ts] - Access token recibido, guardando en cookie');
 			cookies.set('token', res?.data?.access_token, {
 				path: '/',
 				httpOnly: true,
@@ -75,11 +59,9 @@ export const actions = {
 				sameSite: 'lax',
 				maxAge: 60 * 60 * 24
 			});
-			console.log('[+page.server.ts] - Redirigiendo a /admin con token guardado');
 			redirect(303, '/admin');
 		}
 
-		console.error('[+page.server.ts] - ERROR: Respuesta inesperada del endpoint login:', res);
 		redirect(307, '/admin');
 	}
 };

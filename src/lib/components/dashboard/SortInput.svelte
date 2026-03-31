@@ -29,7 +29,6 @@
 
 	function ordenar() {
 		if (!ordering) return;
-		//console.log(ordering);
 		const split = ordering.split(' ');
 		$page.url.searchParams.set('page', '1');
 		$page.url.searchParams.set('order', split[0]);

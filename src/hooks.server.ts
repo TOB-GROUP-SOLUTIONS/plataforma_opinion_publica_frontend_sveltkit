@@ -39,14 +39,6 @@ export async function handle({ event, resolve }: any) {
 	try {
 		const res = await api.get({ fetch, endpoint: 'auth/user-admin', token });
 
-		console.log(
-			JSON.stringify({
-				ok: res?.ok,
-				dataType: typeof res?.data,
-				dataKeys: res?.data ? Object.keys(res.data) : 'null'
-			})
-		);
-
 		if (res?.ok) {
 
 			// Validar que res.data tenga estructura mínima de usuario

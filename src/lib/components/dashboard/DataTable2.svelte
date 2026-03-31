@@ -42,7 +42,6 @@
 
 	export let statusFilter: string | null = null;
 
-	console.log('Status Filter:', statusFilter);
 
 	const dispatch = createEventDispatcher();
 

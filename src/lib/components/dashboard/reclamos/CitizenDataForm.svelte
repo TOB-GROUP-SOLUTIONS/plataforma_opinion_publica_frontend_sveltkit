@@ -78,7 +78,6 @@
 		});
 
 		// Devolver los cambios o un mensaje si no hay diferencias
-		//changes.length > 0 ? console.log(changes)  : console.log('Los objetos son iguales');
 		return changes.length > 0 ? changes : 'Los objetos son iguales';
 	}
 </script>

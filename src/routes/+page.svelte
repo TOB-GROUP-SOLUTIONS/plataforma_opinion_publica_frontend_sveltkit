@@ -27,8 +27,8 @@
 </script>
 
 <svelte:head>
-	<title>Iniciar Sesión - Club Deportivo Colón</title>
-	<meta name="description" content="Acceso administrativo al Club Deportivo Colón de Corrientes" />
+	<title>Iniciar Sesión - Plataforma de Opinion Publica</title>
+	<meta name="description" content="Acceso administrativo a Plataforma de Opinion Publica" />
 </svelte:head>
 
 <!-- Fondo principal azul -->

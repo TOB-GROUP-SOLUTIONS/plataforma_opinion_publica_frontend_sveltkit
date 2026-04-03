@@ -1,4 +1,5 @@
-import { HomeSolid, BookSolid, MessagesSolid, BuildingSolid } from "flowbite-svelte-icons"
+import { HomeSolid, DatabaseSolid
+	, MessagesSolid, BuildingSolid } from "flowbite-svelte-icons"
 
 export const data = [
 	{
@@ -7,8 +8,8 @@ export const data = [
 		link: '/admin'
 	},
 	{
-		title: 'Artículos',
-		icon: BookSolid,
+		title: 'Base De datos',
+		icon: DatabaseSolid,
 		link: '/admin/articulos',
 	},
 	{
@@ -17,7 +18,7 @@ export const data = [
 		link: '/admin/comentarios',
 	},
 	{
-		title: 'Entidades',
+		title: 'Personas / Temas',
 		icon: BuildingSolid,
 		link: '/admin/entidades',
 	}

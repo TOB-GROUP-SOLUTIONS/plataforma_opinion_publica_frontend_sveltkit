@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
 	import { Dropdown, DropdownItem } from 'flowbite-svelte';
 	import { openSidebar } from './store';
 	import { onMount } from 'svelte';
@@ -28,17 +27,6 @@
         });
     }
 
-	function handleFilterChange(e: Event) {
-		const target = e.target as HTMLSelectElement | null;
-		if (target && target.form) {
-			target.form.submit();
-		}
-	}
-
-	$: dias = String($page.data?.filters?.dias || '7');
-	$: redSocial = String($page.data?.filters?.redSocial || '');
-	$: entidadId = $page.data?.filters?.entidadId ? String($page.data.filters.entidadId) : '';
-	$: entidadesDropdown = $page.data?.entidades || [];
 	$: firstNameChar = ((user as any)?.firstname?.charAt(0) || '').toUpperCase();
 	
 </script>
@@ -68,35 +56,10 @@
 					</span>
 				{/if}
 
-                <button type="button" class="ml-5 md:ml-5 bg-white border border-gray-200 text-[#475569] text-[13px] rounded-md px-3.5 py-1.5 hover:bg-gray-50 transition flex items-center gap-2 shadow-sm font-medium">
-                    <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    <span class="hidden sm:inline">Exportar</span>
-                </button>
 			</div>
 
-			<!-- Filters and Right Icons -->
+			<!-- Right Icons -->
 			<div class="flex items-center justify-end gap-3 p-1 relative w-full md:w-auto ml-auto">
-				<!-- Global Filters -->
-				<form method="GET" class="flex flex-wrap gap-2 items-center" action={$page.url.pathname}>
-					<select name="dias" value={dias} on:change={handleFilterChange} class="bg-white border border-gray-200 text-[#475569] font-medium text-[12px] md:text-[13px] rounded-lg py-1.5 px-2 md:px-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm cursor-pointer hover:bg-gray-50 h-[34px] md:h-[36px]">
-						<option value="7">7 días</option>
-						<option value="30">30 días</option>
-						<option value="3000">Siempre</option>
-					</select>
-					<select name="redSocial" value={redSocial} on:change={handleFilterChange} class="bg-white border border-gray-200 text-[#475569] font-medium text-[12px] md:text-[13px] rounded-lg py-1.5 px-2 md:px-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm cursor-pointer hover:bg-gray-50 h-[34px] md:h-[36px]">
-						<option value="">Fuentes</option>
-						<option value="Facebook">Facebook</option>
-						<option value="X">X</option>
-						<option value="Instagram">Instagram</option>
-					</select>
-					<select name="entidadId" value={entidadId} on:change={handleFilterChange} class="bg-white border border-gray-200 text-[#475569] font-medium text-[12px] md:text-[13px] rounded-lg py-1.5 px-2 md:px-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm cursor-pointer hover:bg-gray-50 h-[34px] md:h-[36px] max-w-[100px] md:max-w-none">
-						<option value="">Entidades</option>
-						{#each entidadesDropdown as entidad}
-							<option value={String(entidad.id)}>{entidad.entidad}</option>
-						{/each}
-					</select>
-				</form>
-
 				<div class="rounded-full p-1 border border-gray-300">
 					<div class="w-12 h-12 acs cursor-pointer bg-white rounded-full flex items-center justify-center">
 						<span class="text-3xl font-bold text-[#DD052B]">{firstNameChar}</span>

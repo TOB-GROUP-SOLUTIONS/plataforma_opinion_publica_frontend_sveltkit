@@ -16,7 +16,6 @@ export const load = async ({ url, cookies, locals, fetch }: any) => {
 		const res = await api.get({ fetch, endpoint: `dashboard/overview${queryString}`, token });
 		const entRes = await api.get({ fetch, endpoint: 'entidades-objetivo', token });
 
-		console.log('res', res?.data?.sentimientoMediosVsUsuarios.series);
 
 		return {
 			dashboard: res.ok ? res.data : null,

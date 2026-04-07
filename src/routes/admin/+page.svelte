@@ -140,58 +140,7 @@
 -->
 <div class="h-full w-full bg-gray-50 -mx-2 lg:-mx-4 -mt-4 -mb-36 md:-mb-8">
 	<div class="p-4 md:p-6 font-sans text-gray-800 space-y-6">
-		<form method="GET" action={$page.url.pathname} class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-			<div>
-				<label for="filtro-dias" class="block text-[11px] tracking-[0.14em] text-gray-600 font-semibold mb-2">RANGO DE FECHAS</label>
-				<select
-					id="filtro-dias"
-					name="dias"
-					value={dias}
-					on:change={handleFilterChange}
-					class="w-full bg-white border border-gray-200 text-[#475569] font-medium text-[13px] rounded-lg py-2.5 px-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm cursor-pointer hover:bg-gray-50 h-[42px]"
-				>
-					<option value="7">7 días</option>
-					<option value="30">30 días</option>
-					<option value="3000">Siempre</option>
-				</select>
-			</div>
-			<div>
-				<label for="filtro-entidad" class="block text-[11px] tracking-[0.14em] text-gray-600 font-semibold mb-2">TEMA O PERSONA</label>
-				<select
-					id="filtro-entidad"
-					name="entidadId"
-					value={entidadId}
-					on:change={handleFilterChange}
-					class="w-full bg-white border border-gray-200 text-[#475569] font-medium text-[13px] rounded-lg py-2.5 px-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm cursor-pointer hover:bg-gray-50 h-[42px]"
-				>
-					<option value="">Todos</option>
-					{#each entidadesDropdown as entidad}
-						<option value={String(entidad.id)}>{entidad.entidad}</option>
-					{/each}
-				</select>
-			</div>
-			<div>
-				<label for="filtro-fuente" class="block text-[11px] tracking-[0.14em] text-gray-600 font-semibold mb-2">FUENTES</label>
-				<select
-					id="filtro-fuente"
-					name="redSocial"
-					value={redSocial}
-					on:change={handleFilterChange}
-					class="w-full bg-white border border-gray-200 text-[#475569] font-medium text-[13px] rounded-lg py-2.5 px-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm cursor-pointer hover:bg-gray-50 h-[42px]"
-				>
-					<option value="">Todas</option>
-					<option value="Facebook">Facebook</option>
-					<option value="X">X</option>
-					<option value="Instagram">Instagram</option>
-				</select>
-			</div>
-			<button
-				type="button"
-				class="h-[42px] bg-white border border-gray-200 text-[#475569] text-[13px] rounded-lg px-4 hover:bg-gray-50 transition flex items-center justify-center gap-2 shadow-sm font-medium tracking-[0.06em]"
-			>
-				EXPORTAR
-			</button>
-		</form>
+		<!-- Se eliminaron los filtros locales porque ahora están en el TopBar -->
 
 		<!-- Top row: temas + KPI -->
 		<div class="w-full">

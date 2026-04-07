@@ -15,12 +15,29 @@
 	font-weight: 700;
 	font-style: normal;
 }
+
 @font-face {
 	font-family: 'MontserratBlack';
 	src: url('/fonts/Montserrat-Black.ttf') format('truetype');
 	font-weight: 900;
 	font-style: normal;
 }
+
 input[type='file']::file-selector-button {
 	background-color: #6b9907;
+}
+
+/* Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-hide::-webkit-scrollbar {
+	display: none;
+}
+
+/* IE, Edge and Firefox */
+.no-scrollbar,
+.scrollbar-hide {
+	-ms-overflow-style: none;
+	/* IE and Edge */
+	scrollbar-width: none;
+	/* Firefox */
 }

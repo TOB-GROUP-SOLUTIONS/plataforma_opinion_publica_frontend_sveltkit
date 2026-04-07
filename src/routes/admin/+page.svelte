@@ -144,9 +144,9 @@
 
 		<!-- Top row: temas + KPI -->
 		<div class="w-full">
-			<div class="grid w-full grid-cols-1 md:grid-cols-3 gap-4">
+			<div class="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
 				<div class="bg-white p-4 md:p-5 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
-					<h3 class="text-gray-500 text-sm font-medium">Menciones Totales</h3>
+					<h3 class="text-gray-500 text-sm font-medium">Menciones Totales de entidades</h3>
 					<div class="mt-2 flex items-baseline gap-2 flex-wrap">
 						<span class="text-2xl md:text-3xl font-bold text-gray-900">{kpis.totalMenciones.valor.toLocaleString()}</span>
 						<span class="text-sm {kpis.totalMenciones.esPositivo ? 'text-green-500' : 'text-red-500'} font-medium flex items-center">
@@ -154,21 +154,33 @@
 						</span>
 					</div>
 				</div>
-				<div class="bg-white p-4 md:p-5 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
-					<h3 class="text-gray-500 text-sm font-medium">Alcance Global</h3>
-					<div class="mt-2 flex items-baseline gap-2 flex-wrap">
-						<span class="text-2xl md:text-3xl font-bold text-gray-900">{kpis.impactoArticulos.valor.toLocaleString()}</span>
-						<span class="text-sm {kpis.impactoArticulos.esPositivo ? 'text-green-500' : 'text-red-500'} font-medium flex items-center">
-							{kpis.impactoArticulos.esPositivo ? '↑' : '↓'} {Math.abs(kpis.impactoArticulos.variacion)}%
-						</span>
-					</div>
-				</div>
+				
 				<div class="bg-white p-4 md:p-5 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
 					<h3 class="text-gray-500 text-sm font-medium">Sentimiento Neto</h3>
 					<div class="mt-2 flex items-baseline gap-2 flex-wrap">
 						<span class="text-2xl md:text-3xl font-bold text-gray-900">{kpis.sentimientoNeto.valor}%</span>
 						<span class="text-sm {kpis.sentimientoNeto.esPositivo ? 'text-green-500' : 'text-red-500'} font-medium flex items-center">
 							{kpis.sentimientoNeto.esPositivo ? '↑' : '↓'} {Math.abs(kpis.sentimientoNeto.variacion)}%
+						</span>
+					</div>
+				</div>
+
+				<div class="bg-white p-4 md:p-5 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
+					<h3 class="text-gray-500 text-sm font-medium">Total Articulos</h3>
+					<div class="mt-2 flex items-baseline gap-2 flex-wrap">
+						<span class="text-2xl md:text-3xl font-bold text-gray-900">{kpis.totalArticulos.valor.toLocaleString()}</span>
+						<span class="text-sm {kpis.totalArticulos.esPositivo ? 'text-green-500' : 'text-red-500'} font-medium flex items-center">
+							{kpis.totalArticulos.esPositivo ? '↑' : '↓'} {Math.abs(kpis.totalArticulos.variacion)}%
+						</span>
+					</div>
+				</div>
+
+				<div class="bg-white p-4 md:p-5 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
+					<h3 class="text-gray-500 text-sm font-medium">Total Comentarios</h3>
+					<div class="mt-2 flex items-baseline gap-2 flex-wrap">
+						<span class="text-2xl md:text-3xl font-bold text-gray-900">{kpis.totalComentarios.valor.toLocaleString()}</span>
+						<span class="text-sm {kpis.totalComentarios.esPositivo ? 'text-green-500' : 'text-red-500'} font-medium flex items-center">
+							{kpis.totalComentarios.esPositivo ? '↑' : '↓'} {Math.abs(kpis.totalComentarios.variacion)}%
 						</span>
 					</div>
 				</div>
@@ -255,7 +267,7 @@
 		<!-- Gráfico principal al final -->
 		<div class="bg-white p-4 md:p-6 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
 			<div class="flex justify-between items-center mb-2">
-				<h3 class="text-lg font-bold text-gray-900">Evolución del Volumen</h3>
+				<h3 class="text-lg font-bold text-gray-900">Evolución del Volumen de menciones de entidades</h3>
 				<button class="text-gray-400 hover:text-gray-600 font-bold px-2">···</button>
 			</div>
 			{#if overview.evolucionVolumen}

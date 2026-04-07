@@ -13,6 +13,7 @@ export const load = async ({ cookies, locals, url, fetch }: any) => {
 	const dias = url.searchParams.get('dias') || '7'; // Por defecto 7 dias como en el topbar
 	const redSocial = url.searchParams.get('redSocial') || '';
 	const entidadId = url.searchParams.get('entidadId') || '';
+	const temaId = url.searchParams.get('temaId') || '';
 
 	const params = new URLSearchParams({
 		page,
@@ -22,6 +23,7 @@ export const load = async ({ cookies, locals, url, fetch }: any) => {
     if (dias) params.append('dias', dias);
     if (redSocial) params.append('redSocial', redSocial);
     if (entidadId) params.append('entidadId', entidadId);
+	if (temaId) params.append('temaId', temaId);
 
 	const response = await api.get({
 		fetch,

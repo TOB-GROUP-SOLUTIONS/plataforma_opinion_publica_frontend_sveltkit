@@ -27,8 +27,8 @@
 </script>
 
 <svelte:head>
-	<title>Iniciar Sesión - Plataforma de Opinion Publica</title>
-	<meta name="description" content="Acceso administrativo a Plataforma de Opinion Publica" />
+	<title>Iniciar Sesión - Plataforma de monitoreo de opinion publica</title>
+	<meta name="description" content="Acceso administrativo a Plataforma de monitoreo de opinion publica" />
 </svelte:head>
 
 <!-- Fondo principal azul -->
@@ -39,7 +39,7 @@
 
 		<div class="text-center mb-8">
 			<h1 class="text-2xl font-bold text-gray-900 mb-2">
-				Opinión Pública
+				Plataforma de monitoreo de opinion publica
 			</h1>
 			<p class="text-gray-500 text-sm">
 				Iniciar Sesión

@@ -24,6 +24,7 @@
 	$: dias = $page.url.searchParams.get('dias') || '7';
 	$: entidadId = $page.url.searchParams.get('entidadId') || '';
 	$: redSocial = $page.url.searchParams.get('redSocial') || '';
+	$: temaId = $page.url.searchParams.get('temaId') || '';
 	$: entidadesDropdown = $page.data?.entidades || [];
 
 	function handleFilterChange(e: Event) {
@@ -134,7 +135,25 @@
 							<option value="Instagram">Instagram</option>
 						</select>
 					</div>
-				</div>
+
+					<div class="flex items-center border-r border-gray-200 px-2 md:px-4">
+						<span class="text-[10px] font-bold text-gray-400 uppercase hidden lg:inline mr-2">Tema / Categoria </span>
+						<select
+							name="temaId"
+							value={temaId}
+							on:change={handleFilterChange}
+							class="bg-transparent border-none text-[13px] font-semibold text-gray-700 focus:ring-0 cursor-pointer py-1 pr-8 max-w-[130px] md:max-w-[200px] truncate"
+						>
+							<option value="">Todas</option>
+							<option value="economía">Economía</option>
+							<option value="política">Política</option>
+							<option value="gestión pública">Gestión pública</option>
+							<option value="salarios">Salarios</option>
+							<option value="impuestos">Impuestos</option>
+							<option value="corrupción">Corrupción</option>
+							<option value="otros">Otros</option>
+						</select>
+					</div>
 			</div>
 
 			<!-- Lado Derecho: Usuario (Desktop) -->

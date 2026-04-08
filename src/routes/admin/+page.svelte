@@ -17,6 +17,27 @@
 	$: redSocial = String($page.data?.filters?.redSocial || '');
 	$: entidadesDropdown = $page.data?.entidades || [];
 
+	// Modal state
+	let showTopTemasModal = false;
+	let isLoadingTopTemas = false;
+	let errorTopTemas = '';
+	let generatedTopTemas: any[] = [];
+
+	async function generarTopTemas() {
+		isLoadingTopTemas = true;
+		errorTopTemas = '';
+		try {
+			const res = await fetch(`/api/top-temas?dias=${dias}`);
+			if (!res.ok) throw new Error('Error al generar tendencias');
+			const json = await res.json();
+			generatedTopTemas = json.topTemas || [];
+		} catch (error: any) {
+			errorTopTemas = error.message;
+		} finally {
+			isLoadingTopTemas = false;
+		}
+	}
+
 	// Action to load and render ApexCharts seamlessly in Svelte without SSR issues
 	function chartAction(node: HTMLElement, options: any) {
 		let chartInstance: any;
@@ -241,7 +262,15 @@
 			</div>
 
 			<div class="bg-white p-4 md:p-6 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
-				<h3 class="text-lg font-bold text-gray-900 mb-4">Top Temas del Momento</h3>
+				<div class="flex justify-between items-center mb-4">
+					<h3 class="text-lg font-bold text-gray-900">Top Temas del Momento</h3>
+					<button 
+						class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-lg border border-blue-200 transition-colors flex items-center gap-1"
+						on:click={() => { showTopTemasModal = true; if(generatedTopTemas.length === 0) generarTopTemas(); }}
+					>
+						<span>✨</span> AI Top 10
+					</button>
+				</div>
 				<div class="space-y-5">
 					{#each topTemas as tema}
 						<div>
@@ -276,3 +305,76 @@
 		</div>
 	</div>
 </div>
+
+<!-- Modal Top 10 Temas IA -->
+{#if showTopTemasModal}
+	<!-- svelte-ignore a11y-click-events-have-key-events -->
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm" on:click={() => showTopTemasModal = false}>
+		<div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-2xl max-h-[90vh] flex flex-col" on:click|stopPropagation>
+			
+			<div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
+				<div class="flex items-center gap-2">
+					<span class="text-2xl">✨</span>
+					<h2 class="text-xl font-bold text-gray-900">Tendencias Generadas por IA</h2>
+				</div>
+				<button class="text-gray-400 hover:text-gray-700 hover:bg-gray-100 p-2 rounded-full transition-colors" on:click={() => showTopTemasModal = false}>
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+					</svg>
+				</button>
+			</div>
+
+			<div class="overflow-y-auto pr-2 flex-grow">
+				<div class="bg-slate-50 border border-slate-100 rounded-xl p-4 mb-6">
+					<p class="text-sm text-slate-600">
+						Esta herramienta agrupa todos los <strong>temas libres</strong> recolectados en el período usando inteligencia artificial para descubrir cuáles son las conversaciones reales más relevantes del momento, más allá de las categorías estáticas.
+					</p>
+				</div>
+				
+				{#if isLoadingTopTemas}
+					<div class="flex flex-col items-center justify-center py-16">
+						<svg class="animate-spin h-10 w-10 text-blue-600 mb-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+							<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+						</svg>
+						<h3 class="text-xl font-bold text-gray-800 mb-2">Analizando conversaciones</h3>
+						<p class="text-gray-500 font-medium text-center px-4 max-w-sm">La inteligencia artificial está leyendo y agrupando los temas más mencionados, esto puede tardar unos segundos...</p>
+					</div>
+				{:else if errorTopTemas}
+					<div class="bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl mt-2 text-sm font-medium">
+						{errorTopTemas}
+					</div>
+					<div class="flex justify-center mt-4">
+						<button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg" on:click={generarTopTemas}>Reintentar</button>
+					</div>
+				{:else if generatedTopTemas.length > 0}
+					<div class="border border-gray-100 rounded-xl mb-4 overflow-hidden bg-white shadow-sm">
+						<div class="bg-gray-50 px-4 py-3 border-b border-gray-100 flex justify-between items-center">
+							<h3 class="text-sm font-bold text-gray-700 uppercase tracking-wider">Top 10 Tendencias</h3>
+							<button class="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 rounded font-bold transition-colors" on:click={generarTopTemas}>
+								🔄 Recalcular
+							</button>
+						</div>
+						<ul class="divide-y divide-gray-100">
+							{#each generatedTopTemas as tema, index}
+								<li class="flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 transition-colors">
+									<div class="flex items-center gap-4">
+										<span class="flex items-center justify-center bg-blue-100 text-blue-700 font-bold rounded-full w-8 h-8 flex-shrink-0 text-sm">{index + 1}</span>
+										<span class="font-medium text-gray-800 text-base">{typeof tema === 'string' ? tema : tema.tema || tema.nombre || ''}</span>
+									</div>
+									{#if tema.cantidad}
+										<span class="bg-gray-100 text-gray-600 font-bold text-xs px-3 py-1.5 rounded-full border border-gray-200">
+											{tema.cantidad} menciones
+										</span>
+									{/if}
+								</li>
+							{/each}
+						</ul>
+					</div>
+				{/if}
+			</div>
+		</div>
+	</div>
+{/if}
+

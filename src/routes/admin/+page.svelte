@@ -349,18 +349,17 @@
 						<button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg" on:click={generarTopTemas}>Reintentar</button>
 					</div>
 				{:else if generatedTopTemas.length > 0}
-<<<<<<< HEAD
 					<div class="flex flex-col gap-4 mb-4">
 						{#each generatedTopTemas as tema, index}
+							{@const isPositivo = tema.sentimiento?.toLowerCase() === 'positivo'}
+							{@const isNegativo = tema.sentimiento?.toLowerCase() === 'negativo'}
 							{@const pos = tema.positivos || 0}
 							{@const neu = tema.neutros || 0}
 							{@const neg = tema.negativos || 0}
 							{@const total = pos + neu + neg}
-							{@const posPct = total > 0 ? Math.round((pos / total) * 100) : 0}
-							{@const neuPct = total > 0 ? Math.round((neu / total) * 100) : 0}
-							{@const negPct = total > 0 ? Math.round((neg / total) * 100) : 0}
-							{@const isPositivo = tema.sentimiento?.toLowerCase() === 'positivo'}
-							{@const isNegativo = tema.sentimiento?.toLowerCase() === 'negativo'}
+							{@const posPct = total > 0 ? Math.round((pos / total) * 100) : (isPositivo ? 100 : 0)}
+							{@const negPct = total > 0 ? Math.round((neg / total) * 100) : (isNegativo ? 100 : 0)}
+							{@const neuPct = total > 0 ? Math.round((neu / total) * 100) : ((!isPositivo && !isNegativo) ? 100 : 0)}
 							{@const articulos = tema.articulos !== undefined ? tema.articulos : (tema.cantidad || 0)}
 							{@const comentarios = tema.comentarios !== undefined ? tema.comentarios : (tema.total_comentarios || 0)}
 
@@ -393,27 +392,25 @@
 									{/if}
 								</div>
 
-								{#if total > 0}
-									<!-- Barra de progreso -->
-									<div class="flex h-2.5 w-full rounded-full overflow-hidden border border-gray-50 gap-0.5 mb-3 bg-gray-100">
-										{#if posPct > 0}<div class="bg-[#34d399] h-full" style="width: {posPct}%"></div>{/if}
-										{#if neuPct > 0}<div class="bg-[#fcd34d] h-full" style="width: {neuPct}%"></div>{/if}
-										{#if negPct > 0}<div class="bg-[#f87171] h-full" style="width: {negPct}%"></div>{/if}
-									</div>
+								<!-- Barra de progreso -->
+								<div class="flex h-2.5 w-full rounded-full overflow-hidden border border-gray-50 gap-0.5 mb-3 bg-gray-100">
+									{#if posPct > 0}<div class="bg-[#34d399] h-full" style="width: {posPct}%"></div>{/if}
+									{#if neuPct > 0}<div class="bg-[#fcd34d] h-full" style="width: {neuPct}%"></div>{/if}
+									{#if negPct > 0}<div class="bg-[#f87171] h-full" style="width: {negPct}%"></div>{/if}
+								</div>
 
-									<!-- Porcentajes con puntos -->
-									<div class="flex items-center gap-4 text-[13px] text-gray-500 font-medium mb-4">
-										<div class="flex items-center gap-1.5">
-											<span class="w-2.5 h-2.5 rounded-full bg-[#34d399]"></span> {posPct}% pos
-										</div>
-										<div class="flex items-center gap-1.5">
-											<span class="w-2.5 h-2.5 rounded-full bg-[#fcd34d]"></span> {neuPct}% neu
-										</div>
-										<div class="flex items-center gap-1.5">
-											<span class="w-2.5 h-2.5 rounded-full bg-[#f87171]"></span> {negPct}% neg
-										</div>
+								<!-- Porcentajes con puntos -->
+								<div class="flex items-center gap-4 text-[13px] text-gray-500 font-medium mb-4">
+									<div class="flex items-center gap-1.5">
+										<span class="w-2.5 h-2.5 rounded-full bg-[#34d399]"></span> {posPct}% pos
 									</div>
-								{/if}
+									<div class="flex items-center gap-1.5">
+										<span class="w-2.5 h-2.5 rounded-full bg-[#fcd34d]"></span> {neuPct}% neu
+									</div>
+									<div class="flex items-center gap-1.5">
+										<span class="w-2.5 h-2.5 rounded-full bg-[#f87171]"></span> {negPct}% neg
+									</div>
+								</div>
 
 								<!-- Footer (Artículos y Comentarios) -->
 								<div class="flex items-center text-[14px]">
@@ -424,63 +421,8 @@
 								</div>
 							</div>
 						{/each}
-=======
-				<div class="mb-4">
-					<div class="flex justify-end mb-3">
-						<button class="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-3 py-1.5 rounded-lg font-bold transition-colors border border-blue-100" on:click={generarTopTemas}>
-							🔄 Recalcular
-						</button>
->>>>>>> 302e916f6d6a9ff4a1bc34844722dfff52de2fb8
 					</div>
-					<div class="space-y-3">
-						{#each generatedTopTemas as tema, index}
-							{@const total = (tema.distribucion?.positivo ?? 0) + (tema.distribucion?.neutro ?? 0) + (tema.distribucion?.negativo ?? 0)}
-							{@const pctPos = total > 0 ? Math.round((tema.distribucion?.positivo ?? 0) / total * 100) : 0}
-							{@const pctNeu = total > 0 ? Math.round((tema.distribucion?.neutro ?? 0) / total * 100) : 0}
-							{@const pctNeg = total > 0 ? 100 - pctPos - pctNeu : 0}
-							{@const etiqueta = tema.etiqueta_dominante ?? null}
-							<div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
-								<!-- Header: número + nombre + badge sentimiento -->
-								<div class="flex items-start justify-between gap-3 mb-3">
-									<div class="flex items-center gap-3 min-w-0">
-										<span class="flex-shrink-0 flex items-center justify-center bg-slate-800 text-white font-bold rounded-full w-7 h-7 text-xs">{index + 1}</span>
-										<span class="font-semibold text-gray-900 text-sm leading-snug">{tema.tema || tema.nombre || ''}</span>
-									</div>
-									{#if etiqueta === 'positivo'}
-										<span class="flex-shrink-0 text-xs font-bold px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">😊 Positivo</span>
-									{:else if etiqueta === 'negativo'}
-										<span class="flex-shrink-0 text-xs font-bold px-2 py-1 rounded-full bg-red-100 text-red-700 border border-red-200">😟 Negativo</span>
-									{:else if etiqueta === 'neutro'}
-										<span class="flex-shrink-0 text-xs font-bold px-2 py-1 rounded-full bg-amber-100 text-amber-700 border border-amber-200">😐 Neutro</span>
-									{/if}
-								</div>
-
-								<!-- Barra distribución sentimiento -->
-								{#if total > 0}
-									<div class="mb-2">
-										<div class="flex rounded-full h-2 overflow-hidden gap-px bg-gray-100">
-											{#if pctPos > 0}<div class="bg-emerald-400 h-full transition-all" style="width:{pctPos}%"></div>{/if}
-											{#if pctNeu > 0}<div class="bg-amber-300 h-full transition-all" style="width:{pctNeu}%"></div>{/if}
-											{#if pctNeg > 0}<div class="bg-red-400 h-full transition-all" style="width:{pctNeg}%"></div>{/if}
-										</div>
-										<div class="flex gap-3 mt-1.5 text-xs text-gray-500">
-											<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span>{pctPos}% pos</span>
-											<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-300 inline-block"></span>{pctNeu}% neu</span>
-											<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-400 inline-block"></span>{pctNeg}% neg</span>
-										</div>
-									</div>
-								{/if}
-
-								<!-- Stats: artículos y comentarios -->
-								<div class="flex flex-wrap gap-3 mt-2 pt-2 border-t border-gray-50">
-									<span class="text-xs text-gray-500"><span class="font-bold text-gray-800">{tema.cantidad ?? 0}</span> artículos</span>
-									<span class="text-xs text-gray-500"><span class="font-bold text-gray-800">{tema.total_comentarios ?? 0}</span> comentarios</span>
-								</div>
-							</div>
-						{/each}
-					</div>
-				</div>
-			{/if}
+				{/if}
 			</div>
 		</div>
 	</div>

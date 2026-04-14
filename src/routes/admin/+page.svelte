@@ -349,28 +349,80 @@
 						<button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg" on:click={generarTopTemas}>Reintentar</button>
 					</div>
 				{:else if generatedTopTemas.length > 0}
-					<div class="border border-gray-100 rounded-xl mb-4 overflow-hidden bg-white shadow-sm">
-						<div class="bg-gray-50 px-4 py-3 border-b border-gray-100 flex justify-between items-center">
-							<h3 class="text-sm font-bold text-gray-700 uppercase tracking-wider">Top 10 Tendencias</h3>
-							<button class="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 rounded font-bold transition-colors" on:click={generarTopTemas}>
-								🔄 Recalcular
-							</button>
-						</div>
-						<ul class="divide-y divide-gray-100">
-							{#each generatedTopTemas as tema, index}
-								<li class="flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 transition-colors">
-									<div class="flex items-center gap-4">
-										<span class="flex items-center justify-center bg-blue-100 text-blue-700 font-bold rounded-full w-8 h-8 flex-shrink-0 text-sm">{index + 1}</span>
-										<span class="font-medium text-gray-800 text-base">{typeof tema === 'string' ? tema : tema.tema || tema.nombre || ''}</span>
+					<div class="flex flex-col gap-4 mb-4">
+						{#each generatedTopTemas as tema, index}
+							{@const pos = tema.positivos || 0}
+							{@const neu = tema.neutros || 0}
+							{@const neg = tema.negativos || 0}
+							{@const total = pos + neu + neg}
+							{@const posPct = total > 0 ? Math.round((pos / total) * 100) : 0}
+							{@const neuPct = total > 0 ? Math.round((neu / total) * 100) : 0}
+							{@const negPct = total > 0 ? Math.round((neg / total) * 100) : 0}
+							{@const isPositivo = tema.sentimiento?.toLowerCase() === 'positivo'}
+							{@const isNegativo = tema.sentimiento?.toLowerCase() === 'negativo'}
+							{@const articulos = tema.articulos !== undefined ? tema.articulos : (tema.cantidad || 0)}
+							{@const comentarios = tema.comentarios !== undefined ? tema.comentarios : (tema.total_comentarios || 0)}
+
+							<div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+								<div class="flex items-start justify-between gap-4 mb-5">
+									<div class="flex items-start gap-4">
+										<div class="flex items-center justify-center bg-[#1e293b] text-white font-bold rounded-full w-8 h-8 min-w-[2rem] text-sm mt-0.5">
+											{index + 1}
+										</div>
+										<h3 class="font-semibold text-gray-900 text-[17px] leading-tight pt-1">
+											{typeof tema === 'string' ? tema : tema.tema || tema.nombre || ''}
+										</h3>
 									</div>
-									{#if tema.cantidad}
-										<span class="bg-gray-100 text-gray-600 font-bold text-xs px-3 py-1.5 rounded-full border border-gray-200">
-											{tema.cantidad} menciones
-										</span>
+									{#if tema.sentimiento}
+										<div class="flex-shrink-0">
+											{#if isPositivo}
+												<span class="bg-[#dcfce7] text-[#166534] border border-[#bbf7d0] font-medium text-sm px-3 py-1.5 rounded-full flex items-center gap-1.5">
+													<span class="text-base">😃</span> Positivo
+												</span>
+											{:else if isNegativo}
+												<span class="bg-[#fee2e2] text-[#991b1b] border border-[#fecaca] font-medium text-sm px-3 py-1.5 rounded-full flex items-center gap-1.5">
+													<span class="text-base">🥺</span> Negativo
+												</span>
+											{:else}
+												<span class="bg-[#fef3c7] text-[#92400e] border border-[#fde68a] font-medium text-sm px-3 py-1.5 rounded-full flex items-center gap-1.5">
+													<span class="text-base">😐</span> Neutro
+												</span>
+											{/if}
+										</div>
 									{/if}
-								</li>
-							{/each}
-						</ul>
+								</div>
+
+								{#if total > 0}
+									<!-- Barra de progreso -->
+									<div class="flex h-2.5 w-full rounded-full overflow-hidden border border-gray-50 gap-0.5 mb-3 bg-gray-100">
+										{#if posPct > 0}<div class="bg-[#34d399] h-full" style="width: {posPct}%"></div>{/if}
+										{#if neuPct > 0}<div class="bg-[#fcd34d] h-full" style="width: {neuPct}%"></div>{/if}
+										{#if negPct > 0}<div class="bg-[#f87171] h-full" style="width: {negPct}%"></div>{/if}
+									</div>
+
+									<!-- Porcentajes con puntos -->
+									<div class="flex items-center gap-4 text-[13px] text-gray-500 font-medium mb-4">
+										<div class="flex items-center gap-1.5">
+											<span class="w-2.5 h-2.5 rounded-full bg-[#34d399]"></span> {posPct}% pos
+										</div>
+										<div class="flex items-center gap-1.5">
+											<span class="w-2.5 h-2.5 rounded-full bg-[#fcd34d]"></span> {neuPct}% neu
+										</div>
+										<div class="flex items-center gap-1.5">
+											<span class="w-2.5 h-2.5 rounded-full bg-[#f87171]"></span> {negPct}% neg
+										</div>
+									</div>
+								{/if}
+
+								<!-- Footer (Artículos y Comentarios) -->
+								<div class="flex items-center text-[14px]">
+									<span class="font-bold text-gray-800">{Math.max(0, articulos)}</span>
+									<span class="text-gray-500 ml-1.5">artículos</span>
+									<span class="font-bold text-gray-800 ml-4">{comentarios}</span>
+									<span class="text-gray-500 ml-1.5">comentarios</span>
+								</div>
+							</div>
+						{/each}
 					</div>
 				{/if}
 			</div>

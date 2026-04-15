@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 	export let data: any;
 
 	// Computed dynamic data from API
@@ -24,6 +25,7 @@
 	let generatedTopTemas: any[] = [];
 
 	async function generarTopTemas() {
+		if (!browser) return;
 		isLoadingTopTemas = true;
 		errorTopTemas = '';
 		try {
@@ -36,6 +38,15 @@
 		} finally {
 			isLoadingTopTemas = false;
 		}
+	}
+
+	onMount(() => {
+		generarTopTemas();
+	});
+
+	// Trigger reload if `dias` changes
+	$: if (browser && dias) {
+		generarTopTemas();
 	}
 
 	// Action to load and render ApexCharts seamlessly in Svelte without SSR issues
@@ -165,27 +176,8 @@
 
 		<!-- Top row: temas + KPI -->
 		<div class="w-full">
-			<div class="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-				<div class="bg-white p-4 md:p-5 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
-					<h3 class="text-gray-500 text-sm font-medium">Menciones Totales de entidades</h3>
-					<div class="mt-2 flex items-baseline gap-2 flex-wrap">
-						<span class="text-2xl md:text-3xl font-bold text-gray-900">{kpis.totalMenciones.valor.toLocaleString()}</span>
-						<span class="text-sm {kpis.totalMenciones.esPositivo ? 'text-green-500' : 'text-red-500'} font-medium flex items-center">
-							{kpis.totalMenciones.esPositivo ? '↑' : '↓'} {Math.abs(kpis.totalMenciones.variacion)}%
-						</span>
-					</div>
-				</div>
-				
-				<div class="bg-white p-4 md:p-5 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
-					<h3 class="text-gray-500 text-sm font-medium">Sentimiento Neto</h3>
-					<div class="mt-2 flex items-baseline gap-2 flex-wrap">
-						<span class="text-2xl md:text-3xl font-bold text-gray-900">{kpis.sentimientoNeto.valor}%</span>
-						<span class="text-sm {kpis.sentimientoNeto.esPositivo ? 'text-green-500' : 'text-red-500'} font-medium flex items-center">
-							{kpis.sentimientoNeto.esPositivo ? '↑' : '↓'} {Math.abs(kpis.sentimientoNeto.variacion)}%
-						</span>
-					</div>
-				</div>
-
+			<div class="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-2">
+			
 				<div class="bg-white p-4 md:p-5 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
 					<h3 class="text-gray-500 text-sm font-medium">Total Articulos</h3>
 					<div class="mt-2 flex items-baseline gap-2 flex-wrap">
@@ -226,11 +218,11 @@
 
 		<!-- Row: cuentas y top temas -->
 		<div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-			<div class="bg-white p-4 md:p-6 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
-				<h3 class="text-lg font-bold text-gray-900 mb-4">Cuentas más Activas</h3>
-				<div class="overflow-x-auto">
+			<div class="bg-white p-4 md:p-6 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] h-[500px] flex flex-col">
+				<h3 class="text-lg font-bold text-gray-900 mb-4 flex-shrink-0">Cuentas más Activas</h3>
+				<div class="overflow-y-auto flex-grow pr-2 no-scrollbar scrollbar-hide">
 					<table class="w-full text-sm text-left text-gray-600">
-						<thead class="text-xs text-gray-400 capitalize bg-white">
+						<thead class="text-xs text-gray-400 capitalize bg-white sticky top-0 z-10">
 							<tr>
 								<th class="px-2 py-3 font-semibold w-1/2 line-clamp-1 border-b border-gray-100">Cuenta</th>
 								<th class="px-2 py-3 font-semibold border-b border-gray-100">Red</th>
@@ -261,40 +253,96 @@
 				</div>
 			</div>
 
-			<div class="bg-white p-4 md:p-6 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
-				<div class="flex justify-between items-center mb-4">
-					<h3 class="text-lg font-bold text-gray-900">Top Temas del Momento</h3>
-					<button 
-						class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-lg border border-blue-200 transition-colors flex items-center gap-1"
-						on:click={() => { showTopTemasModal = true; if(generatedTopTemas.length === 0) generarTopTemas(); }}
-					>
-						<span>✨</span> AI Top 10
-					</button>
+			<div class="bg-white p-4 md:p-6 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] h-[500px] flex flex-col">
+				<div class="flex justify-between items-center mb-4 flex-shrink-0">
+					<h3 class="text-lg font-bold text-gray-900">Top Temas del Momento <span class="bg-blue-100 text-blue-800 text-xs font-semibold ml-2 px-2.5 py-0.5 rounded">AI</span></h3>
 				</div>
-				<div class="space-y-5">
-					{#each topTemas as tema}
-						<div>
-							<div class="flex justify-between mb-2 text-sm">
-								<span class="font-medium text-gray-800">{tema.nombre}</span>
-								<span class="text-gray-500 font-medium">{tema.valor.toLocaleString()}
-									{#if tema.porcentaje > 50}
-										<span class="text-red-500 font-bold ml-1">▲</span>
-									{:else}
-										<span class="text-green-500 font-bold ml-1">▼</span>
-									{/if}
-								</span>
-							</div>
-							<div class="w-full bg-gray-100 rounded-full h-2.5">
-								<div class="bg-slate-800 h-2.5 rounded-full" style="width: {tema.porcentaje}%"></div>
-							</div>
+				<div class="space-y-4 overflow-y-auto flex-grow pr-2 no-scrollbar scrollbar-hide">
+					{#if isLoadingTopTemas}
+						<div class="flex flex-col items-center justify-center py-10">
+							<svg class="animate-spin h-8 w-8 text-blue-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+								<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+								<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+							</svg>
+							<p class="text-gray-500 font-medium text-sm text-center">Analizando e identificando tendencias...</p>
 						</div>
-					{/each}
+					{:else if errorTopTemas}
+						<div class="bg-red-50 border border-red-200 text-red-600 p-3 rounded-lg text-sm text-center">
+							{errorTopTemas}
+						</div>
+					{:else if generatedTopTemas.length > 0}
+						{#each generatedTopTemas.slice(0, 10) as tema, index}
+							{@const isPositivo = tema.sentimiento?.toLowerCase() === 'positivo'}
+							{@const isNegativo = tema.sentimiento?.toLowerCase() === 'negativo'}
+							{@const pos = tema.positivos || 0}
+							{@const neu = tema.neutros || 0}
+							{@const neg = tema.negativos || 0}
+							{@const total = pos + neu + neg}
+							{@const posPct = total > 0 ? Math.round((pos / total) * 100) : (isPositivo ? 100 : 0)}
+							{@const negPct = total > 0 ? Math.round((neg / total) * 100) : (isNegativo ? 100 : 0)}
+							{@const neuPct = total > 0 ? Math.round((neu / total) * 100) : ((!isPositivo && !isNegativo) ? 100 : 0)}
+							{@const articulos = tema.articulos !== undefined ? tema.articulos : (tema.cantidad || 0)}
+							{@const comentarios = tema.comentarios !== undefined ? tema.comentarios : (tema.total_comentarios || 0)}
+
+							<div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+								<div class="flex items-start justify-between gap-3 mb-3">
+									<div class="flex items-start gap-3">
+										<div class="flex items-center justify-center bg-[#1e293b] text-white font-bold rounded-full w-6 h-6 min-w-[1.5rem] text-xs mt-0.5">
+											{index + 1}
+										</div>
+										<h3 class="font-semibold text-gray-900 text-[14px] leading-tight pt-0.5">
+											{typeof tema === 'string' ? tema : tema.tema || tema.nombre || ''}
+										</h3>
+									</div>
+									{#if tema.sentimiento}
+										<div class="flex-shrink-0">
+											{#if isPositivo}
+												<span class="bg-[#dcfce7] text-[#166534] border border-[#bbf7d0] font-medium text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1">
+													<span>😃</span> Pos
+												</span>
+											{:else if isNegativo}
+												<span class="bg-[#fee2e2] text-[#991b1b] border border-[#fecaca] font-medium text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1">
+													<span>🥺</span> Neg
+												</span>
+											{:else}
+												<span class="bg-[#fef3c7] text-[#92400e] border border-[#fde68a] font-medium text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1">
+													<span>😐</span> Neu
+												</span>
+											{/if}
+										</div>
+									{/if}
+								</div>
+
+								<!-- Barra de progreso -->
+								<div class="flex h-1.5 w-full rounded-full overflow-hidden border border-gray-50 gap-0.5 mb-2 bg-gray-100">
+									{#if posPct > 0}<div class="bg-[#34d399] h-full" style="width: {posPct}%"></div>{/if}
+									{#if neuPct > 0}<div class="bg-[#fcd34d] h-full" style="width: {neuPct}%"></div>{/if}
+									{#if negPct > 0}<div class="bg-[#f87171] h-full" style="width: {negPct}%"></div>{/if}
+								</div>
+
+								<!-- Stats -->
+								<div class="flex items-center justify-between mt-2">
+									<div class="flex items-center gap-2 text-[10px] text-gray-500 font-medium">
+										{#if posPct > 0}<span class="text-[#10b981]">{posPct}% pos</span>{/if}
+										{#if neuPct > 0}<span class="text-[#f59e0b]">{neuPct}% neu</span>{/if}
+										{#if negPct > 0}<span class="text-[#ef4444]">{negPct}% neg</span>{/if}
+									</div>
+									<div class="flex items-center text-[11px]">
+										<span class="font-bold text-gray-800">{Math.max(0, articulos)}</span>
+										<span class="text-gray-500 ml-1">art.</span>
+										<span class="font-bold text-gray-800 ml-2">{comentarios}</span>
+										<span class="text-gray-500 ml-1">com.</span>
+									</div>
+								</div>
+							</div>
+						{/each}
+					{/if}
 				</div>
 			</div>
 		</div>
 
 		<!-- Gráfico principal al final -->
-		<div class="bg-white p-4 md:p-6 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
+<!-- 		<div class="bg-white p-4 md:p-6 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)]">
 			<div class="flex justify-between items-center mb-2">
 				<h3 class="text-lg font-bold text-gray-900">Evolución del Volumen de menciones de entidades</h3>
 				<button class="text-gray-400 hover:text-gray-600 font-bold px-2">···</button>
@@ -302,7 +350,7 @@
 			{#if overview.evolucionVolumen}
 				<div class="w-full" use:chartAction={volumeChartOptions}></div>
 			{/if}
-		</div>
+		</div> -->
 	</div>
 </div>
 

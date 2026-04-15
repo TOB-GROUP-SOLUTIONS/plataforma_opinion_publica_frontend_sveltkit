@@ -55,10 +55,10 @@
 	<div class="mx-auto w-full max-w-[1600px]">
 		
 		<!-- Contenedor Principal: Columna en Móvil, Fila en Desktop -->
-		<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+		<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative">
 			
 			<!-- Fila 1: Toggle, Título y Avatar (Móvil) / Lado Izquierdo (Desktop) -->
-			<div class="flex items-center justify-between w-full md:w-auto">
+			<div class="flex items-center justify-between w-full md:w-auto z-10">
 				<div class="flex items-center gap-2 md:gap-4">
 					<button
 						type="button"
@@ -85,8 +85,8 @@
 				</div>
 			</div>
 
-			<!-- Fila 2: Filtros (Móvil) / Centro (Desktop) -->
-			<div class="flex items-center justify-center flex-1 overflow-x-auto no-scrollbar scrollbar-hide py-1 md:py-0">
+			<!-- Fila 2: Filtros (Móvil) / Centro absoluto (Desktop) -->
+			<div class="flex items-center justify-center w-full md:absolute md:left-1/2 md:-translate-x-1/2 md:w-auto overflow-x-auto no-scrollbar scrollbar-hide py-1 md:py-0 z-0">
 				<div class="flex items-center bg-gray-50/80 p-1 px-2 rounded-xl border border-gray-100 space-x-1 whitespace-nowrap">
 					
 					<!-- Period -->
@@ -105,7 +105,7 @@
 					</div>
 
 					<!-- Entity -->
-					<div class="flex items-center border-r border-gray-200 px-2 md:px-4">
+<!-- 					<div class="flex items-center border-r border-gray-200 px-2 md:px-4">
 						<span class="text-[10px] font-bold text-gray-400 uppercase hidden lg:inline mr-2">Entidad</span>
 						<select
 							name="entidadId"
@@ -118,7 +118,7 @@
 								<option value={String(entidad.id)}>{entidad.entidad}</option>
 							{/each}
 						</select>
-					</div>
+					</div> -->
 
 					<!-- Source -->
 					<div class="flex items-center px-2 md:px-4">
@@ -136,7 +136,7 @@
 						</select>
 					</div>
 
-					<div class="flex items-center border-r border-gray-200 px-2 md:px-4">
+<!-- 					<div class="flex items-center border-r border-gray-200 px-2 md:px-4">
 						<span class="text-[10px] font-bold text-gray-400 uppercase hidden lg:inline mr-2">Tema / Categoria </span>
 						<select
 							name="temaId"
@@ -153,11 +153,12 @@
 							<option value="corrupción">Corrupción</option>
 							<option value="otros">Otros</option>
 						</select>
-					</div>
+					</div> -->
+				</div>
 			</div>
 
 			<!-- Lado Derecho: Usuario (Desktop) -->
-			<div class="hidden md:flex items-center justify-end flex-shrink-0">
+			<div class="hidden md:flex items-center justify-end flex-shrink-0 z-10 w-[60px]">
 				<div class="rounded-full p-1 border border-gray-300">
 					<div class="w-11 h-11 lg:w-12 lg:h-12 acs cursor-pointer bg-white rounded-full flex items-center justify-center">
 						<span class="text-2xl font-bold text-[#DD052B]">{firstNameChar}</span>

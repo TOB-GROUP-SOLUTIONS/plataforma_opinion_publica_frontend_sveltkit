@@ -98,9 +98,8 @@
 							on:change={handleFilterChange}
 							class="bg-transparent border-none text-[13px] font-semibold text-gray-700 focus:ring-0 cursor-pointer py-1 pr-8"
 						>
+							<option value="1">1 dia</option>
 							<option value="7">7 días</option>
-							<option value="30">30 días</option>
-							<option value="3000">Siempre</option>
 						</select>
 					</div>
 

@@ -80,6 +80,51 @@
 		}
 	}
 
+	function getTemaIdFromTop(tema: any) {
+		if (typeof tema === 'string') return tema;
+		return tema?.tema || tema?.nombre || '';
+	}
+
+	function getComentariosIdsFromTop(tema: any) {
+		if (!tema || typeof tema === 'string') return [] as string[];
+
+		const rawIds =
+			tema?.comentarios_ids ??
+			tema?.comentariosIds ??
+			tema?.comentariosId ??
+			tema?.comentarios_id;
+
+		if (Array.isArray(rawIds)) {
+			return rawIds.map((id: any) => String(id).trim()).filter(Boolean);
+		}
+
+		if (typeof rawIds === 'string') {
+			return rawIds
+				.split(',')
+				.map((id) => id.trim())
+				.filter(Boolean);
+		}
+
+		return [] as string[];
+	}
+
+	function getComentariosUrlForTop(tema: any) {
+		const params = new URLSearchParams();
+		const temaId = getTemaIdFromTop(tema);
+		const comentariosIds = getComentariosIdsFromTop(tema);
+
+		if (comentariosIds.length > 0) {
+			params.append('comentarios_ids', comentariosIds.join(','));
+		} else if (temaId) {
+			params.append('temaId', temaId);
+		}
+		if (dias) params.append('dias', dias);
+		if (redSocial) params.append('redSocial', redSocial);
+		if (entidadId) params.append('entidadId', entidadId);
+
+		return `/admin/comentarios?${params.toString()}`;
+	}
+
 	// Chart Options definitions mapped from API dynamically
 	$: volumeChartOptions = {
 		chart: { type: 'area', height: 420, toolbar: { show: false }, zoom: { enabled: false }, fontFamily: 'inherit' },
@@ -233,14 +278,14 @@
 							{@const articulos = tema.articulos !== undefined ? tema.articulos : (tema.cantidad || 0)}
 							{@const comentarios = tema.comentarios !== undefined ? tema.comentarios : (tema.total_comentarios || 0)}
 
-							<div class="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+							<a href={getComentariosUrlForTop(tema)} class="block bg-white border border-gray-100 rounded-xl p-4 shadow-sm hover:border-blue-200 hover:bg-blue-50/40 transition-colors cursor-pointer">
 								<div class="flex items-start justify-between gap-3 mb-3">
 									<div class="flex items-start gap-3">
 										<div class="flex items-center justify-center bg-[#1e293b] text-white font-bold rounded-full w-6 h-6 min-w-[1.5rem] text-xs mt-0.5">
 											{index + 1}
 										</div>
 										<h3 class="font-semibold text-gray-900 text-[14px] leading-tight pt-0.5">
-											{typeof tema === 'string' ? tema : tema.tema || tema.nombre || ''}
+											{getTemaIdFromTop(tema)}
 										</h3>
 									</div>
 									{#if tema.sentimiento}
@@ -283,7 +328,7 @@
 										<span class="text-gray-500 ml-1">com.</span>
 									</div>
 								</div>
-							</div>
+							</a>
 						{/each}
 					{/if}
 				</div>

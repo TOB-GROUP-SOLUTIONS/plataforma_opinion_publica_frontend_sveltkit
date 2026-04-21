@@ -12,15 +12,19 @@ export const load = async ({ cookies, locals, url, fetch }: any) => {
     // Extrayendo los filtros
 	const dias = url.searchParams.get('dias') || '7';
 	const redSocial = url.searchParams.get('redSocial') || '';
+	const entidadId = url.searchParams.get('entidadId') || '';
     const articulo_id = url.searchParams.get('articulo_id') || '';
 	const temaId = url.searchParams.get('temaId') || '';
+	const comentarios_ids = url.searchParams.get('comentarios_ids') || '';
 
 	const params = new URLSearchParams({ page, limit });
 
     if (dias) params.append('dias', dias);
     if (redSocial) params.append('redSocial', redSocial);
+	if (entidadId) params.append('entidadId', entidadId);
     if (articulo_id) params.append('articulo_id', articulo_id);
 	if (temaId) params.append('temaId', temaId);
+	if (comentarios_ids) params.append('comentarios_ids', comentarios_ids);
 
 	const response = await api.get({
 		fetch,

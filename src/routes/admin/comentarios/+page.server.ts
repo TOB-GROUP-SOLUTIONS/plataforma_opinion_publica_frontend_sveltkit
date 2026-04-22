@@ -13,6 +13,8 @@ export const load = async ({ cookies, locals, url, fetch }: any) => {
 	const dias = url.searchParams.get('dias') || '7';
 	const redSocial = url.searchParams.get('redSocial') || '';
 	const entidadId = url.searchParams.get('entidadId') || '';
+	const municipioId = url.searchParams.get('municipioId') || '';
+
     const articulo_id = url.searchParams.get('articulo_id') || '';
 	const temaId = url.searchParams.get('temaId') || '';
 	const comentarios_ids = url.searchParams.get('comentarios_ids') || '';
@@ -24,6 +26,7 @@ export const load = async ({ cookies, locals, url, fetch }: any) => {
 	if (entidadId) params.append('entidadId', entidadId);
     if (articulo_id) params.append('articulo_id', articulo_id);
 	if (temaId) params.append('temaId', temaId);
+	if (municipioId) params.append('municipioId', municipioId);
 	if (comentarios_ids) params.append('comentarios_ids', comentarios_ids);
 
 	const response = await api.get({

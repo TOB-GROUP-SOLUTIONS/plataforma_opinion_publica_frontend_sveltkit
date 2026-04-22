@@ -23,9 +23,12 @@
 	// Reactive values for filters from the page data/URL
 	$: dias = $page.url.searchParams.get('dias') || '7';
 	$: entidadId = $page.url.searchParams.get('entidadId') || '';
+	$: municipioId = $page.url.searchParams.get('municipioId') || '';
 	$: redSocial = $page.url.searchParams.get('redSocial') || '';
 	$: temaId = $page.url.searchParams.get('temaId') || '';
 	$: entidadesDropdown = $page.data?.entidades || [];
+	$: municipiosDropdown = $page.data?.municipios || [];
+	
 
 	function handleFilterChange(e: Event) {
 		const target = e.target as HTMLSelectElement | null;
@@ -104,7 +107,7 @@
 					</div>
 
 					<!-- Entity -->
-<!-- 					<div class="flex items-center border-r border-gray-200 px-2 md:px-4">
+					<div class="flex items-center border-r border-gray-200 px-2 md:px-4">
 						<span class="text-[10px] font-bold text-gray-400 uppercase hidden lg:inline mr-2">Entidad</span>
 						<select
 							name="entidadId"
@@ -117,7 +120,22 @@
 								<option value={String(entidad.id)}>{entidad.entidad}</option>
 							{/each}
 						</select>
-					</div> -->
+					</div> 
+
+					<div class="flex items-center border-r border-gray-200 px-2 md:px-4">
+						<span class="text-[10px] font-bold text-gray-400 uppercase hidden lg:inline mr-2">Municipios</span>
+						<select
+							name="municipioId"
+							value={municipioId}
+							on:change={handleFilterChange}
+							class="bg-transparent border-none text-[13px] font-semibold text-gray-700 focus:ring-0 cursor-pointer py-1 pr-8 max-w-[130px] md:max-w-[200px] truncate"
+						>
+							<option value="">Todas</option>
+							{#each municipiosDropdown as municipio}
+								<option value={String(municipio.id)}>{municipio.municipio}</option>
+							{/each}
+						</select>
+					</div> 
 
 					<!-- Source -->
 					<div class="flex items-center px-2 md:px-4">

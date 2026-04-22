@@ -21,5 +21,10 @@ export const data = [
 		title: 'Personas / Temas',
 		icon: BuildingSolid,
 		link: '/admin/entidades',
+	},
+	{
+		title: 'Municipios',
+		icon: BuildingSolid,
+		link: '/admin/municipios',
 	}
 ];

@@ -20,16 +20,18 @@ RUN npm run build
 FROM node:20-bookworm-slim AS prod
 ENV NODE_ENV=production
 ENV TZ=America/Argentina/Buenos_Aires
+ENV BODY_SIZE_LIMIT=10485760
 WORKDIR /app
 
-# Si tu app lee env vars en runtime, las vas a pasar por docker-compose env_file
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 
-# Copiamos lo mínimo necesario para correr adapter-node
 COPY --from=build /app/build ./build
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/node_modules ./node_modules
 
 EXPOSE 3000
 
-# adapter-node arranca con esto
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 --start-period=40s \
+  CMD curl -f http://localhost:3000/ || exit 1
+
 CMD ["node", "build/index.js"]

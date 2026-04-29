@@ -1,0 +1,176 @@
+name: "🏭 Production — Build, Publish & Deploy"
+
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: plataforma_opinion_publica_frontend_sveltkit
+  REGISTRY: ghcr.io/tob-group-solutions
+
+jobs:
+  # ─── 1. Build ───
+  build:
+    name: "🔨 Build"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build
+        run: npm run build
+
+  notify-build:
+    name: "📢 Build Status"
+    needs: [build]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Discord
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: "Opinion Pública — Frontend (prod) [1/3 Build]"
+          description: |
+            **Build:** ${{ needs.build.result == 'success' && '✅' || '❌' }}
+            **Branch:** `${{ github.ref_name }}`
+            **Commit:** `${{ github.sha }}`
+          color: ${{ needs.build.result == 'success' && '0x00FF00' || '0xFF0000' }}
+          username: "GitHub Actions"
+
+  # ─── 2. Publish Docker Image ───
+  publish:
+    name: "📦 Publish Docker Image"
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  notify-publish:
+    name: "📢 Publish Status"
+    needs: [publish]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Discord
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: "Opinion Pública — Frontend (prod) [2/3 Publish]"
+          description: |
+            **Publish:** ${{ needs.publish.result == 'success' && '✅' || '❌' }}
+            **Image:** `${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest`
+          color: ${{ needs.publish.result == 'success' && '0x00FF00' || '0xFF0000' }}
+          username: "GitHub Actions"
+
+  # ─── 3. Deploy ───
+  deploy:
+    name: "🚀 Deploy to Production"
+    needs: [publish]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd ~/apps/tob/opinion-publica/frontend
+            docker compose pull
+            docker compose up -d --force-recreate
+
+  verify:
+    name: "✅ Verify Health"
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check container health
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            for i in $(seq 1 20); do
+              STATUS=$(docker inspect --format='{{.State.Health.Status}}' opinion_publica_frontend_sveltkit_prod 2>/dev/null || echo "starting")
+              if [ "$STATUS" = "healthy" ]; then
+                echo "✅ Container healthy"
+                exit 0
+              fi
+              echo "⏳ Waiting... ($i/20) status=$STATUS"
+              sleep 3
+            done
+            echo "❌ Container not healthy after 60s"
+            exit 1
+
+  rollback:
+    name: "⏪ Rollback"
+    needs: [verify]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rollback via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd ~/apps/tob/opinion-publica/frontend
+            docker compose down
+            docker compose up -d
+
+  notify-deploy:
+    name: "📢 Deploy Status"
+    needs: [deploy, verify]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Discord
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: "Opinion Pública — Frontend (prod) [3/3 Deploy]"
+          description: |
+            **Deploy:** ${{ needs.deploy.result == 'success' && '✅' || '❌' }}
+            **Health:** ${{ needs.verify.result == 'success' && '✅' || '❌' }}
+            **Author:** ${{ github.actor }}
+          color: ${{ needs.verify.result == 'success' && '0x00FF00' || '0xFF0000' }}
+          username: "GitHub Actions"

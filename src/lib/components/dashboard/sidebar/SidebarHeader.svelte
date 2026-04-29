@@ -8,7 +8,7 @@
 >
 	{#if $sidebarOpen}
 		<h1 class="text-white text-lg font-bold tracking-wide leading-tight">
-			Plataforma de Opinión Pública
+			Plataforma de monitoreo de opinion publica
 		</h1>
 		<p class="text-[#7D93B2] text-[10px] font-semibold tracking-wider mt-1 uppercase">
 			Inteligencia Social

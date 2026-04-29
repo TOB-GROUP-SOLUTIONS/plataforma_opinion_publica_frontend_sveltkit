@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
 	import { Dropdown, DropdownItem } from 'flowbite-svelte';
 	import { openSidebar } from './store';
 	import { onMount } from 'svelte';
 	import { ArrowLeftToBracketOutline } from 'flowbite-svelte-icons';
 	import type { User } from '$lib/interfaces/user.interface';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 
 	export let user: User | undefined;
 	export let title: string = '';
@@ -19,90 +20,169 @@
 		window.addEventListener('resize', () => (screenWidth = window.innerWidth));
 	});
 
-    function logout() {
-        fetch('/api/auth/logout', {
-            method: 'POST',
-            credentials: 'include'
-        }).finally(() => {
-            window.location.replace('/?t=' + Date.now());
-        });
-    }
+	// Reactive values for filters from the page data/URL
+	$: dias = $page.url.searchParams.get('dias') || '7';
+	$: entidadId = $page.url.searchParams.get('entidadId') || '';
+	$: municipioId = $page.url.searchParams.get('municipioId') || '';
+	$: redSocial = $page.url.searchParams.get('redSocial') || '';
+	$: temaId = $page.url.searchParams.get('temaId') || '';
+	$: entidadesDropdown = $page.data?.entidades || [];
+	$: municipiosDropdown = $page.data?.municipios || [];
+	
 
 	function handleFilterChange(e: Event) {
 		const target = e.target as HTMLSelectElement | null;
-		if (target && target.form) {
-			target.form.submit();
+		if (target) {
+			const name = target.name;
+			const value = target.value;
+			const url = new URL($page.url);
+			
+			if (value === "") {
+				url.searchParams.delete(name);
+			} else {
+				url.searchParams.set(name, value);
+			}
+			
+			// Reiniciar página al filtrar
+			url.searchParams.delete('page');
+			
+			goto(url.toString(), { keepFocus: true, noScroll: true });
 		}
 	}
 
-	$: dias = String($page.data?.filters?.dias || '7');
-	$: redSocial = String($page.data?.filters?.redSocial || '');
-	$: entidadId = $page.data?.filters?.entidadId ? String($page.data.filters.entidadId) : '';
-	$: entidadesDropdown = $page.data?.entidades || [];
 	$: firstNameChar = ((user as any)?.firstname?.charAt(0) || '').toUpperCase();
 	
 </script>
 
-<header class="bg-white border-b border-gray-200 py-3 flex flex-col items-center relative shadow-sm w-full z-10 md:py-4">
-	<div class="flex flex-center flex-col h-full justify-center mx-auto px-6 relative w-full">
-		<div class="flex items-center pl-1 relative w-full sm:ml-0 sm:pr-2 justify-between flex-wrap gap-y-4">
-			<div class="flex items-center left-0 relative">
-				<div class="flex group h-full items-center justify-center relative w-10">
+<header class="bg-white border-b border-gray-200 py-3 md:py-4 w-full z-10 sticky top-0 px-4 md:px-6 shadow-sm">
+	<div class="mx-auto w-full max-w-[1600px]">
+		
+		<!-- Contenedor Principal: Columna en Móvil, Fila en Desktop -->
+		<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative">
+			
+			<!-- Fila 1: Toggle, Título y Avatar (Móvil) / Lado Izquierdo (Desktop) -->
+			<div class="flex items-center justify-between w-full md:w-auto z-10">
+				<div class="flex items-center gap-2 md:gap-4">
 					<button
 						type="button"
-						aria-expanded="false"
-						aria-label="Toggle sidenav"
 						on:click={openSidebar}
-						class="text-[32px] font-light text-[#1e293b] focus:outline-none flex items-center hover:bg-gray-100 rounded-lg px-2 pb-1 transition-colors leading-none"
+						class="text-[32px] font-light text-[#1e293b] hover:bg-gray-100 rounded-lg px-2 pb-1 transition-colors leading-none focus:outline-none"
 					>
 						&#8801;
 					</button>
-				</div>
 
-				<!-- Título de la sección -->
-				{#if title}
-					<span class="ml-4 flex items-center gap-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-[40vw] md:max-w-none text-[#1e293b]">
-						<span class:text-lg={screenWidth < 1024} class:text-[22px]={screenWidth >= 1024} class="font-bold tracking-tight">
+					{#if title}
+						<span class="text-lg md:text-xl font-bold text-[#1e293b] whitespace-nowrap overflow-hidden text-ellipsis max-w-[50vw]">
 							{title}
 						</span>
-					</span>
-				{/if}
+					{/if}
+				</div>
 
-                <button type="button" class="ml-5 md:ml-5 bg-white border border-gray-200 text-[#475569] text-[13px] rounded-md px-3.5 py-1.5 hover:bg-gray-50 transition flex items-center gap-2 shadow-sm font-medium">
-                    <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    <span class="hidden sm:inline">Exportar</span>
-                </button>
+				<!-- Usuario Móvil (Oculto en Desktop) -->
+				<div class="md:hidden flex items-center">
+					<div class="rounded-full p-0.5 border border-gray-300">
+						<div class="w-9 h-9 acs-mobile cursor-pointer bg-white rounded-full flex items-center justify-center">
+							<span class="text-xl font-bold text-[#DD052B]">{firstNameChar}</span>
+						</div>
+					</div>
+				</div>
 			</div>
 
-			<!-- Filters and Right Icons -->
-			<div class="flex items-center justify-end gap-3 p-1 relative w-full md:w-auto ml-auto">
-				<!-- Global Filters -->
-				<form method="GET" class="flex flex-wrap gap-2 items-center" action={$page.url.pathname}>
-					<select name="dias" value={dias} on:change={handleFilterChange} class="bg-white border border-gray-200 text-[#475569] font-medium text-[12px] md:text-[13px] rounded-lg py-1.5 px-2 md:px-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm cursor-pointer hover:bg-gray-50 h-[34px] md:h-[36px]">
-						<option value="7">7 días</option>
-						<option value="30">30 días</option>
-						<option value="3000">Siempre</option>
-					</select>
-					<select name="redSocial" value={redSocial} on:change={handleFilterChange} class="bg-white border border-gray-200 text-[#475569] font-medium text-[12px] md:text-[13px] rounded-lg py-1.5 px-2 md:px-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm cursor-pointer hover:bg-gray-50 h-[34px] md:h-[36px]">
-						<option value="">Fuentes</option>
-						<option value="Facebook">Facebook</option>
-						<option value="X">X</option>
-						<option value="Instagram">Instagram</option>
-					</select>
-					<select name="entidadId" value={entidadId} on:change={handleFilterChange} class="bg-white border border-gray-200 text-[#475569] font-medium text-[12px] md:text-[13px] rounded-lg py-1.5 px-2 md:px-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm cursor-pointer hover:bg-gray-50 h-[34px] md:h-[36px] max-w-[100px] md:max-w-none">
-						<option value="">Entidades</option>
-						{#each entidadesDropdown as entidad}
-							<option value={String(entidad.id)}>{entidad.entidad}</option>
-						{/each}
-					</select>
-				</form>
-
-				<div class="rounded-full p-1 border border-gray-300">
-					<div class="w-12 h-12 acs cursor-pointer bg-white rounded-full flex items-center justify-center">
-						<span class="text-3xl font-bold text-[#DD052B]">{firstNameChar}</span>
+			<!-- Fila 2: Filtros (Móvil) / Centro absoluto (Desktop) -->
+			<div class="flex items-center justify-center w-full md:absolute md:left-1/2 md:-translate-x-1/2 md:w-auto overflow-x-auto no-scrollbar scrollbar-hide py-1 md:py-0 z-0">
+				<div class="flex items-center bg-gray-50/80 p-1 px-2 rounded-xl border border-gray-100 space-x-1 whitespace-nowrap">
+					
+					<!-- Period -->
+					<div class="flex items-center border-r border-gray-200 px-2 md:px-4">
+						<span class="text-[10px] font-bold text-gray-400 uppercase hidden lg:inline mr-2">Rango de fechas</span>
+						<select
+							name="dias"
+							value={dias}
+							on:change={handleFilterChange}
+							class="bg-transparent border-none text-[13px] font-semibold text-gray-700 focus:ring-0 cursor-pointer py-1 pr-8"
+						>
+							<option value="1">1 dia</option>
+						</select>
 					</div>
-					<Dropdown triggeredBy=".acs" class="mt-2">
-						<DropdownItem class="text-center flex justify-center text-gray-600" slot="footer" on:click={() => form.requestSubmit()}><ArrowLeftToBracketOutline/> Cerrar sesión</DropdownItem>
+
+					<!-- Entity -->
+					<div class="flex items-center border-r border-gray-200 px-2 md:px-4">
+						<span class="text-[10px] font-bold text-gray-400 uppercase hidden lg:inline mr-2">Entidad</span>
+						<select
+							name="entidadId"
+							value={entidadId}
+							on:change={handleFilterChange}
+							class="bg-transparent border-none text-[13px] font-semibold text-gray-700 focus:ring-0 cursor-pointer py-1 pr-8 max-w-[130px] md:max-w-[200px] truncate"
+						>
+							<option value="">Todas</option>
+							{#each entidadesDropdown as entidad}
+								<option value={String(entidad.id)}>{entidad.entidad}</option>
+							{/each}
+						</select>
+					</div> 
+
+					<div class="flex items-center border-r border-gray-200 px-2 md:px-4">
+						<span class="text-[10px] font-bold text-gray-400 uppercase hidden lg:inline mr-2">Municipios</span>
+						<select
+							name="municipioId"
+							value={municipioId}
+							on:change={handleFilterChange}
+							class="bg-transparent border-none text-[13px] font-semibold text-gray-700 focus:ring-0 cursor-pointer py-1 pr-8 max-w-[130px] md:max-w-[200px] truncate"
+						>
+							<option value="">Todas</option>
+							{#each municipiosDropdown as municipio}
+								<option value={String(municipio.id)}>{municipio.municipio}</option>
+							{/each}
+						</select>
+					</div> 
+
+					<!-- Source -->
+					<div class="flex items-center px-2 md:px-4">
+						<span class="text-[10px] font-bold text-gray-400 uppercase hidden lg:inline mr-2">Fuente</span>
+						<select
+							name="redSocial"
+							value={redSocial}
+							on:change={handleFilterChange}
+							class="bg-transparent border-none text-[13px] font-semibold text-gray-700 focus:ring-0 cursor-pointer py-1 pr-8"
+						>
+							<option value="">Todas</option>
+							<option value="Facebook">Facebook</option>
+							<option value="X">X (Twitter)</option>
+							<option value="Instagram">Instagram</option>
+						</select>
+					</div>
+
+<!-- 					<div class="flex items-center border-r border-gray-200 px-2 md:px-4">
+						<span class="text-[10px] font-bold text-gray-400 uppercase hidden lg:inline mr-2">Tema / Categoria </span>
+						<select
+							name="temaId"
+							value={temaId}
+							on:change={handleFilterChange}
+							class="bg-transparent border-none text-[13px] font-semibold text-gray-700 focus:ring-0 cursor-pointer py-1 pr-8 max-w-[130px] md:max-w-[200px] truncate"
+						>
+							<option value="">Todas</option>
+							<option value="economía">Economía</option>
+							<option value="política">Política</option>
+							<option value="gestión pública">Gestión pública</option>
+							<option value="salarios">Salarios</option>
+							<option value="impuestos">Impuestos</option>
+							<option value="corrupción">Corrupción</option>
+							<option value="otros">Otros</option>
+						</select>
+					</div> -->
+				</div>
+			</div>
+
+			<!-- Lado Derecho: Usuario (Desktop) -->
+			<div class="hidden md:flex items-center justify-end flex-shrink-0 z-10 w-[60px]">
+				<div class="rounded-full p-1 border border-gray-300">
+					<div class="w-11 h-11 lg:w-12 lg:h-12 acs cursor-pointer bg-white rounded-full flex items-center justify-center">
+						<span class="text-2xl font-bold text-[#DD052B]">{firstNameChar}</span>
+					</div>
+					<Dropdown triggeredBy=".acs" class="mt-2 text-left">
+						<DropdownItem class="text-center flex justify-center text-gray-600" slot="footer" on:click={() => form.requestSubmit()}>
+							<ArrowLeftToBracketOutline class="mr-2"/> Cerrar sesión
+						</DropdownItem>
 					</Dropdown>
 					<form
 						method="POST"
@@ -113,6 +193,7 @@
 					></form>
 				</div>
 			</div>
+
 		</div>
 	</div>
 </header>

@@ -1,10 +1,10 @@
 services:
-  opinion_publica_frontend_sveltkit_prod:
-    image: ghcr.io/tob-group-solutions/plataforma_opinion_publica_frontend_sveltkit:latest
-    container_name: opinion_publica_frontend_sveltkit_prod
-    restart: always
+  opinion_publica_frontend_sveltkit_staging:
+    image: ghcr.io/tob-group-solutions/plataforma_opinion_publica_frontend_sveltkit:staging
+    container_name: opinion_publica_frontend_sveltkit_staging
+    restart: unless-stopped
     ports:
-      - "3851:3000"
+      - "3861:3000"
     env_file:
       - .env
     extra_hosts:

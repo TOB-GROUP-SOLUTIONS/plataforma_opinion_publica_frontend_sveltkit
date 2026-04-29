@@ -11,12 +11,13 @@ export const load = async ({ url, cookies, locals, fetch }: any) => {
 		if (url.searchParams.get('dias')) params.append('dias', url.searchParams.get('dias'));
 		if (url.searchParams.get('redSocial')) params.append('redSocial', url.searchParams.get('redSocial'));
 		if (url.searchParams.get('entidadId')) params.append('entidadId', url.searchParams.get('entidadId'));
+		if (url.searchParams.get('municipioId')) params.append('municipioId', url.searchParams.get('municipioId'));
+
+		if (url.searchParams.get('temaId')) params.append('temaId', url.searchParams.get('temaId'));
 		const queryString = params.toString() ? `?${params.toString()}` : '';
 
 		const res = await api.get({ fetch, endpoint: `dashboard/overview${queryString}`, token });
 		const entRes = await api.get({ fetch, endpoint: 'entidades-objetivo', token });
-
-		console.log('res', res?.data?.sentimientoMediosVsUsuarios.series);
 
 		return {
 			dashboard: res.ok ? res.data : null,
@@ -24,7 +25,9 @@ export const load = async ({ url, cookies, locals, fetch }: any) => {
 			filters: {
 				dias: url.searchParams.get('dias') || '7',
 				redSocial: url.searchParams.get('redSocial') || '',
-				entidadId: url.searchParams.get('entidadId') || ''
+				entidadId: url.searchParams.get('entidadId') || '',
+				municipioId: url.searchParams.get('municipioId') || '',
+				temaId: url.searchParams.get('temaId') || ''
 			},
 			user: locals.user,
 		};

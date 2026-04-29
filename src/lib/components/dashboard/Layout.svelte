@@ -30,6 +30,7 @@
 		'/admin/entidades': 'Entidades',
 		'/admin/comentarios': 'Comentarios',
 		'/admin/articulos': 'Artículos',
+		'/admin/municipios': 'Municipios',
 		// Agrega aquí más rutas y títulos según sea necesario
 	};
 

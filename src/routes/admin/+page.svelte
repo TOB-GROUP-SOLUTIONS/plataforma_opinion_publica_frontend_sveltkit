@@ -17,6 +17,7 @@
 	$: entidadId = $page.data?.filters?.entidadId ? String($page.data.filters.entidadId) : '';
 	$: redSocial = String($page.data?.filters?.redSocial || '');
 	$: entidadesDropdown = $page.data?.entidades || [];
+	$: municipioId = $page.data?.filters?.municipioId ? String($page.data.filters.municipioId) : ($page.url.searchParams.get('municipioId') || '');
 
 	// Modal state
 	let showTopTemasModal = false;
@@ -29,7 +30,13 @@
 		isLoadingTopTemas = true;
 		errorTopTemas = '';
 		try {
-			const res = await fetch(`/api/top-temas?dias=${dias}`);
+			const params = new URLSearchParams();
+			if (dias) params.set('dias', dias);
+			if (entidadId) params.set('entidadId', entidadId);
+			if (redSocial) params.set('redSocial', redSocial);
+			if (municipioId) params.set('municipioId', municipioId);
+
+			const res = await fetch(`/api/top-temas?${params.toString()}`);
 			if (!res.ok) throw new Error('Error al generar tendencias');
 			const json = await res.json();
 			generatedTopTemas = json.topTemas || [];
@@ -44,8 +51,9 @@
 		generarTopTemas();
 	});
 
-	// Trigger reload if `dias` changes
-	$: if (browser && dias) {
+	// Trigger reload if `dias`, `entidadId`, `redSocial` or `municipioId` change
+	$: triggerTop = [dias, entidadId, redSocial, municipioId].join('|');
+	$: if (browser && triggerTop) {
 		generarTopTemas();
 	}
 
@@ -182,26 +190,38 @@
 		legend: { position: 'top', horizontalAlign: 'center' }
 	};
 
-	$: channelDonutOptions = {
-		chart: { type: 'donut', height: 320, fontFamily: 'inherit' },
+	let canalTab: 'articulos' | 'comentarios' = 'articulos';
+
+	const channelColors = ['#1877f2', '#0f172a', '#e1306c', '#94a3b8', '#8b5cf6'];
+
+	$: channelDonutArticulosOptions = {
+		chart: { type: 'donut', height: 260, fontFamily: 'inherit' },
 		labels: overview.distribucionCanal?.labels || [],
-		series: overview.distribucionCanal?.series || [],
-		colors: ['#1877f2', '#0f172a', '#e1306c', '#94a3b8'],
+		series: overview.distribucionCanal?.seriesArticulos || [],
+		colors: channelColors,
 		plotOptions: { pie: { donut: { size: '65%' }, expandOnClick: false } },
 		dataLabels: { enabled: false },
-		legend: { position: 'right', verticalAlign: 'middle', markers: { radius: 12 }, itemMargin: { vertical: 5 } },
+		legend: { position: 'bottom', horizontalAlign: 'center', markers: { radius: 12 }, itemMargin: { horizontal: 8 } },
 		responsive: [
 			{
-				breakpoint: 1024,
-				options: {
-					legend: { position: 'bottom', horizontalAlign: 'center' }
-				}
-			},
+				breakpoint: 640,
+				options: { chart: { height: 220 } }
+			}
+		]
+	};
+
+	$: channelDonutComentariosOptions = {
+		chart: { type: 'donut', height: 260, fontFamily: 'inherit' },
+		labels: overview.distribucionCanal?.labels || [],
+		series: overview.distribucionCanal?.seriesComentarios || [],
+		colors: channelColors,
+		plotOptions: { pie: { donut: { size: '65%' }, expandOnClick: false } },
+		dataLabels: { enabled: false },
+		legend: { position: 'bottom', horizontalAlign: 'center', markers: { radius: 12 }, itemMargin: { horizontal: 8 } },
+		responsive: [
 			{
 				breakpoint: 640,
-				options: {
-					chart: { height: 280 }
-				}
+				options: { chart: { height: 220 } }
 			}
 		]
 	};
@@ -381,12 +401,30 @@
 				</div>
 			</div>
 
-						<div class="bg-white p-4 md:p-6 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] flex flex-col">
-				<h3 class="text-lg font-bold text-gray-900 mb-4">Distribución por Canal</h3>
-				{#if overview.distribucionCanal}
-					<div class="flex-grow flex items-center justify-center w-full min-h-[260px]" use:chartAction={channelDonutOptions}></div>
-				{/if}
-			</div>
+				<div class="bg-white p-4 md:p-6 rounded-xl border border-gray-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.05)] flex flex-col">
+					<div class="flex items-center justify-between mb-4 flex-shrink-0">
+						<h3 class="text-lg font-bold text-gray-900">Distribución por Canal</h3>
+						<div class="flex items-center bg-gray-100 rounded-lg p-0.5 text-xs font-semibold">
+							<button
+								id="canal-tab-articulos"
+								class="px-3 py-1.5 rounded-md transition-all duration-200 {canalTab === 'articulos' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'}"
+								on:click={() => canalTab = 'articulos'}
+							>📰 Artículos</button>
+							<button
+								id="canal-tab-comentarios"
+								class="px-3 py-1.5 rounded-md transition-all duration-200 {canalTab === 'comentarios' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'}"
+								on:click={() => canalTab = 'comentarios'}
+							>💬 Comentarios</button>
+						</div>
+					</div>
+					{#if overview.distribucionCanal}
+						{#if canalTab === 'articulos'}
+							<div class="flex-grow flex items-center justify-center w-full min-h-[260px]" use:chartAction={channelDonutArticulosOptions}></div>
+						{:else}
+							<div class="flex-grow flex items-center justify-center w-full min-h-[260px]" use:chartAction={channelDonutComentariosOptions}></div>
+						{/if}
+					{/if}
+				</div>
 
 		</div>
 

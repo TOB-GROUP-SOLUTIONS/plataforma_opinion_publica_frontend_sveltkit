@@ -34,6 +34,7 @@ export const load = async ({ cookies, locals, url, fetch }: any) => {
 		token
 	});
 
+
 	if (!response.ok) throw error(500, 'Error al cargar los artículos');
 
 	return {

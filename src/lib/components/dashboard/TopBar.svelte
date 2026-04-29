@@ -102,7 +102,6 @@
 							class="bg-transparent border-none text-[13px] font-semibold text-gray-700 focus:ring-0 cursor-pointer py-1 pr-8"
 						>
 							<option value="1">1 dia</option>
-							<option value="7">7 días</option>
 						</select>
 					</div>
 
